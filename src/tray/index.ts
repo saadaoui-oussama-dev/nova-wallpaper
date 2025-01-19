@@ -4,12 +4,12 @@ const { renderControls } = require('./controls');
 import eventsBus from '@/events';
 import { MenuOption } from './helpers';
 
-let executed = false;
-export const createTray = () => {
-	if (executed) return;
-	executed = true;
+let tray: Electron.Tray;
 
-	const tray = new Tray(join(__dirname, '../src/assets/images/logo.png'));
+export const createTray = () => {
+	if (tray) return;
+
+	tray = new Tray(join(__dirname, '../src/assets/images/logo.png'));
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 

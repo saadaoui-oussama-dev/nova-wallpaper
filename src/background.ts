@@ -1,7 +1,6 @@
 'use strict';
 
-import { app, dialog, protocol, BrowserWindow } from 'electron';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+import { app, dialog, protocol } from 'electron';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import { createTray } from './tray';
 const isDevelopment = process.env.NODE_ENV !== 'production';

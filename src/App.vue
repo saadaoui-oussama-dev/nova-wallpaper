@@ -10,7 +10,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import events from './events';
-import Dashboard from './pages/dashboard.vue';
+import Dashboard from './dashboard/page.vue';
 
 export default defineComponent({
 	name: 'App',
