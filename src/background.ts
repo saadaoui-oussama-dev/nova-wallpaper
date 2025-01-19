@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, dialog, protocol, BrowserWindow } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import { createTray } from './tray';
@@ -11,14 +11,26 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: tru
 
 app.on('window-all-closed', (event: Electron.Event) => event.preventDefault());
 
-app.on('ready', async () => {
-	if (isDevelopment) {
-		try {
-			await installExtension(VUEJS3_DEVTOOLS);
-		} catch {}
-	}
-	createTray();
-});
+if (!app.requestSingleInstanceLock()) {
+	app.on('ready', () => {
+		dialog.showMessageBoxSync({
+			type: 'error',
+			title: 'Nova Wallpaper',
+			message: 'Another instance of Nova Wallpaper is already running.\nPlease close the application from the task manager and try again.', // prettier-ignore
+			buttons: ['OK'],
+		});
+		app.quit();
+	});
+} else {
+	app.on('ready', async () => {
+		if (isDevelopment) {
+			try {
+				await installExtension(VUEJS3_DEVTOOLS);
+			} catch {}
+		}
+		createTray();
+	});
+}
 
 if (isDevelopment) {
 	if (process.platform !== 'win32') process.on('SIGTERM', () => app.quit());
