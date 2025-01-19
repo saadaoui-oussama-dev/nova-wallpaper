@@ -1,5 +1,6 @@
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+const { join } = require('path');
 
 let dashboard: BrowserWindow | undefined;
 
@@ -12,7 +13,7 @@ export const openDashboard = async () => {
 		frame: false,
 		transparent: true,
 		title: 'Nova Wallpaper',
-		icon: 'src/assets/images/logo.png',
+		icon: join(__dirname, app.isPackaged ? 'imgs/logo.png' : '../public/imgs/logo.png'),
 		webPreferences: {
 			devTools: false,
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,

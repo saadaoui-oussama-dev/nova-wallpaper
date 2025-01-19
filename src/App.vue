@@ -1,6 +1,6 @@
 <template>
 	<div v-if="splashscreen" class="splashscreen">
-		<img alt="Vue logo" src="./assets/images/logo.png" width="150" />
+		<img alt="Vue logo" src="/imgs/logo.png" width="150" />
 	</div>
 	<div class="app">
 		<dashboard v-show="!splashscreen" />
