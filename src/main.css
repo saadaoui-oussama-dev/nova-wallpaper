@@ -4,25 +4,51 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
 body {
+	width: 100vw;
+	height: 100vh;
 	transition: background-color 0.1s ease-in-out;
 }
 
 body.ready {
 	background-color: var(--window-bg);
+	border: 1px solid var(--window-border);
 }
 
-#app {
+body > #app {
+	height: 100%;
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
 }
 
-#app > * {
-	width: 100vw;
-	height: 100vh;
+body > #app > .splashscreen {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+body > #app > .splashscreen > img {
+	opacity: 1;
+	transition: opacity 0.7s ease-in-out;
+	transition-delay: 0.2s;
+}
+
+body.ready > #app > .splashscreen > img {
+	opacity: 0;
+}
+
+body > #app > .app {
+	height: 100%;
 	color: var(--text-color);
+}
+
+body.ready > #app > .app {
+	overflow: auto;
 }

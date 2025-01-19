@@ -1,6 +1,8 @@
 <template>
+	<div v-if="splashscreen" class="splashscreen">
+		<img alt="Vue logo" src="./assets/images/logo.png" width="150" />
+	</div>
 	<div class="app">
-		<img class="splashscreen" v-if="splashscreen" alt="Vue logo" src="./assets/images/logo.png" width="150" />
 		<dashboard v-show="!splashscreen" />
 	</div>
 </template>
@@ -25,23 +27,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style scoped>
-.app {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	gap: 1.5rem;
-}
-
-.splashscreen {
-	opacity: 1;
-	transition: opacity 0.7s ease-in-out;
-	transition-delay: 0.2s;
-}
-
-.ready .splashscreen {
-	opacity: 0;
-}
-</style>
