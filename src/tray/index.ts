@@ -1,8 +1,8 @@
 const { Tray, Menu } = require('electron');
 const { join } = require('path');
-const { renderControls } = require('./controls');
 import eventsBus from '@/events';
-import { MenuOption } from './helpers';
+import { MenuOption } from '@/tray/helpers';
+import { renderControls } from '@/tray/controls';
 
 let tray: Electron.Tray;
 

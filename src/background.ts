@@ -2,8 +2,7 @@
 
 import { app, dialog, protocol } from 'electron';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
-import { createTray } from './tray';
-const isDevelopment = process.env.NODE_ENV !== 'production';
+import { createTray } from '@/tray';
 
 require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
@@ -22,7 +21,7 @@ if (!app.requestSingleInstanceLock()) {
 	});
 } else {
 	app.on('ready', async () => {
-		if (isDevelopment) {
+		if (process.env.NODE_ENV !== 'production') {
 			try {
 				await installExtension(VUEJS3_DEVTOOLS);
 			} catch {}
@@ -31,7 +30,7 @@ if (!app.requestSingleInstanceLock()) {
 	});
 }
 
-if (isDevelopment) {
+if (process.env.NODE_ENV !== 'production') {
 	if (process.platform !== 'win32') process.on('SIGTERM', () => app.quit());
 	else process.on('message', (data) => data === 'graceful-exit' && app.quit());
 }
