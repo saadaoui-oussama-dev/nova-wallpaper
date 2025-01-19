@@ -40,13 +40,15 @@ export const openDashboard = async () => {
 
 export const closeDashboard = () => {
 	if (dashboard) {
-		dashboard.close();
+		dashboard.destroy();
 		dashboard = undefined;
 	}
 };
 
 ipcMain.on('dashboard', (_, key: string, ...args: any[]) => {
-	console.log(key, ...args);
+	if (!dashboard) return;
+	if (key === 'close') return closeDashboard();
+	if (key === 'minimize') return dashboard.minimize();
 });
 
 ipcMain.handle('dashboard', async (_, key: string, ...data: any[]) => {

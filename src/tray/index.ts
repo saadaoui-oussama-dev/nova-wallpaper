@@ -9,7 +9,7 @@ let tray: Electron.Tray;
 export const createTray = () => {
 	if (tray) return;
 
-	tray = new Tray(join(__dirname, app.isPackaged ? 'imgs/logo.png' : '../public/imgs/logo.png'));
+	tray = new Tray(join(__dirname, app.isPackaged ? '/imgs/logo.png' : '../public/imgs/logo.png'));
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 
