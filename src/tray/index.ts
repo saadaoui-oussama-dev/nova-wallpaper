@@ -17,7 +17,7 @@ export const createTray = () => {
 
 	eventsBus.$on('reloadMenu', () => {
 		const options: MenuOption[] = [];
-		options.push(...renderControls(options));
+		renderControls(options);
 		eventsBus.$emit('renderMenu', options);
 	});
 
