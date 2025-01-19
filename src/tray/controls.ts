@@ -1,6 +1,7 @@
 const { app } = require('electron');
 import eventsBus from '@/events';
 import { noPadding, padding, MenuOption } from './helpers';
+import { openDashboard } from '@/dashboard';
 
 let soundsStateLabel = 'Mute Wallpaper';
 
@@ -40,6 +41,10 @@ export const renderControls = (options: MenuOption[]): void => {
 		soundsController,
 		visibilityController,
 		{ type: 'separator' },
+		{
+			label: padding('Open Dashboard', pad),
+			click: () => openDashboard(),
+		},
 		{
 			label: padding('Exit App', pad),
 			click: () => {
