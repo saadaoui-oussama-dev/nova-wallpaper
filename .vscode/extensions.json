@@ -1,0 +1,8 @@
+{
+	"recommendations": [
+		"esbenp.prettier-vscode",
+		"streetsidesoftware.code-spell-checker",
+		"naumovs.color-highlight",
+		"pkief.material-icon-theme"
+	]
+}
