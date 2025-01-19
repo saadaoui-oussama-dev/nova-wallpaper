@@ -7,6 +7,10 @@
 }
 
 body {
+	transition: background-color 0.1s ease-in-out;
+}
+
+body.ready {
 	background-color: var(--window-bg);
 }
 
@@ -20,6 +24,5 @@ body {
 #app > * {
 	width: 100vw;
 	height: 100vh;
-	background-color: var(--window-bg);
 	color: var(--text-color);
 }

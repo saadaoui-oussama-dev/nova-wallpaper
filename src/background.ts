@@ -13,6 +13,7 @@ async function createWindow() {
 		width: 800,
 		height: 600,
 		frame: false,
+		transparent: true,
 		title: 'Nova Wallpaper',
 		icon: 'src/assets/images/logo.png',
 		webPreferences: {
