@@ -1,5 +1,13 @@
 <template>
-	<div class="dashboard">Dashboard</div>
+	<div class="dashboard">
+		<div class="font-standard">
+			<p>Standard font</p>
+		</div>
+
+		<div class="font-handwritten">
+			<p>Handwritten font</p>
+		</div>
+	</div>
 </template>
 
 <script lang="ts">

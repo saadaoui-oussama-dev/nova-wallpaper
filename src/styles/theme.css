@@ -3,3 +3,15 @@
 	--window-border: #2e2e2e;
 	--text-color: #fff;
 }
+
+*,
+.font-standard,
+.font-standard * {
+	font-family: system-ui, 'Trebuchet MS', 'Segoe UI', Helvetica, Arial;
+}
+
+.font-handwritten,
+.font-handwritten * {
+	font-family: cursive, 'Comic Sans MS', 'Trebuchet MS', system-ui, 'Segoe UI', Helvetica, Arial;
+	font-size: 0.99em;
+}
