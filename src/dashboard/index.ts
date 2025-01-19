@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 const { join } = require('path');
 
@@ -12,26 +12,30 @@ export const openDashboard = async () => {
 		height: 600,
 		frame: false,
 		transparent: true,
+		resizable: false,
 		title: 'Nova Wallpaper',
-		icon: join(__dirname, app.isPackaged ? 'imgs/logo.png' : '../public/imgs/logo.png'),
+		icon: join(__dirname, app.isPackaged ? '/imgs/logo.png' : '../public/imgs/logo.png'),
 		webPreferences: {
 			devTools: false,
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
 			enableRemoteModule: true,
+			preload: join(__dirname, app.isPackaged ? '/scripts/preload.js' : '../public/scripts/preload.js'),
 		},
 	});
 
+	dashboard.on('close', () => (dashboard = undefined));
 	try {
 		if (process.env.WEBPACK_DEV_SERVER_URL) {
 			await dashboard.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
 		} else {
 			createProtocol('app');
-			dashboard.loadURL('app://./index.html');
+			await dashboard.loadURL('app://./index.html');
 		}
 	} catch {
-		closeDashboard();
+		return closeDashboard();
 	}
+	dashboard.webContents.executeJavaScript('window.eventsBus.$emit("nova-wallpaper-preload", NovaWallpaper);');
 };
 
 export const closeDashboard = () => {
@@ -40,3 +44,11 @@ export const closeDashboard = () => {
 		dashboard = undefined;
 	}
 };
+
+ipcMain.on('dashboard', (_, key: string, ...args: any[]) => {
+	console.log(key, ...args);
+});
+
+ipcMain.handle('dashboard', async (_, key: string, ...data: any[]) => {
+	console.log('Data requested:', key, ...data);
+});
