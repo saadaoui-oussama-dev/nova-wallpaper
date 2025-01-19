@@ -7,9 +7,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import events from './events';
 
 export default defineComponent({
 	name: 'App',
+	created() {
+		events.$emit('onAppReady');
+	},
 });
 </script>
 
