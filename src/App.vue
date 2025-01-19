@@ -1,7 +1,7 @@
 <template>
 	<div class="app">
-		<img alt="Vue logo" src="./assets/images/logo.png" />
-		<h1>{{ 'Nova Wallpaper' }}</h1>
+		<img alt="Vue logo" src="./assets/images/logo.png" width="150" />
+		<h1>Nova Wallpaper</h1>
 	</div>
 </template>
 

@@ -6,11 +6,6 @@
 	box-sizing: border-box;
 }
 
-*::before,
-*::after {
-	content: '';
-}
-
 body {
 	background-color: var(--window-bg);
 }

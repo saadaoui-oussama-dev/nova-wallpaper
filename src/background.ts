@@ -13,6 +13,8 @@ async function createWindow() {
 		width: 800,
 		height: 600,
 		frame: false,
+		title: 'Nova Wallpaper',
+		icon: 'src/assets/images/logo.png',
 		webPreferences: {
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
