@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 const { join } = require('path');
+import eventsBus from '@/global/events';
 
 let dashboard: BrowserWindow | undefined;
 
@@ -24,6 +25,7 @@ export const openDashboard = async () => {
 		},
 	});
 
+	dashboard.focus();
 	dashboard.on('close', () => (dashboard = undefined));
 	try {
 		if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -33,22 +35,23 @@ export const openDashboard = async () => {
 			await dashboard.loadURL('app://./index.html');
 		}
 	} catch {
-		return closeDashboard();
+		return eventsBus.$emit('dashboard', 'close');
 	}
 	dashboard.webContents.executeJavaScript('window.eventsBus.$emit("nova-wallpaper-preload", NovaWallpaper);');
 };
 
-export const closeDashboard = () => {
-	if (dashboard) {
+eventsBus.$on('dashboard', (action: string) => {
+	if (!dashboard) return;
+	if (action === 'focus') return dashboard.focus();
+	if (action === 'minimize') return dashboard.minimize();
+	if (action === 'close') {
 		dashboard.destroy();
 		dashboard = undefined;
 	}
-};
+});
 
-ipcMain.on('dashboard', (_, key: string, ...args: any[]) => {
-	if (!dashboard) return;
-	if (key === 'close') return closeDashboard();
-	if (key === 'minimize') return dashboard.minimize();
+ipcMain.on('dashboard', (_, key: string) => {
+	if (['close', 'minimize'].includes(key)) return eventsBus.$emit('dashboard', key);
 });
 
 ipcMain.handle('dashboard', async (_, key: string, ...data: any[]) => {

@@ -27,6 +27,7 @@ export const renderControls = (options: MenuOption[]): void => {
 			visibilityController.label = newLabel;
 			if (oldLabel !== 'Show Wallpaper') soundsStateLabel = soundsController.label = padding('Unmute Wallpaper', pad);
 			eventsBus.$emit('renderMenu', options);
+			if (oldLabel === 'Show Wallpaper') eventsBus.$emit('dashboard', 'minimize');
 		},
 	};
 
@@ -36,6 +37,7 @@ export const renderControls = (options: MenuOption[]): void => {
 			label: padding('Reload Wallpaper', pad),
 			click: () => {
 				eventsBus.$emit('reloadMenu');
+				eventsBus.$emit('dashboard', 'minimize');
 			},
 		},
 		soundsController,
@@ -49,6 +51,7 @@ export const renderControls = (options: MenuOption[]): void => {
 			label: padding('Exit App', pad),
 			click: () => {
 				eventsBus.$emit('renderMenu', [{ label: 'Waiting 3 seconds to close' }]);
+				eventsBus.$emit('dashboard', 'close');
 				setTimeout(() => app.exit(), 3000);
 			},
 		}
