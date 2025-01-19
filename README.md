@@ -1,4 +1,4 @@
-# sticky-wallpaper
+# nova-wallpaper
 
 ## Project setup
 ```
