@@ -40,6 +40,6 @@ const eventsBus = {
 	},
 };
 
-Object.assign(window, { eventsBus });
+if (typeof window !== 'undefined') Object.assign(window, { eventsBus });
 
 export default eventsBus;
