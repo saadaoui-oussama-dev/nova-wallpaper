@@ -1,6 +1,6 @@
 const { app, Tray, Menu } = require('electron');
 const { join } = require('path');
-import eventsBus from '@/events';
+import eventsBus from '@/global/events';
 import { MenuOption } from '@/tray/helpers';
 import { renderControls } from '@/tray/controls';
 

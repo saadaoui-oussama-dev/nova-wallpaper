@@ -4,12 +4,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import events from '@/events';
+import eventsBus from '@/global/events';
 
 export default defineComponent({
 	name: 'DashboardPage',
 	created() {
-		events.$on('onAppReady', () => {
+		eventsBus.$on('onAppReady', () => {
 			console.log('App is ready');
 		});
 	},

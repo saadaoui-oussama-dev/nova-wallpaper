@@ -1,5 +1,5 @@
 const { app } = require('electron');
-import eventsBus from '@/events';
+import eventsBus from '@/global/events';
 import { openDashboard } from '@/dashboard';
 import { noPadding, padding, MenuOption } from '@/tray/helpers';
 

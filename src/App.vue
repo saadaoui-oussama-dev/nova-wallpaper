@@ -9,8 +9,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import events from './events';
-import Dashboard from './dashboard/page.vue';
+import eventsBus from '@/global/events';
+import Dashboard from '@/dashboard/page.vue';
 
 export default defineComponent({
 	name: 'App',
@@ -22,7 +22,7 @@ export default defineComponent({
 		setTimeout(() => document.body.classList.add('ready'), 2000);
 		setTimeout(() => {
 			this.splashscreen = false;
-			events.$emit('onAppReady');
+			eventsBus.$emit('onAppReady');
 		}, 3000);
 	},
 });
