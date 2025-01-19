@@ -1,0 +1,30 @@
+@import url('./assets/styles/theme.css');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+*::before,
+*::after {
+	content: '';
+}
+
+body {
+	background-color: var(--window-bg);
+}
+
+#app {
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
+}
+
+#app > * {
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--window-bg);
+	color: var(--text-color);
+}

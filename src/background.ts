@@ -5,15 +5,18 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 async function createWindow() {
 	const win = new BrowserWindow({
 		width: 800,
 		height: 600,
+		frame: false,
 		webPreferences: {
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+			enableRemoteModule: true,
 		},
 	});
 
@@ -40,15 +43,6 @@ app.on('ready', async () => {
 });
 
 if (isDevelopment) {
-	if (process.platform === 'win32') {
-		process.on('message', (data) => {
-			if (data === 'graceful-exit') {
-				app.quit();
-			}
-		});
-	} else {
-		process.on('SIGTERM', () => {
-			app.quit();
-		});
-	}
+	if (process.platform !== 'win32') process.on('SIGTERM', () => app.quit());
+	else process.on('message', (data) => data === 'graceful-exit' && app.quit());
 }
