@@ -76,6 +76,9 @@ export default defineComponent({
 	width: 42px;
 	height: 32px;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	transition: background-color 0.3s ease;
 	-webkit-app-region: no-drag;
 }

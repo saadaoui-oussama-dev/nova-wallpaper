@@ -4,28 +4,26 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	overflow: hidden;
 }
 
 body {
 	width: 100vw;
 	height: 100vh;
-	transition: background-color 0.1s ease-in-out;
-}
-
-body.ready {
-	border: 1px solid var(--window-border);
-	border-radius: 7px;
-}
-
-body.ready > * {
-	background-color: var(--window-bg);
+	background-color: transparent;
 }
 
 body > #app {
 	height: 100%;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	overflow: hidden;
+	border-radius: 7px;
+	transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+
+body.ready > #app {
+	border: 1px solid var(--window-border);
+	background-color: var(--window-bg);
 }
 
 body > #app > .splashscreen {
