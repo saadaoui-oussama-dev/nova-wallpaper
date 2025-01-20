@@ -9,11 +9,6 @@
 				<icon-minimize />
 			</button>
 
-			<button class="titlebar-btn" @click="toggleSettings">
-				<icon-settings />
-			</button>
-			<settings :visible="settingsVisible" @close="settingsVisible = false" />
-
 			<button class="titlebar-btn close" @click="request('close')">
 				<icon-close />
 			</button>
@@ -25,23 +20,15 @@
 import { defineComponent } from 'vue';
 import { NovaWallpaper } from '@/global/preload';
 
-import Settings from '@/components/Settings.vue';
 import IconClose from '@/components/icons/IconClose.vue';
 import IconMinimize from '@/components/icons/IconMinimize.vue';
-import IconSettings from '@/components/icons/IconSettings.vue';
 
 export default defineComponent({
 	name: 'TitleBarComponent',
-	components: { Settings, IconClose, IconMinimize, IconSettings },
-	data: () => ({
-		settingsVisible: false,
-	}),
+	components: { IconClose, IconMinimize },
 	methods: {
 		request(action: 'minimize' | 'close') {
 			NovaWallpaper.dashboard.send(action);
-		},
-		toggleSettings() {
-			this.settingsVisible = !this.settingsVisible;
 		},
 	},
 });

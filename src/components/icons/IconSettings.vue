@@ -25,9 +25,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style scoped>
-svg {
-	opacity: 0.5;
-}
-</style>
