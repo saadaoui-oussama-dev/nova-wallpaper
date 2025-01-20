@@ -37,7 +37,6 @@ export const openDashboard = async () => {
 	} catch {
 		return eventsBus.$emit('dashboard', 'close');
 	}
-	dashboard.webContents.executeJavaScript('window.eventsBus.$emit("nova-wallpaper-preload", NovaWallpaper);');
 };
 
 eventsBus.$on('dashboard', (action: string) => {
