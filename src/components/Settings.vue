@@ -1,0 +1,105 @@
+<template>
+	<div class="mask" v-show="visible" @click="$emit('close')"></div>
+	<div class="settings" v-show="visible">
+		<div class="option">
+			<p>Text font</p>
+			<div class="toggle-options">
+				<label
+					v-for="font in fonts"
+					:key="font.value"
+					class="toggle-option"
+					:class="{ selected: font.value === selectedFont }"
+				>
+					<input type="radio" :name="font.value" :value="font.value" v-model="selectedFont" class="hidden-radio" />
+					<span :class="`font-${font.value}`">{{ font.label }}</span>
+				</label>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+	name: 'SettingsComponent',
+	props: {
+		visible: { type: Boolean, default: false },
+	},
+	data() {
+		return {
+			fonts: [
+				{ label: 'Standard', value: 'standard' },
+				{ label: 'Handwritten', value: 'handwritten' },
+			],
+			selectedFont: this.$store.state.settings.font,
+		};
+	},
+	watch: {
+		selectedFont() {
+			this.$store.dispatch('setSettings', { font: this.selectedFont });
+		},
+	},
+});
+</script>
+
+<style scoped>
+.mask {
+	position: fixed;
+	top: 32px;
+	left: 0;
+	width: 100%;
+	height: calc(100% - 32px);
+	z-index: 999;
+}
+
+.settings {
+	position: absolute;
+	top: 42px;
+	right: 10px;
+	background-color: var(--titlebar-bg);
+	padding: 10px;
+	z-index: 1000;
+}
+
+.option p {
+	margin-bottom: 5px;
+}
+
+.option:not(:last-child) {
+	margin-bottom: 5px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid var(--window-border);
+}
+
+.toggle-options {
+	display: inline-flex;
+	border: 1px solid var(--window-border);
+	border-radius: 4px;
+	overflow: hidden;
+	width: 300px;
+	background-color: var(--window-bg);
+}
+
+.toggle-option {
+	width: 50%;
+	text-align: center;
+	padding: 8px 0;
+	cursor: pointer;
+	background-color: #333;
+	color: var(--text-color);
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.toggle-option:hover {
+	background-color: #444;
+}
+
+.toggle-option.selected {
+	background-color: var(--primary-color);
+}
+
+.hidden-radio {
+	display: none;
+}
+</style>

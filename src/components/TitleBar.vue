@@ -5,11 +5,16 @@
 			<span class="app-title">Nova Wallpaper</span>
 		</div>
 		<div class="titlebar-right">
-			<button class="titlebar-btn" @click="minimizeWindow">
+			<button class="titlebar-btn" @click="request('minimize')">
 				<icon-minimize />
 			</button>
 
-			<button class="titlebar-btn close" @click="closeWindow">
+			<button class="titlebar-btn" @click="toggleSettings">
+				<icon-settings />
+			</button>
+			<settings :visible="settingsVisible" @close="settingsVisible = false" />
+
+			<button class="titlebar-btn close" @click="request('close')">
 				<icon-close />
 			</button>
 		</div>
@@ -20,18 +25,23 @@
 import { defineComponent } from 'vue';
 import { NovaWallpaper } from '@/global/preload';
 
-import IconClose from './icons/IconClose.vue';
-import IconMinimize from './icons/IconMinimize.vue';
+import Settings from '@/components/Settings.vue';
+import IconClose from '@/components/icons/IconClose.vue';
+import IconMinimize from '@/components/icons/IconMinimize.vue';
+import IconSettings from '@/components/icons/IconSettings.vue';
 
 export default defineComponent({
 	name: 'TitleBarComponent',
-	components: { IconClose, IconMinimize },
+	components: { Settings, IconClose, IconMinimize, IconSettings },
+	data: () => ({
+		settingsVisible: false,
+	}),
 	methods: {
-		minimizeWindow() {
-			NovaWallpaper.dashboard.send('minimize');
+		request(action: 'minimize' | 'close') {
+			NovaWallpaper.dashboard.send(action);
 		},
-		closeWindow() {
-			NovaWallpaper.dashboard.send('close');
+		toggleSettings() {
+			this.settingsVisible = !this.settingsVisible;
 		},
 	},
 });
@@ -42,8 +52,8 @@ export default defineComponent({
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background-color: #272727;
-	color: #fff;
+	background-color: var(--titlebar-bg);
+	color: var(--text-color);
 	height: 32px;
 	padding: 0 0 0 10px;
 	user-select: none;
@@ -71,7 +81,7 @@ export default defineComponent({
 .titlebar-btn {
 	background: transparent;
 	border: none;
-	color: #fff;
+	color: var(--text-color);
 	font-size: 14px;
 	width: 42px;
 	height: 32px;
@@ -84,10 +94,10 @@ export default defineComponent({
 }
 
 .titlebar-btn:hover {
-	background-color: #ffffff33;
+	background-color: var(--titlebar-btn-hover);
 }
 
 .titlebar-btn.close:hover {
-	background-color: #bf2a1b;
+	background-color: var(--titlebar-btn-danger-hover);
 }
 </style>

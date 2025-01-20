@@ -1,17 +1,23 @@
 :root {
+	--primary-color: #007bff;
+
 	--window-bg: #1e1e1e;
 	--window-border: #2e2e2e;
 	--text-color: #fff;
+
+	--titlebar-bg: #272727;
+	--titlebar-btn-hover: #ffffff33;
+	--titlebar-btn-danger-hover: #bf2a1b;
 }
 
-*,
-.font-standard,
-.font-standard * {
+body:not(.font-standard):not(.font-handwritten),
+body.font-standard,
+.font-standard:not(body) {
 	font-family: system-ui, 'Trebuchet MS', 'Segoe UI', Helvetica, Arial;
 }
 
-.font-handwritten,
-.font-handwritten * {
+body.font-handwritten,
+.font-handwritten:not(body) {
 	font-family: cursive, 'Comic Sans MS', 'Trebuchet MS', system-ui, 'Segoe UI', Helvetica, Arial;
-	font-size: 0.99em;
+	font-size: 0.93em;
 }
