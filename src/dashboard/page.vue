@@ -1,15 +1,14 @@
 <template>
 	<title-bar />
 	<header-component />
-	<div class="dashboard">Dashboard</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import eventsBus from '@/global/events';
 
-import TitleBar from '@/components/TitleBar.vue';
-import HeaderComponent from '@/components/Header.vue';
+import TitleBar from '@/dashboard/components/TitleBar.vue';
+import HeaderComponent from '@/dashboard/components/Header.vue';
 
 export default defineComponent({
 	name: 'DashboardPage',

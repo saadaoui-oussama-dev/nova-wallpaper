@@ -20,8 +20,8 @@
 import { defineComponent } from 'vue';
 import { NovaWallpaper } from '@/global/preload';
 
-import IconClose from '@/components/icons/IconClose.vue';
-import IconMinimize from '@/components/icons/IconMinimize.vue';
+import IconClose from '@/dashboard/icons/IconClose.vue';
+import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 
 export default defineComponent({
 	name: 'TitleBarComponent',

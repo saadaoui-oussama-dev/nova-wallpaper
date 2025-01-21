@@ -1,6 +1,6 @@
 <template>
 	<div class="header">
-		<h1>Welcome Back</h1>
+		<h1>Dashboard</h1>
 
 		<button class="settings-icon" @click="settingsVisible = true">
 			<icon-settings />
@@ -12,8 +12,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Settings from '@/components/Settings.vue';
-import IconSettings from '@/components/icons/IconSettings.vue';
+import Settings from '@/dashboard/components/Settings.vue';
+import IconSettings from '@/dashboard/icons/IconSettings.vue';
 
 export default defineComponent({
 	name: 'HeaderComponent',
@@ -29,7 +29,9 @@ export default defineComponent({
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 10px 0px 10px 20px;
+	margin: 15px 20px 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--window-border);
 }
 
 .settings-icon {
