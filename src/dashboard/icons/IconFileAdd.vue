@@ -22,7 +22,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-	name: 'IconAdd',
+	name: 'IconFileAdd',
 	props: {
 		color: { type: String, default: 'currentColor' },
 	},

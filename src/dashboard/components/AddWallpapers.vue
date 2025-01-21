@@ -1,15 +1,17 @@
 <template>
 	<div class="options">
-		<div
-			:class="`option${option.class}`"
-			v-for="option in globalOptions"
-			:key="option.label"
-			@mousedown="clicked(option.label, true)"
-			@mouseup="clicked(option.label, false)"
-			@click="createWallpaper(option.type)"
-		>
-			<component :is="option.icon" />
-			<div class="option-label">{{ option.label }}</div>
+		<div v-for="option in globalOptions" :key="option.label">
+			<div v-if="!option.label"></div>
+			<div
+				v-else
+				:class="`option${option.class}`"
+				@mousedown="clicked(option, true)"
+				@mouseup="clicked(option, false)"
+				@click="createWallpaper(option)"
+			>
+				<component :is="option.icon" />
+				<div class="option-label">{{ option.label }}</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -17,29 +19,37 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import IconAdd from '@/dashboard/icons/IconAdd.vue';
-import IconImport from '@/dashboard/icons/IconImport.vue';
-import IconMediaFolder from '@/dashboard/icons/IconMediaFolder.vue';
+import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
+import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
+import IconFileVideo from '@/dashboard/icons/IconFileVideo.vue';
+import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
+import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
+import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
 export default defineComponent({
 	name: 'AddWallpapersComponent',
-	components: { IconAdd, IconImport, IconMediaFolder },
+	components: { IconFileAdd, IconFileImage, IconFileVideo, IconFileObjects, IconFileWebpage, IconFolderMedia },
 	data: () => ({
 		globalOptions: [
-			{ label: 'Create Stickers Wallpaper', icon: 'icon-add', type: 'stickers', class: '' },
-			{ label: 'Import Wallpaper', icon: 'icon-import', type: 'file', class: '' },
-			{ label: 'Import Carousel Folder', icon: 'icon-media-folder', type: 'folder', class: '' },
+			{ label: 'Import Image', icon: 'icon-file-image', type: 'image', class: '' },
+			{ label: 'Import Video', icon: 'icon-file-video', type: 'video', class: '' },
+			{ label: 'Import Webpage', icon: 'icon-file-webpage', type: 'html', class: '' },
+			{ key: 0 },
+			{ label: 'Import Carousel Folder', icon: 'icon-folder-media', type: 'folder', class: '' },
+			{ label: 'Import Stickers Wallpaper', icon: 'icon-file-objects', type: 'stickers', class: '' },
+			{ label: 'Create Stickers Wallpaper', icon: 'icon-file-add', type: 'create', class: '' },
 		],
 	}),
 	methods: {
-		clicked(key: string, isDown: boolean) {
+		clicked(option: any, isDown: boolean) {
 			this.globalOptions = this.globalOptions.map((it) => {
-				const className = it.label === key && isDown ? ' clicked' : '';
+				if (!it.label) return it;
+				const className = it.label === option.label && isDown ? ' clicked' : '';
 				return { ...it, class: className };
 			});
 		},
-		createWallpaper(type: string) {
-			console.log(type);
+		createWallpaper(option: any) {
+			console.log(option.type);
 		},
 	},
 });

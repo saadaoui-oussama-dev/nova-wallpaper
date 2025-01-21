@@ -21,7 +21,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-	name: 'IconMediaFolder',
+	name: 'IconFolderMedia',
 	props: {
 		color: { type: String, default: 'currentColor' },
 	},
