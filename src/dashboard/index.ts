@@ -9,7 +9,7 @@ export const openDashboard = async () => {
 	if (dashboard) return dashboard.focus();
 
 	dashboard = new BrowserWindow({
-		width: 800,
+		width: 850,
 		height: 600,
 		frame: false,
 		transparent: true,

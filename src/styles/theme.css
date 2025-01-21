@@ -1,5 +1,8 @@
 :root {
 	--primary-color: #007bff;
+	--primary-color-active: #0074f0;
+	--neutral-color: #333333;
+	--neutral-color-active: #444444;
 
 	--window-bg: #1e1e1e;
 	--window-border: #2e2e2e;

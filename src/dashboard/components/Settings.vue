@@ -87,17 +87,21 @@ export default defineComponent({
 	text-align: center;
 	padding: 8px 0;
 	cursor: pointer;
-	background-color: #333;
+	background-color: var(--neutral-color);
 	color: var(--text-color);
 	transition: background-color 0.3s, color 0.3s;
 }
 
 .toggle-option:hover {
-	background-color: #444;
+	background-color: var(--neutral-color-active);
 }
 
 .toggle-option.selected {
 	background-color: var(--primary-color);
+}
+
+.toggle-option.selected:hover {
+	background-color: var(--primary-color-active);
 }
 
 .hidden-radio {
