@@ -39,7 +39,7 @@ export default defineComponent({
 	border: none;
 	color: var(--text-color);
 	font-size: 14px;
-	width: 40px;
+	width: 24px;
 	height: 32px;
 	cursor: pointer;
 	display: flex;
