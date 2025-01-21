@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { NovaWallpaper } from '@/dashboard/preload';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
@@ -48,8 +49,12 @@ export default defineComponent({
 				return { ...it, class: className };
 			});
 		},
-		createWallpaper(option: any) {
-			console.log(option.type);
+		async createWallpaper({ type }: { type: string }) {
+			const { path, content } = (await NovaWallpaper.files.invoke(type)) as { path: string; content: string[] };
+			if (!path) return;
+			if (type !== 'folder') return console.log({ path });
+			if (!content.length) return console.log({ path, message: 'Folder is empty' });
+			console.log({ path, content });
 		},
 	},
 });

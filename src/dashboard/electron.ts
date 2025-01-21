@@ -1,7 +1,9 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 const { join } = require('path');
+const { readdirSync } = require('fs');
+import { app, dialog, BrowserWindow, ipcMain } from 'electron';
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import eventsBus from '@/global/events';
+import { isMediaSupported, isSupported } from '@/global/utils';
 
 let dashboard: BrowserWindow | undefined;
 
@@ -55,6 +57,30 @@ ipcMain.on('dashboard', (_, key: string) => {
 	if (['close', 'minimize'].includes(key)) return eventsBus.$emit('dashboard', key);
 });
 
-ipcMain.handle('dashboard', async (_, key: string, ...data: any[]) => {
-	console.log('Data requested:', key, ...data);
+ipcMain.handle('files', async (_, type: string) => {
+	return new Promise<{ path: string; content: string[] }>((resolve) => {
+		const openFile = (name: string, extensions: string[]) => {
+			if (!dashboard) return;
+			dialog.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] }).then((result) => {
+				if (result.canceled || !result.filePaths.length) resolve({ path: '', content: [] });
+				const path = result.filePaths[0];
+				resolve(isSupported(path) ? { path: result.filePaths[0], content: [] } : { path: '', content: [] });
+			});
+		};
+
+		const openDirectory = () => {
+			if (!dashboard) return;
+			dialog.showOpenDialog(dashboard, { properties: ['openDirectory'] }).then((result) => {
+				if (result.canceled || !result.filePaths.length) resolve({ path: '', content: [] });
+				const path = result.filePaths[0];
+				resolve({ path, content: readdirSync(path).filter((filename: string) => isMediaSupported(filename)) });
+			});
+		};
+
+		if (type === 'image') openFile('Images', ['png', 'jpg', 'jpeg']);
+		else if (type === 'video') openFile('Videos', ['mp4']);
+		else if (type === 'html') openFile('Webpages', ['html']);
+		else if (type === 'folder') openDirectory();
+		else resolve({ path: '', content: [`${type}: This type of wallpapers is not supported yet`] });
+	});
 });

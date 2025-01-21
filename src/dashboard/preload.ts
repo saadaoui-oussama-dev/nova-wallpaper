@@ -7,6 +7,7 @@ type ChannelConnector = {
 
 type NovaWallpaperPreload = {
 	dashboard: ChannelConnector;
+	files: ChannelConnector;
 };
 
 export const NovaWallpaper: NovaWallpaperPreload = new Proxy<NovaWallpaperPreload>({} as NovaWallpaperPreload, {
