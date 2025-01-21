@@ -1,9 +1,23 @@
-@import url('./styles/theme.css');
+:root {
+	--primary-color: #007bff;
+	--primary-color-active: #0074f0;
+	--neutral-color: #333333;
+	--neutral-color-active: #444444;
+
+	--window-bg: #1e1e1e;
+	--window-border: #2e2e2e;
+	--text-color: #fff;
+
+	--titlebar-bg: #272727;
+	--titlebar-btn-hover: #ffffff33;
+	--titlebar-btn-danger-hover: #bf2a1b;
+}
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	user-select: none;
 }
 
 body {

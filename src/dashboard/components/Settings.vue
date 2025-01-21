@@ -38,7 +38,7 @@ export default defineComponent({
 	},
 	watch: {
 		selectedFont() {
-			this.$store.dispatch('setSettings', { font: this.selectedFont });
+			this.$store.commit('settings', { font: this.selectedFont });
 		},
 	},
 });

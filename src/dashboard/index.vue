@@ -47,7 +47,7 @@ export default defineComponent({
 <style scoped>
 .options {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr) 0.6fr;
+	grid-template-columns: repeat(3, 1fr) 0.5fr;
 	gap: 12px;
 	width: 100%;
 	padding-left: 20px;

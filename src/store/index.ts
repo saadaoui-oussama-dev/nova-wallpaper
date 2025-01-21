@@ -2,7 +2,7 @@ import { createStore } from 'vuex';
 
 export interface State {
 	settings: {
-		font: string;
+		font: 'standard' | 'handwritten';
 	};
 }
 
@@ -17,15 +17,6 @@ export default createStore<State>({
 			state.settings = { ...state.settings, ...settings };
 		},
 	},
-	actions: {
-		setSettings({ commit }, settings: State['settings']) {
-			commit('settings', settings);
-			if (settings.font) {
-				document.body.classList.remove('font-standard');
-				document.body.classList.remove('font-handwritten');
-				document.body.classList.add(`font-${settings.font}`);
-			}
-		},
-	},
+	actions: {},
 	modules: {},
 });

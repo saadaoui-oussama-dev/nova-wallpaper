@@ -12,6 +12,7 @@ export const openDashboard = async () => {
 		width: 850,
 		height: 600,
 		frame: false,
+		show: false,
 		transparent: true,
 		resizable: false,
 		title: 'Nova Wallpaper',
@@ -34,6 +35,7 @@ export const openDashboard = async () => {
 			createProtocol('app');
 			await dashboard.loadURL('app://./index.html');
 		}
+		dashboard.show();
 	} catch {
 		return eventsBus.$emit('dashboard', 'close');
 	}

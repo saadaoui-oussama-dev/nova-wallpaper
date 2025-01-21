@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { NovaWallpaper } from '@/global/preload';
+import { NovaWallpaper } from '@/dashboard/preload';
 
 import IconClose from '@/dashboard/icons/IconClose.vue';
 import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
@@ -43,7 +43,6 @@ export default defineComponent({
 	color: var(--text-color);
 	height: 32px;
 	padding: 0 0 0 10px;
-	user-select: none;
 	-webkit-app-region: drag;
 }
 

@@ -1,5 +1,3 @@
-import eventsBus from '@/global/events';
-
 type ChannelConnector = {
 	on: (event: string, callback: (...data: any[]) => void) => void;
 	off: (event: string) => void;
