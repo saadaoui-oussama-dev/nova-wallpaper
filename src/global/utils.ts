@@ -1,5 +1,3 @@
-export type MenuOption = Electron.MenuItemConstructorOptions | Electron.MenuItem;
-
 export const isSupported = (path: string): boolean => {
 	return ['.mp4', '.png', '.jpg', '.jpeg', '.html'].some((ext) => path.toLowerCase().endsWith(ext));
 };

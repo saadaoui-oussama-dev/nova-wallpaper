@@ -1,9 +1,9 @@
-const { join } = require('path');
 const { readdirSync } = require('fs');
-import { app, dialog, BrowserWindow, ipcMain } from 'electron';
+import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import eventsBus from '@/global/events';
 import { isMediaSupported, isSupported } from '@/global/utils';
+import { joinPublic } from '@/global/electron-utils';
 
 let dashboard: BrowserWindow | undefined;
 
@@ -18,13 +18,13 @@ export const openDashboard = async () => {
 		transparent: true,
 		resizable: false,
 		title: 'Nova Wallpaper',
-		icon: join(__dirname, app.isPackaged ? '/imgs/logo.png' : '../public/imgs/logo.png'),
+		icon: joinPublic('@/imgs/logo.png'),
 		webPreferences: {
 			devTools: false,
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
 			enableRemoteModule: true,
-			preload: join(__dirname, app.isPackaged ? '/scripts/preload.js' : '../public/scripts/preload.js'),
+			preload: joinPublic('@/scripts/preload.js'),
 		},
 	});
 
