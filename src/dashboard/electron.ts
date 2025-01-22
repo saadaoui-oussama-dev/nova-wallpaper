@@ -62,7 +62,7 @@ ipcMain.handle('files', async (_, type: string) => {
 		const openFile = (name: string, extensions: string[]) => {
 			if (!dashboard) return;
 			dialog.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] }).then((result) => {
-				if (result.canceled || !result.filePaths.length) resolve({ path: '', content: [] });
+				if (result.canceled || !result.filePaths.length) return resolve({ path: '', content: [] });
 				const path = result.filePaths[0];
 				resolve(isSupported(path) ? { path: result.filePaths[0], content: [] } : { path: '', content: [] });
 			});
@@ -71,7 +71,7 @@ ipcMain.handle('files', async (_, type: string) => {
 		const openDirectory = () => {
 			if (!dashboard) return;
 			dialog.showOpenDialog(dashboard, { properties: ['openDirectory'] }).then((result) => {
-				if (result.canceled || !result.filePaths.length) resolve({ path: '', content: [] });
+				if (result.canceled || !result.filePaths.length) return resolve({ path: '', content: [] });
 				const path = result.filePaths[0];
 				resolve({ path, content: readdirSync(path).filter((filename: string) => isMediaSupported(filename)) });
 			});

@@ -19,6 +19,7 @@
 <script lang="ts" setup>
 import { Component, ref } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
+import { getFileName } from '@/global/utils';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
@@ -62,9 +63,14 @@ const clicked = (option: Option, isDown: boolean) => {
 const createWallpaper = async ({ type }: Option) => {
 	const { path, content } = (await NovaWallpaper.files.invoke(type)) as { path: string; content: string[] };
 	if (!path) return;
-	if (type !== 'folder') return console.log({ path });
-	if (!content.length) return console.log({ path, message: 'Folder is empty' });
-	console.log({ path, content });
+	else if (type !== 'folder' && type !== 'create') {
+		const wallpaper: Wallpaper = { id: '', label: getFileName(path, 'path', 30), type, path, settings: {} };
+		store.prepareToAddWallpaper(wallpaper);
+	} else if (!content.length) {
+		console.log({ path, message: 'Folder is empty' });
+	} else {
+		console.log({ path, content });
+	}
 };
 </script>
 
