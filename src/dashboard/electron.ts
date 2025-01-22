@@ -79,7 +79,7 @@ ipcMain.handle('files', async (_, type: string) => {
 
 		if (type === 'image') openFile('Images', ['png', 'jpg', 'jpeg']);
 		else if (type === 'video') openFile('Videos', ['mp4']);
-		else if (type === 'html') openFile('Webpages', ['html']);
+		else if (type === 'webpage') openFile('Webpages', ['html']);
 		else if (type === 'folder') openDirectory();
 		else resolve({ path: '', content: [`${type}: This type of wallpapers is not supported yet`] });
 	});

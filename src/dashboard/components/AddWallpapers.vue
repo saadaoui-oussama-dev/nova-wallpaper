@@ -9,7 +9,7 @@
 				@mouseup="clicked(option, false)"
 				@click="createWallpaper(option)"
 			>
-				<component :is="option.icon" />
+				<component :is="icons[option.type]" />
 				<div class="option-label">{{ option.label }}</div>
 			</div>
 		</div>
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { Component, ref } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
@@ -27,16 +27,28 @@ import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
-type Option = { label: string; icon: string; type: string; class: string };
+import { useWallpaperStore, Wallpaper } from '@/store';
+const store = useWallpaperStore();
+
+type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
+
+const icons: { [k in Option['type']]: Component } = {
+	image: IconFileImage,
+	video: IconFileVideo,
+	webpage: IconFileWebpage,
+	folder: IconFolderMedia,
+	stickers: IconFileObjects,
+	create: IconFileAdd,
+};
 
 const options = ref<(Option | undefined)[]>([
-	{ label: 'Import Image', icon: 'icon-file-image', type: 'image', class: '' },
-	{ label: 'Import Video', icon: 'icon-file-video', type: 'video', class: '' },
-	{ label: 'Import Webpage', icon: 'icon-file-webpage', type: 'html', class: '' },
+	{ label: 'Import Image', type: 'image', class: '' },
+	{ label: 'Import Video', type: 'video', class: '' },
+	{ label: 'Import Webpage', type: 'webpage', class: '' },
 	undefined,
-	{ label: 'Import Carousel Folder', icon: 'icon-folder-media', type: 'folder', class: '' },
-	{ label: 'Import Stickers Wallpaper', icon: 'icon-file-objects', type: 'stickers', class: '' },
-	{ label: 'Create Stickers Wallpaper', icon: 'icon-file-add', type: 'create', class: '' },
+	{ label: 'Import Carousel Folder', type: 'folder', class: '' },
+	{ label: 'Import Stickers Wallpaper', type: 'stickers', class: '' },
+	{ label: 'Create Stickers Wallpaper', type: 'create', class: '' },
 ]);
 
 const clicked = (option: Option, isDown: boolean) => {
