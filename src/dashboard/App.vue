@@ -6,7 +6,12 @@
 		<title-bar v-show="!splashscreen" />
 		<page-header v-show="!splashscreen" />
 		<div class="dashboard" v-show="!splashscreen">
-			<add-wallpapers />
+			<div :class="`pages${store.currentImporting ? ' second-page' : ''}`">
+				<div class="main">
+					<add-wallpapers />
+				</div>
+				<p>{{ store.currentImporting }}</p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -41,5 +46,28 @@ onMounted(() => {
 .font-handwritten:not(#app .app) {
 	font-family: cursive, 'Comic Sans MS', 'Trebuchet MS', system-ui, 'Segoe UI', Helvetica, Arial;
 	font-size: 0.93em;
+}
+
+#app .app {
+	display: flex;
+	flex-direction: column;
+}
+
+#app .app .dashboard {
+	flex: 1;
+	margin-block: 20px;
+	overflow: hidden;
+}
+
+#app .app .pages {
+	width: 200vw;
+	height: 100%;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	transition: transform 0.3s ease-in-out;
+}
+
+#app .app .pages.second-page {
+	transform: translateX(-100vw);
 }
 </style>

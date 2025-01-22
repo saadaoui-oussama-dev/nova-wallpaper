@@ -31,5 +31,9 @@ export const useWallpaperStore = defineStore('wallpaper', {
 		prepareToAddWallpaper(wallpaper: Wallpaper) {
 			this.currentImporting = wallpaper;
 		},
+
+		cancelImporting() {
+			this.currentImporting = null;
+		},
 	},
 });
