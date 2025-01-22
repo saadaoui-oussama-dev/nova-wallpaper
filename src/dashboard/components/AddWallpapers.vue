@@ -1,5 +1,5 @@
 <template>
-	<div class="options">
+	<div :class="`options${collapsed ? ' collapsed' : ''}`">
 		<div v-for="option in options" :key="option ? option.label : 0">
 			<div v-if="!option"></div>
 			<div
@@ -20,6 +20,7 @@
 import { Component, ref } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { getFileName } from '@/global/utils';
+import eventsBus from '@/global/events';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
@@ -30,6 +31,12 @@ import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
 import { useWallpaperStore, Wallpaper } from '@/store';
 const store = useWallpaperStore();
+
+const collapsed = ref(store.wallpapers.length > 0);
+
+eventsBus.$on('icon-add-toggle', (state: 'plus' | 'close') => {
+	collapsed.value = state === 'plus';
+});
 
 type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
 
@@ -76,19 +83,29 @@ const createWallpaper = async ({ type }: Option) => {
 
 <style scoped>
 .options {
+	height: 220px;
+	overflow: hidden;
 	display: grid;
-	grid-template-columns: repeat(3, 1fr) 0.5fr;
-	gap: 12px;
+	grid-template-columns: repeat(3, 1fr) 0.4fr;
+	grid-template-rows: repeat(2, 1fr);
+	gap: 10px;
 	width: 100%;
 	padding-left: 20px;
+	transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .option {
+	overflow: hidden;
+	height: 105px;
 	border: 2px solid var(--window-border);
 	border-radius: 13px;
 	cursor: pointer;
-	padding: 20px 10px;
-	transition: all 0.2s ease-in-out;
+	padding: 17px 10px 0px;
+	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, height 0.3s ease-in-out;
+}
+
+.option .option-label {
+	margin-top: 15px;
 }
 
 .option:hover {
@@ -100,7 +117,12 @@ const createWallpaper = async ({ type }: Option) => {
 	transform: scale(0.97);
 }
 
-.option > .option-label {
-	margin-top: 15px;
+.collapsed {
+	height: 0px;
+	opacity: 0;
+}
+
+.collapsed .option {
+	height: 0px;
 }
 </style>
