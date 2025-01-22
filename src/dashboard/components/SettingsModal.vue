@@ -18,29 +18,25 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { ref, watch, defineProps, defineEmits } from 'vue';
+import { useWallpaperStore } from '@/store';
 
-export default defineComponent({
-	name: 'SettingsComponent',
-	emits: ['close'],
-	props: {
-		visible: { type: Boolean, default: false },
-	},
-	data() {
-		return {
-			fonts: [
-				{ label: 'Standard', value: 'standard' },
-				{ label: 'Handwritten', value: 'handwritten' },
-			],
-			selectedFont: this.$store.state.settings.font,
-		};
-	},
-	watch: {
-		selectedFont() {
-			this.$store.commit('settings', { font: this.selectedFont });
-		},
-	},
+const store = useWallpaperStore();
+
+const props = defineProps({
+	visible: { type: Boolean, default: false },
+});
+const emit = defineEmits(['close']);
+
+const fonts = [
+	{ label: 'Standard', value: 'standard' },
+	{ label: 'Handwritten', value: 'handwritten' },
+];
+const selectedFont = ref(store.settings.font);
+
+watch(selectedFont, (newFont) => {
+	store.updateSettings({ font: newFont });
 });
 </script>
 

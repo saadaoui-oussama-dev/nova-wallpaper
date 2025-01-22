@@ -1,4 +1,4 @@
-import { createStore } from 'vuex';
+import { defineStore } from 'pinia';
 
 export interface State {
 	settings: {
@@ -6,17 +6,16 @@ export interface State {
 	};
 }
 
-export default createStore<State>({
-	state: {
+export const useWallpaperStore = defineStore('wallpaper', {
+	state: (): State => ({
 		settings: {
 			font: 'standard',
 		},
-	},
-	mutations: {
-		settings(state, settings: State['settings']) {
-			state.settings = { ...state.settings, ...settings };
+	}),
+
+	actions: {
+		updateSettings(newSettings: Partial<State['settings']>) {
+			this.settings = { ...this.settings, ...newSettings };
 		},
 	},
-	actions: {},
-	modules: {},
 });

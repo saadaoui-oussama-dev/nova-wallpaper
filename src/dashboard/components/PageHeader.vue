@@ -5,23 +5,17 @@
 		<button class="settings-icon" @click="settingsVisible = true">
 			<icon-settings />
 		</button>
-		<settings :visible="settingsVisible" @close="settingsVisible = false" />
+		<settings-modal :visible="settingsVisible" @close="settingsVisible = false" />
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { ref } from 'vue';
 
-import Settings from '@/dashboard/components/Settings.vue';
+import SettingsModal from '@/dashboard/components/SettingsModal.vue';
 import IconSettings from '@/dashboard/icons/IconSettings.vue';
 
-export default defineComponent({
-	name: 'HeaderComponent',
-	components: { Settings, IconSettings },
-	data: () => ({
-		settingsVisible: false,
-	}),
-});
+const settingsVisible = ref(false);
 </script>
 
 <style scoped>

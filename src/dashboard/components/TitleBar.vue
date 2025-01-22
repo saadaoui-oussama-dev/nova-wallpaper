@@ -16,22 +16,14 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
 import { NovaWallpaper } from '@/dashboard/preload';
-
 import IconClose from '@/dashboard/icons/IconClose.vue';
 import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 
-export default defineComponent({
-	name: 'TitleBarComponent',
-	components: { IconClose, IconMinimize },
-	methods: {
-		request(action: 'minimize' | 'close') {
-			NovaWallpaper.dashboard.send(action);
-		},
-	},
-});
+const request = (action: 'minimize' | 'close') => {
+	NovaWallpaper.dashboard.send(action);
+};
 </script>
 
 <style scoped>

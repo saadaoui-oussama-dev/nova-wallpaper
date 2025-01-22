@@ -17,13 +17,10 @@
 	</svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineProps } from 'vue';
 
-export default defineComponent({
-	name: 'IconFolderMedia',
-	props: {
-		color: { type: String, default: 'currentColor' },
-	},
+const props = defineProps({
+	color: { type: String, default: 'currentColor' },
 });
 </script>
