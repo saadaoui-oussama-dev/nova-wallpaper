@@ -1,7 +1,6 @@
-const { app, Tray, Menu } = require('electron');
-const { join } = require('path');
+const { Tray, Menu } = require('electron');
 import eventsBus from '@/global/events';
-import { MenuOption } from '@/global/utils';
+import { joinPublic, MenuOption } from '@/global/electron-utils';
 import { renderControls } from '@/tray/controls';
 
 let tray: Electron.Tray;
@@ -9,7 +8,7 @@ let tray: Electron.Tray;
 export const createTray = () => {
 	if (tray) return;
 
-	tray = new Tray(join(__dirname, app.isPackaged ? '/imgs/logo.png' : '../public/imgs/logo.png'));
+	tray = new Tray(joinPublic('@/public/imgs/logo.png'));
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 

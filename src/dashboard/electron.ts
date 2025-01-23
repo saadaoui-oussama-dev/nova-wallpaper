@@ -3,7 +3,7 @@ import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import eventsBus from '@/global/events';
 import { isMediaSupported, isSupported } from '@/global/utils';
-import { joinPublic } from '@/global/electron-utils';
+import { fileSizeChecker, joinPublic } from '@/global/electron-utils';
 import { FileChannelAction, FileChannelResponse, FileChannelContentResponse } from '@/global/channel-types';
 
 let dashboard: BrowserWindow | undefined;
@@ -19,13 +19,13 @@ export const openDashboard = async () => {
 		transparent: true,
 		resizable: false,
 		title: 'Nova Wallpaper',
-		icon: joinPublic('@/imgs/logo.png'),
+		icon: joinPublic('@/public/imgs/logo.png'),
 		webPreferences: {
 			devTools: false,
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
 			enableRemoteModule: true,
-			preload: joinPublic('@/scripts/preload.js'),
+			preload: joinPublic('@/public/scripts/preload.js'),
 		},
 	});
 
@@ -66,7 +66,8 @@ ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
 				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
 				const absolutePath = result.filePaths[0];
 				if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type' });
-				resolve({ path: absolutePath });
+				const error = fileSizeChecker(absolutePath);
+				resolve(error ? { error } : { path: absolutePath, content: [] });
 			});
 		};
 
@@ -80,7 +81,8 @@ ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
 					.map((filename: string): FileChannelContentResponse | undefined => {
 						if (isMediaSupported(filename)) return;
 						const absolutePath = join(folderPath, filename);
-						return { filename, path: absolutePath };
+						const error = fileSizeChecker(absolutePath);
+						return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
 					})
 					.filter(Boolean);
 				resolve(content.length ? { path: folderPath, content } : { error: `The folder { ${folderPath} } is empty` });
