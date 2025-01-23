@@ -6,7 +6,7 @@
 		<p>Loading...</p>
 	</div>
 	<div class="render" v-else>
-		<video v-if="url.endsWith('.mp4')" class="content" :src="url" muted autoplay loop playsinline></video>
+		<video v-if="isVideo" class="content" :src="url" muted autoplay loop playsinline></video>
 		<img v-else class="content" :src="url" />
 	</div>
 </template>
@@ -22,6 +22,7 @@ const props = defineProps<{ wallpaper: Wallpaper; settings: any }>();
 
 const url = ref('');
 const error = ref('');
+const isVideo = ref(false);
 
 onMounted(async () => {
 	try {
@@ -44,6 +45,7 @@ onMounted(async () => {
 		}
 		if (data.error) error.value = data.error;
 		else if (data.path) url.value = data.path;
+		isVideo.value = url.value.startsWith('data:video') || url.value.endsWith('.mp4');
 	} catch (e) {
 		url.value = '';
 	}
