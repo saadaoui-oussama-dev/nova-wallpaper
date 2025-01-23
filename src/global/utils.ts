@@ -2,6 +2,28 @@ export const isSupported = (path: string): boolean => {
 	return ['.mp4', '.png', '.jpg', '.jpeg', '.html'].some((ext) => path.toLowerCase().endsWith(ext));
 };
 
+export const getFileType = (filePath: string): { ext: string; mime: string } => {
+	const types: Record<string, string> = {
+		mp4: 'video/mp4',
+		png: 'image/png',
+		jpg: 'image/jpeg',
+		jpeg: 'image/jpeg',
+		html: 'text/html',
+	};
+	const filenameParts = filePath.split('.');
+	const ext = filenameParts[filenameParts.length - 1].toLowerCase();
+	return { ext, mime: types[ext] };
+};
+
+export const replaceFileName = (fullPath: string, { name, extension }: { name: string; extension: string }) => {
+	const filenameParts = fullPath.split('\\');
+	const oldFile = filenameParts[filenameParts.length - 1];
+	const oldName = oldFile.slice(0, oldFile.lastIndexOf('.'));
+	const oldExtension = oldFile.slice(oldFile.lastIndexOf('.') + 1);
+	filenameParts[filenameParts.length - 1] = `${name || oldName}.${extension || oldExtension}`;
+	return filenameParts.join('\\');
+};
+
 export const isMediaSupported = (path: string): boolean => {
 	return ['.mp4', '.png', '.jpg', '.jpeg'].some((ext) => path.toLowerCase().endsWith(ext));
 };

@@ -1,8 +1,9 @@
-const { readdirSync } = require('fs');
+const { readdirSync, readFileSync } = require('fs');
+import { join } from 'path';
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import eventsBus from '@/global/events';
-import { isMediaSupported, isSupported } from '@/global/utils';
+import { getFileType, isMediaSupported, isSupported } from '@/global/utils';
 import { fileSizeChecker, joinPublic } from '@/global/electron-utils';
 import { FileChannelAction, FileChannelResponse, FileChannelContentResponse } from '@/global/channel-types';
 
@@ -60,12 +61,19 @@ ipcMain.on('dashboard', (_, key: string) => {
 
 ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
 	return new Promise<FileChannelResponse>((resolve) => {
+		if (action === 'get-url' && path) {
+			if (!isSupported(path)) return resolve({ error: 'Unsupported file type.' });
+			const error = fileSizeChecker(path);
+			if (error) return resolve({ error });
+			return resolve({ path: `data:${getFileType(path).mime};base64,${readFileSync(path).toString('base64')}` });
+		}
+
 		const openFile = (name: string, extensions: string[]) => {
 			if (!dashboard) return;
 			dialog.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] }).then((result) => {
 				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
 				const absolutePath = result.filePaths[0];
-				if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type' });
+				if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type.' });
 				const error = fileSizeChecker(absolutePath);
 				resolve(error ? { error } : { path: absolutePath, content: [] });
 			});
@@ -85,7 +93,7 @@ ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
 						return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
 					})
 					.filter(Boolean);
-				resolve(content.length ? { path: folderPath, content } : { error: `The folder { ${folderPath} } is empty` });
+				resolve(content.length ? { path: folderPath, content } : { error: 'The folder is empty.' });
 			});
 		};
 

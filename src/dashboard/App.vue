@@ -10,7 +10,7 @@
 				<div class="main">
 					<add-wallpapers />
 				</div>
-				<p>{{ store.currentImporting }}</p>
+				<wallpaper-form />
 			</div>
 		</div>
 	</div>
@@ -21,6 +21,7 @@ import { ref, onMounted, computed } from 'vue';
 import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
 import AddWallpapers from '@/dashboard/components/AddWallpapers.vue';
+import WallpaperForm from '@/dashboard/components/WallpaperForm.vue';
 
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();

@@ -12,6 +12,6 @@ export const fileSizeChecker = (filePath: string): string => {
 	try {
 		return statSync(filePath).size <= 40 * 1024 * 1024 ? '' : 'File exceeds the 40MB limit.';
 	} catch {
-		return `Unable to access the file { ${{ filePath }} }.`;
+		return 'Unable to access the file.';
 	}
 };
