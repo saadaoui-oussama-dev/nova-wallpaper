@@ -1,7 +1,6 @@
 'use strict';
 
 import { app, dialog, protocol } from 'electron';
-import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import { createTray } from '@/tray';
 
 require('@electron/remote/main').initialize();
@@ -20,14 +19,7 @@ if (!app.requestSingleInstanceLock()) {
 		app.quit();
 	});
 } else {
-	app.on('ready', async () => {
-		if (process.env.NODE_ENV !== 'production') {
-			try {
-				await installExtension(VUEJS3_DEVTOOLS);
-			} catch {}
-		}
-		createTray();
-	});
+	app.on('ready', async () => createTray());
 }
 
 if (process.env.NODE_ENV !== 'production') {

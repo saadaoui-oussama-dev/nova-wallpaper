@@ -68,15 +68,12 @@ const clicked = (option: Option, isDown: boolean) => {
 };
 
 const createWallpaper = async ({ type }: Option) => {
-	const { path, content } = (await NovaWallpaper.files.invoke(type)) as { path: string; content: string[] };
-	if (!path) return;
-	else if (type !== 'folder' && type !== 'create') {
-		const wallpaper: Wallpaper = { id: '', label: getFileName(path, 'path', 30), type, path, settings: {} };
+	const { path, content, error } = await NovaWallpaper.files.invoke(type);
+	if (error || !path || !content) {
+		return console.log({ error });
+	} else if (type !== 'create') {
+		const wallpaper: Wallpaper = { id: '', label: '', type, path, content, settings: {} };
 		store.prepareToAddWallpaper(wallpaper);
-	} else if (!content.length) {
-		console.log({ path, message: 'Folder is empty' });
-	} else {
-		console.log({ path, content });
 	}
 };
 </script>

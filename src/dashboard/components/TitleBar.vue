@@ -20,8 +20,9 @@
 import { NovaWallpaper } from '@/dashboard/preload';
 import IconClose from '@/dashboard/icons/IconClose.vue';
 import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
+import { DashboardChannelAction } from '@/global/channel-types';
 
-const request = (action: 'minimize' | 'close') => {
+const request = (action: DashboardChannelAction) => {
 	NovaWallpaper.dashboard.send(action);
 };
 </script>

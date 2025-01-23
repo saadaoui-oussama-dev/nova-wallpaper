@@ -4,6 +4,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import eventsBus from '@/global/events';
 import { isMediaSupported, isSupported } from '@/global/utils';
 import { joinPublic } from '@/global/electron-utils';
+import { FileChannelAction, FileChannelResponse, FileChannelContentResponse } from '@/global/channel-types';
 
 let dashboard: BrowserWindow | undefined;
 
@@ -57,30 +58,39 @@ ipcMain.on('dashboard', (_, key: string) => {
 	if (['close', 'minimize'].includes(key)) return eventsBus.$emit('dashboard', key);
 });
 
-ipcMain.handle('files', async (_, type: string) => {
-	return new Promise<{ path: string; content: string[] }>((resolve) => {
+ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
+	return new Promise<FileChannelResponse>((resolve) => {
 		const openFile = (name: string, extensions: string[]) => {
 			if (!dashboard) return;
 			dialog.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] }).then((result) => {
-				if (result.canceled || !result.filePaths.length) return resolve({ path: '', content: [] });
-				const path = result.filePaths[0];
-				resolve(isSupported(path) ? { path: result.filePaths[0], content: [] } : { path: '', content: [] });
+				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
+				const absolutePath = result.filePaths[0];
+				if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type' });
+				resolve({ path: absolutePath });
 			});
 		};
 
 		const openDirectory = () => {
 			if (!dashboard) return;
 			dialog.showOpenDialog(dashboard, { properties: ['openDirectory'] }).then((result) => {
-				if (result.canceled || !result.filePaths.length) return resolve({ path: '', content: [] });
-				const path = result.filePaths[0];
-				resolve({ path, content: readdirSync(path).filter((filename: string) => isMediaSupported(filename)) });
+				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
+				const folderPath = result.filePaths[0];
+
+				const content: FileChannelContentResponse[] = readdirSync(folderPath)
+					.map((filename: string): FileChannelContentResponse | undefined => {
+						if (isMediaSupported(filename)) return;
+						const absolutePath = join(folderPath, filename);
+						return { filename, path: absolutePath };
+					})
+					.filter(Boolean);
+				resolve(content.length ? { path: folderPath, content } : { error: `The folder { ${folderPath} } is empty` });
 			});
 		};
 
-		if (type === 'image') openFile('Images', ['png', 'jpg', 'jpeg']);
-		else if (type === 'video') openFile('Videos', ['mp4']);
-		else if (type === 'webpage') openFile('Webpages', ['html']);
-		else if (type === 'folder') openDirectory();
-		else resolve({ path: '', content: [`${type}: This type of wallpapers is not supported yet`] });
+		if (action === 'image') return openFile('Images', ['png', 'jpg', 'jpeg']);
+		if (action === 'video') return openFile('Videos', ['mp4']);
+		if (action === 'webpage') return openFile('Webpages', ['html']);
+		if (action === 'folder') return openDirectory();
+		resolve({ error: `${action}: This action is not supported` });
 	});
 });
