@@ -6,7 +6,7 @@
 		<p>Loading...</p>
 	</div>
 	<div class="render" v-else>
-		<video v-if="url.endsWith('.mp4')" class="content" :src="url" autoplay muted loop></video>
+		<video v-if="url.endsWith('.mp4')" class="content" :src="url" muted autoplay loop playsinline></video>
 		<img v-else class="content" :src="url" />
 	</div>
 </template>
@@ -16,6 +16,7 @@ import { defineProps, ref, onMounted } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { Wallpaper } from '@/store';
 import { replaceFileName } from '@/global/utils';
+import { FileChannelResponse } from '@/global/channel-types';
 
 const props = defineProps<{ wallpaper: Wallpaper; settings: any }>();
 
@@ -24,33 +25,25 @@ const error = ref('');
 
 onMounted(async () => {
 	try {
-		if (props.wallpaper.type === 'webpage') {
-			const preview = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
-			const data = { path: '', error: '', cursor: 0 };
-			while (data.cursor < preview.length) {
-				let path = replaceFileName(props.wallpaper.path, { name: 'preview', extension: preview[data.cursor] });
-				const response = await NovaWallpaper.files.invoke('get-url', path);
-				if (response.path) {
-					data.path = response.path;
-					break;
-				} else if (response.error === 'File exceeds the 40MB limit.') {
-					data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
-					break;
-				} else {
-					data.cursor++;
-				}
-			}
-
-			if (data.error) error.value = data.error;
-			if (data.path) return (url.value = data.path);
-			if (data.cursor === preview.length)
-				error.value =
-					'<p>Webpages can only be<br />rendered, not previewed.</p><p style="margin-top: 5px; opacity: 0.5">You can include a preview.png file alongside the HTML file.</p>';
+		let data: FileChannelResponse = { path: '', error: '' };
+		if (props.wallpaper.type !== 'webpage') {
+			data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
 		} else {
-			const data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
-			if (data.error) error.value = data.error;
-			if (data.path) url.value = data.path;
+			const preview = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
+			let cursor = 0;
+			while (!data.error && !data.path && cursor < preview.length) {
+				let path = replaceFileName(props.wallpaper.path, { name: 'preview', extension: preview[cursor] });
+				const response = await NovaWallpaper.files.invoke('get-url', path);
+				if (response.path) data.path = response.path;
+				else if (response.error?.includes('limit')) data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
+				else cursor++;
+			}
+			if (cursor === preview.length)
+				data.error =
+					'<p>Webpages can only be<br />rendered, not previewed.</p><p style="margin-top: 5px; opacity: 0.5">You can include a preview.png file alongside the HTML file.</p>';
 		}
+		if (data.error) error.value = data.error;
+		else if (data.path) url.value = data.path;
 	} catch (e) {
 		url.value = '';
 	}
