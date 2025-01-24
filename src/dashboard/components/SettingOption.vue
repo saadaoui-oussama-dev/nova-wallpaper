@@ -50,11 +50,11 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue';
-import { ExtendedOptionType } from '@/global/settings-types';
+import { OptionType } from '@/global/settings-types';
 
 const props = defineProps<{
 	direction: 'row' | 'row-right' | 'column' | 'column-right';
-	modelValue: ExtendedOptionType;
+	modelValue: OptionType;
 }>();
 
 const getTrackBackgroundSize = () => {
@@ -103,7 +103,7 @@ const change = (value: any) => {
 
 .setting.row .label,
 .setting.row-right .label {
-	min-width: 28%;
+	min-width: 29%;
 }
 
 /* Checkbox */

@@ -1,11 +1,11 @@
-type CheckboxToggle = {
+export type ToggleOption = {
 	type: 'checkbox';
 	label: string;
 	name: string;
 	value: boolean;
 };
 
-type RadioGroup = {
+export type RadioGroupOption = {
 	type: 'radio';
 	label: string;
 	name: string;
@@ -13,6 +13,14 @@ type RadioGroup = {
 	options: { label: string; value: string | number }[];
 };
 
-export type OptionType = CheckboxToggle | RadioGroup;
+export type SliderOption = {
+	type: 'slider';
+	label: string;
+	name: string;
+	value: number;
+	min: number;
+	max: number;
+	step?: number;
+};
 
-export type ExtendedOptionType = ({ options?: undefined } & CheckboxToggle) | RadioGroup;
+export type OptionType = ToggleOption | RadioGroupOption | SliderOption;

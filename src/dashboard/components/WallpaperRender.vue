@@ -5,24 +5,40 @@
 	<div class="render text" v-else-if="!url">
 		<p>Loading...</p>
 	</div>
-	<div class="render" v-else>
-		<video v-if="isVideo" class="content" :src="url" muted autoplay loop playsinline></video>
-		<img v-else class="content" :src="url" />
+	<div :class="`render ${rotateVertical ? 'rotate-vertical' : ''}`" v-else>
+		<video
+			v-if="isVideo"
+			ref="video"
+			class="content"
+			:style="settings"
+			:src="url"
+			:muted="wallpaper.type !== 'video'"
+			autoplay
+			loop
+			playsinline
+		></video>
+		<img v-else class="content" :src="url" :style="settings" />
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, useTemplateRef, onMounted, computed, watch } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { Wallpaper } from '@/store';
 import { replaceFileName } from '@/global/utils';
 import { FilesResponse } from '@/global/channel-types';
 
-const props = defineProps<{ wallpaper: Wallpaper; settings: any }>();
+const props = defineProps<{ wallpaper: Wallpaper; settings: string; volume: number }>();
 
 const url = ref('');
 const error = ref('');
 const isVideo = ref(false);
+
+const video = useTemplateRef('video');
+const setVolume = () => props.wallpaper.type === 'video' && video.value && (video.value.volume = props.volume / 100);
+onMounted(setVolume);
+watch(video, setVolume);
+watch(() => props.volume, setVolume);
 
 onMounted(async () => {
 	try {
@@ -50,11 +66,16 @@ onMounted(async () => {
 		url.value = '';
 	}
 });
+
+const rotateVertical = computed(
+	() => props.settings.includes('--rotate: 90') || props.settings.includes('--rotate: -90')
+);
 </script>
 
 <style scoped>
 .render {
-	width: 100%;
+	position: relative;
+	width: 251.33px;
 	aspect-ratio: 1920 / 1080;
 }
 
@@ -71,9 +92,20 @@ onMounted(async () => {
 }
 
 .content {
-	width: 100%;
-	height: 100%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 251.33px;
+	height: 141.38px;
 	display: block;
 	object-fit: cover;
+	transform: translate(-50%, -50%) rotateY(calc(var(--flip) * 1deg)) rotateZ(calc(var(--rotate) * 1deg));
+	filter: saturate(calc(var(--saturate) * 0.1)) contrast(calc(var(--contrast) * 1%))
+		brightness(calc(var(--brightness) * 1%)) hue-rotate(calc(var(--hue-rotate) * 1deg));
+}
+
+.rotate-vertical .content {
+	width: 141.38px;
+	height: 251.33px;
 }
 </style>

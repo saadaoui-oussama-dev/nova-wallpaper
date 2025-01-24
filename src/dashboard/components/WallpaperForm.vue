@@ -3,7 +3,11 @@
 		<div class="left-side">
 			<p class="title">Preview:</p>
 			<div class="preview">
-				<wallpaper-render :wallpaper="store.currentImporting" :settings="computedSettings" />
+				<wallpaper-render
+					:wallpaper="store.currentImporting"
+					:settings="previewStyleVariables"
+					:volume="volume.value"
+				/>
 			</div>
 		</div>
 		<div class="right-side">
@@ -15,7 +19,7 @@
 					:direction="directionText"
 					v-model="properties.settings[index]"
 				/>
-				<p>{{ computedSettings }}</p>
+				<settings-option v-if="store.currentImporting.type === 'video'" :direction="directionText" v-model="volume" />
 			</div>
 		</div>
 	</div>
@@ -25,7 +29,7 @@
 import { computed, ref } from 'vue';
 import WallpaperRender from '@/dashboard/components/WallpaperRender.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
-import { OptionType } from '@/global/settings-types';
+import { OptionType, SliderOption } from '@/global/settings-types';
 
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
@@ -36,17 +40,12 @@ const properties = ref<{
 }>({
 	direction: 'row',
 	settings: [
+		{ label: 'Flip View Horizontally', type: 'checkbox', name: 'flip', value: false },
 		{
-			label: 'Flip Image (Mirror)',
-			type: 'checkbox',
-			name: 'flip',
-			value: false /* transform: rotateY(true ? 180deg : 0deg) */,
-		},
-		{
-			label: 'Rotation',
+			label: 'Rotate View',
 			type: 'radio',
-			name: 'rotation',
-			value: 0 /* rotate: 0deg */,
+			name: 'rotate',
+			value: 0,
 			options: [
 				{ label: '-90°', value: -90 },
 				{ label: '0°', value: 0 },
@@ -54,58 +53,28 @@ const properties = ref<{
 				{ label: '180°', value: 180 },
 			],
 		},
-		{
-			label: 'Saturation',
-			type: 'slider',
-			name: 'saturate',
-			value: 1 /* filter: saturate(1) */,
-			min: 0,
-			max: 10,
-			step: 1,
-		},
-		{
-			label: 'Contrast',
-			type: 'slider',
-			name: 'contrast',
-			value: 100 /* filter: contrast(100%) */,
-			min: 50,
-			max: 200,
-			step: 5,
-		},
-		{
-			label: 'Brightness',
-			type: 'slider',
-			name: 'brightness',
-			value: 100 /* filter: brightness(100%) */,
-			min: 50,
-			max: 200,
-			step: 5,
-		},
-		{
-			label: 'Grayscale',
-			type: 'slider',
-			name: 'grayscale',
-			value: 0 /* filter: grayscale(0%) */,
-			min: 0,
-			max: 100,
-			step: 1,
-		},
-		{
-			label: 'HUE Colors Rotate',
-			type: 'slider',
-			name: 'hue-rotate',
-			value: 0 /* filter: hue-rotate(0%) */,
-			min: 0,
-			max: 360,
-			step: 1,
-		},
-		{
-			label: 'Invert Colors',
-			type: 'checkbox',
-			name: 'invert',
-			value: false /* filter: invert(true ? 100% : 0%) */,
-		},
+		{ label: 'Saturation', type: 'slider', name: 'saturate', value: 10, min: 0, max: 50, step: 1 },
+		{ label: 'Contrast', type: 'slider', name: 'contrast', value: 100, min: 70, max: 150, step: 5 },
+		{ label: 'Brightness', type: 'slider', name: 'brightness', value: 100, min: 70, max: 150, step: 5 },
+		{ label: 'Shift (Hue) Colors', type: 'slider', name: 'hue-rotate', value: 0, min: 0, max: 360, step: 1 },
 	],
+});
+
+const volume = ref<SliderOption>({
+	label: 'Volume',
+	type: 'slider',
+	name: 'volume',
+	value: 5,
+	min: 0,
+	max: 100,
+	step: 1,
+});
+
+const previewStyleVariables = computed(() => {
+	const variables = Object.entries(computedSettings.value).map(([key, value]) => {
+		return key === 'flip' ? `--flip: ${value ? 180 : 0}` : `--${key}: ${value}`;
+	});
+	return variables.join('; ');
 });
 
 const directionText = computed(() => {
@@ -127,13 +96,12 @@ const computedSettings = computed(() =>
 }
 
 .wallpaper-form > .left-side {
-	width: calc(100% / 3 - 30px);
-	margin: 0 10px 0 20px;
+	padding: 0 10px 0 20px;
 }
 
 .wallpaper-form > .right-side {
-	width: calc(200% / 3 - 30px);
-	margin: 0 20px 0 10px;
+	flex: 1;
+	padding: 0 20px 0 10px;
 }
 
 .title {
