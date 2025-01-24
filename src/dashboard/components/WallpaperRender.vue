@@ -99,7 +99,7 @@ const rotateVertical = computed(
 	height: 141.38px;
 	display: block;
 	object-fit: cover;
-	transform: translate(-50%, -50%) rotateY(calc(var(--flip) * 1deg)) rotateZ(calc(var(--rotate) * 1deg));
+	transform: translate(-50%, -50%) rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
 	filter: saturate(calc(var(--saturate) * 0.1)) contrast(calc(var(--contrast) * 1%))
 		brightness(calc(var(--brightness) * 1%)) hue-rotate(calc(var(--hue-rotate) * 1deg));
 }
