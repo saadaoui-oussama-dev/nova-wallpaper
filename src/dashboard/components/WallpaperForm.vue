@@ -10,10 +10,10 @@
 			<p class="title">Settings:</p>
 			<div class="settings">
 				<settings-option
-					v-for="setting in properties.settings"
+					v-for="(setting, index) in properties.settings"
 					:key="setting.name"
 					:direction="directionText"
-					:option="setting"
+					v-model="properties.settings[index]"
 				/>
 				<p>{{ computedSettings }}</p>
 			</div>

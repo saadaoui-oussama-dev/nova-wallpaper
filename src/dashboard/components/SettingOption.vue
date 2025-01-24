@@ -1,23 +1,29 @@
 <template>
 	<div :class="`setting ${direction}`">
-		<p>{{ option.label }}</p>
+		<p>{{ modelValue.label }}</p>
 
-		<div v-if="option.type === 'checkbox'" class="checkbox-button-container">
+		<div v-if="modelValue.type === 'checkbox'" class="checkbox-button-container">
 			<div
 				class="checkbox-button"
-				:class="{ active: option.value }"
-				@click="option.value = !option.value"
+				:class="{ active: modelValue.value }"
+				@click="change(!modelValue.value)"
 				tabindex="0"
-				@keyup.enter="option.value = !option.value"
+				@keyup.enter="change(!modelValue.value)"
 			>
 				<div class="checkbox-thumb"></div>
 			</div>
 		</div>
 
-		<div v-if="option.type === 'radio' && option.options" class="radio-container">
+		<div v-if="modelValue.type === 'radio' && modelValue.options" class="radio-container">
 			<div class="group-radios">
-				<label class="radio-container" v-for="opt in option.options" :key="option.value">
-					<input type="radio" :name="option.name" :value="opt.value" v-model="option.value" />
+				<label class="radio-container" v-for="opt in modelValue.options" :key="opt.value">
+					<input
+						type="radio"
+						:name="modelValue.name"
+						:value="opt.value"
+						:checked="opt.value === modelValue.value"
+						@input="change(opt.value)"
+					/>
 					<span class="radio-label">{{ opt.label }}</span>
 				</label>
 			</div>
@@ -26,13 +32,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { ExtendedOptionType } from '@/global/settings-types';
 
 const props = defineProps<{
 	direction: 'row' | 'row-right' | 'column' | 'column-right';
-	option: ExtendedOptionType;
+	modelValue: ExtendedOptionType;
 }>();
+
+const emit = defineEmits(['update:modelValue']);
+
+const change = (value: any) => {
+	value = typeof value?.target?.value !== 'undefined' ? value.target.value : value;
+	emit('update:modelValue', { ...props.modelValue, value });
+};
 </script>
 
 <style scoped>
