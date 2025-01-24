@@ -1,8 +1,9 @@
 <template>
-	<div :class="`setting ${direction}`">
-		<p>{{ modelValue.label }}</p>
+	<div :class="`setting ${direction} has-${modelValue.type}`">
+		<p class="label">{{ modelValue.label }}</p>
 
-		<div v-if="modelValue.type === 'checkbox'" class="checkbox-button-container">
+		<!-- Checkbox -->
+		<div v-if="modelValue.type === 'checkbox'" class="checkbox-container">
 			<div
 				class="checkbox-button"
 				:class="{ active: modelValue.value }"
@@ -14,6 +15,7 @@
 			</div>
 		</div>
 
+		<!-- Radio -->
 		<div v-if="modelValue.type === 'radio' && modelValue.options" class="radio-container">
 			<div class="group-radios">
 				<label class="radio-container" v-for="opt in modelValue.options" :key="opt.value">
@@ -28,6 +30,21 @@
 				</label>
 			</div>
 		</div>
+
+		<!-- Slider -->
+		<div v-if="modelValue.type === 'slider'" class="slider-container">
+			<input
+				type="range"
+				:name="modelValue.name"
+				:min="modelValue.min"
+				:max="modelValue.max"
+				:step="modelValue.step || 1"
+				:value="modelValue.value"
+				@input="change"
+				:style="{ '--filled-percentage': getTrackBackgroundSize() }"
+			/>
+			<span class="slider-value">{{ modelValue.value }}</span>
+		</div>
 	</div>
 </template>
 
@@ -40,10 +57,18 @@ const props = defineProps<{
 	modelValue: ExtendedOptionType;
 }>();
 
+const getTrackBackgroundSize = () => {
+	if (props.modelValue.type !== 'slider') return;
+	const percentage =
+		((props.modelValue.value - props.modelValue.min) / (props.modelValue.max - props.modelValue.min)) * 100;
+	return `${percentage}%`;
+};
+
 const emit = defineEmits(['update:modelValue']);
 
 const change = (value: any) => {
 	value = typeof value?.target?.value !== 'undefined' ? value.target.value : value;
+	if (props.modelValue.type === 'slider') value = Number(value);
 	emit('update:modelValue', { ...props.modelValue, value });
 };
 </script>
@@ -71,16 +96,22 @@ const change = (value: any) => {
 	gap: 7px;
 }
 
-.setting > p {
+.setting > .label {
 	margin: 0;
 	font-size: 16px;
 }
 
-.checkbox-button-container {
+.setting.row .label,
+.setting.row-right .label {
+	min-width: 28%;
+}
+
+/* Checkbox */
+.checkbox-container {
 	position: relative;
 }
 
-.checkbox-button-container .checkbox-button {
+.checkbox-container .checkbox-button {
 	width: 50px;
 	height: 25px;
 	background-color: var(--neutral-color);
@@ -90,11 +121,11 @@ const change = (value: any) => {
 	transition: background-color 0.3s ease;
 }
 
-.checkbox-button-container .checkbox-button.active {
+.checkbox-container .checkbox-button.active {
 	background-color: var(--primary-color);
 }
 
-.checkbox-button-container .checkbox-thumb {
+.checkbox-container .checkbox-thumb {
 	width: 20px;
 	height: 20px;
 	background-color: var(--text-color);
@@ -106,21 +137,22 @@ const change = (value: any) => {
 	transition: transform 0.3s ease;
 }
 
-.checkbox-button-container .checkbox-button.active .checkbox-thumb {
+.checkbox-container .checkbox-button.active .checkbox-thumb {
 	transform: translate(25px, -50%);
 }
 
-.group-radios {
-	display: flex;
-	gap: 15px;
-}
-
+/* Radio */
 .radio-container {
 	display: flex;
 	align-items: center;
 	gap: 5px;
 	position: relative;
 	cursor: pointer;
+}
+
+.radio-container .group-radios {
+	display: flex;
+	gap: 15px;
 }
 
 .radio-container input[type='radio'] {
@@ -146,5 +178,54 @@ const change = (value: any) => {
 .radio-container .radio-label:hover {
 	background-color: var(--neutral-color-active);
 	border-color: var(--neutral-color-active);
+}
+
+/* Slider */
+.slider-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 40%;
+	min-width: 200px;
+}
+
+.slider-container input[type='range'] {
+	-webkit-appearance: none;
+	width: 100%;
+	height: 5px;
+	background: linear-gradient(
+		to right,
+		var(--primary-color) 0%,
+		var(--primary-color) var(--filled-percentage, 0%),
+		var(--neutral-color) var(--filled-percentage, 0%),
+		var(--neutral-color) 100%
+	);
+	border-radius: 5px;
+	outline: none;
+	transition: background-color 0.3s ease;
+}
+
+.slider-container input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: var(--primary-color);
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.slider-container input[type='range']::-moz-range-thumb {
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: var(--primary-color);
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.slider-container .slider-value {
+	font-size: 14px;
+	color: var(--text-color);
 }
 </style>
