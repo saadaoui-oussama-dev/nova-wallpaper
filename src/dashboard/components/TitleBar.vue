@@ -5,11 +5,11 @@
 			<span class="app-title">Nova Wallpaper</span>
 		</div>
 		<div class="titlebar-right">
-			<button class="titlebar-btn" @click="request('minimize')">
+			<button class="titlebar-btn" @click="NovaWallpaper.window.send('minimize')">
 				<icon-minimize />
 			</button>
 
-			<button class="titlebar-btn close" @click="request('close')">
+			<button class="titlebar-btn close" @click="NovaWallpaper.window.send('close')">
 				<icon-close />
 			</button>
 		</div>
@@ -20,11 +20,6 @@
 import { NovaWallpaper } from '@/dashboard/preload';
 import IconClose from '@/dashboard/icons/IconClose.vue';
 import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
-import { DashboardChannelAction } from '@/global/channel-types';
-
-const request = (action: DashboardChannelAction) => {
-	NovaWallpaper.dashboard.send(action);
-};
 </script>
 
 <style scoped>

@@ -1,4 +1,7 @@
-import { DashboardChannelAction, FileChannelAction, FileChannelResponse } from '@/global/channel-types';
+import { WindowChannelAction, FilesInvokeAction, FilesResponse } from '@/global/channel-types';
+
+type SendActionNotSupported = 'throw-error' | 'send-is-not-supported';
+type InvokeActionNotSupported = 'throw-error' | 'invoke-is-not-supported';
 
 type ChannelConnector<SendAction, ReceiveAction, ReceiveResponse> = {
 	on: (event: string, callback: (...data: any[]) => void) => void;
@@ -8,8 +11,8 @@ type ChannelConnector<SendAction, ReceiveAction, ReceiveResponse> = {
 };
 
 type NovaWallpaperPreload = {
-	dashboard: ChannelConnector<DashboardChannelAction, 'throw-error', Error>;
-	files: ChannelConnector<'throw-error', FileChannelAction, FileChannelResponse>;
+	window: ChannelConnector<WindowChannelAction, InvokeActionNotSupported, Error>;
+	files: ChannelConnector<SendActionNotSupported, FilesInvokeAction, FilesResponse>;
 };
 
 export const NovaWallpaper: NovaWallpaperPreload = new Proxy<NovaWallpaperPreload>({} as NovaWallpaperPreload, {

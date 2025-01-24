@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import eventsBus from '@/global/events';
 import { getFileType, isMediaSupported, isSupported } from '@/global/utils';
 import { fileSizeChecker, joinPublic } from '@/global/electron-utils';
-import { FileChannelAction, FileChannelResponse, FileChannelContentResponse } from '@/global/channel-types';
+import { FilesInvokeAction, FilesResponse, FilesContentResponse } from '@/global/channel-types';
 
 let dashboard: BrowserWindow | undefined;
 
@@ -55,12 +55,12 @@ eventsBus.$on('dashboard', (action: string) => {
 	}
 });
 
-ipcMain.on('dashboard', (_, key: string) => {
+ipcMain.on('window', (_, key: string) => {
 	if (['close', 'minimize'].includes(key)) return eventsBus.$emit('dashboard', key);
 });
 
-ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
-	return new Promise<FileChannelResponse>((resolve) => {
+ipcMain.handle('files', async (_, action: FilesInvokeAction, path?: string) => {
+	return new Promise<FilesResponse>((resolve) => {
 		if (action === 'get-url' && path) {
 			if (!isSupported(path)) return resolve({ error: 'Unsupported file type.' });
 			const error = fileSizeChecker(path);
@@ -85,9 +85,9 @@ ipcMain.handle('files', async (_, action: FileChannelAction, path?: string) => {
 				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
 				const folderPath = result.filePaths[0];
 
-				const content: FileChannelContentResponse[] = readdirSync(folderPath)
-					.map((filename: string): FileChannelContentResponse | undefined => {
-						if (isMediaSupported(filename)) return;
+				const content: FilesContentResponse[] = readdirSync(folderPath)
+					.map((filename: string): FilesContentResponse | undefined => {
+						if (!isMediaSupported(filename)) return;
 						const absolutePath = join(folderPath, filename);
 						const error = fileSizeChecker(absolutePath);
 						return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };

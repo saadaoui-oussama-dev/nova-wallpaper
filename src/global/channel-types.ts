@@ -1,7 +1,7 @@
-export type DashboardChannelAction = 'minimize' | 'close';
+export type WindowChannelAction = 'minimize' | 'close';
 
-export type FileChannelAction = 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create' | 'get-url';
+export type FilesInvokeAction = 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create' | 'get-url';
 
-export type FileChannelContentResponse = { filename: string; path: string; error?: string };
+export type FilesContentResponse = { filename: string; path: string; error?: string };
 
-export type FileChannelResponse = { error?: string; path?: string; content?: FileChannelContentResponse[] };
+export type FilesResponse = { error?: string; path?: string; content?: FilesContentResponse[] };

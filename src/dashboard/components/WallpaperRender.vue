@@ -16,7 +16,7 @@ import { defineProps, ref, onMounted } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { Wallpaper } from '@/store';
 import { replaceFileName } from '@/global/utils';
-import { FileChannelResponse } from '@/global/channel-types';
+import { FilesResponse } from '@/global/channel-types';
 
 const props = defineProps<{ wallpaper: Wallpaper; settings: any }>();
 
@@ -26,14 +26,14 @@ const isVideo = ref(false);
 
 onMounted(async () => {
 	try {
-		let data: FileChannelResponse = { path: '', error: '' };
+		let data: FilesResponse = { path: '', error: '' };
 		if (props.wallpaper.type !== 'webpage') {
 			data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
 		} else {
 			const preview = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
 			let cursor = 0;
 			while (!data.error && !data.path && cursor < preview.length) {
-				let path = replaceFileName(props.wallpaper.path, { name: 'preview', extension: preview[cursor] });
+				const path = replaceFileName(props.wallpaper.path, { name: 'preview', extension: preview[cursor] });
 				const response = await NovaWallpaper.files.invoke('get-url', path);
 				if (response.path) data.path = response.path;
 				else if (response.error?.includes('limit')) data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;

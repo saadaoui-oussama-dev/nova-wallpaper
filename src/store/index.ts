@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { FileChannelContentResponse } from '@/global/channel-types';
+import { FilesContentResponse } from '@/global/channel-types';
 
 export type Settings = {
 	font: 'standard' | 'handwritten';
@@ -10,7 +10,7 @@ export type Wallpaper = {
 	label: string;
 	type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
 	path: string;
-	content: FileChannelContentResponse[];
+	content: FilesContentResponse[];
 	settings: any;
 };
 
