@@ -19,8 +19,7 @@
 <script lang="ts" setup>
 import { Component, ref } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
-import { getFileName } from '@/global/utils';
-import eventsBus from '@/global/events';
+import { events } from '@/global/utils';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
@@ -34,7 +33,7 @@ const store = useWallpaperStore();
 
 const collapsed = ref(store.wallpapers.length > 0);
 
-eventsBus.$on('icon-add-toggle', (state: 'plus' | 'close') => {
+events.$on('icon-add-toggle', (state: 'plus' | 'close') => {
 	collapsed.value = state === 'plus';
 });
 

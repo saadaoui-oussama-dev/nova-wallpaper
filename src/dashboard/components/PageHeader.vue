@@ -23,14 +23,13 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import eventsBus from '@/global/events';
+import { events } from '@/global/utils';
+import { useWallpaperStore } from '@/store';
+const store = useWallpaperStore();
 
 import SettingsModal from '@/dashboard/components/SettingsModal.vue';
 import IconSettings from '@/dashboard/icons/IconSettings.vue';
 import IconAddClose from '@/dashboard/icons/IconAddClose.vue';
-
-import { useWallpaperStore } from '@/store';
-const store = useWallpaperStore();
 
 const addIcon = ref<any>(null);
 const settingsVisible = ref(false);
@@ -39,7 +38,7 @@ const toggleWallpapersAddSection = () => {
 	const state = (addIcon.value?.toggleIcon() as 'plus' | 'close') || '';
 	if (!state) return;
 	if (!store.wallpapers.length && state === 'plus') return addIcon.value?.toggleIcon();
-	eventsBus.$emit('icon-add-toggle', state);
+	events.$emit('icon-add-toggle', state);
 };
 </script>
 

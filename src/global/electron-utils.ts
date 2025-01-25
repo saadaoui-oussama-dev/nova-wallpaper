@@ -2,6 +2,8 @@ const { app } = require('electron');
 const { join } = require('path');
 const { statSync } = require('fs');
 
+export * from '@/global/utils';
+
 export type MenuOption = Electron.MenuItemConstructorOptions | Electron.MenuItem;
 
 export const joinPublic = (path: string): string => {

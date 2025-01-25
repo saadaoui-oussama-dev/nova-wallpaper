@@ -1,5 +1,8 @@
-export const isSupported = (path: string): boolean => {
-	return ['.mp4', '.png', '.jpg', '.jpeg', '.html'].some((ext) => path.toLowerCase().endsWith(ext));
+export * from '@/global/events';
+
+export const isSupported = (path: string, onlyMedia?: boolean): boolean => {
+	const extensions = onlyMedia ? ['.mp4', '.png', '.jpg', '.jpeg'] : ['.mp4', '.png', '.jpg', '.jpeg', '.html'];
+	return extensions.some((ext) => path.toLowerCase().endsWith(ext));
 };
 
 export const getFileType = (filePath: string): { ext: string; mime: string } => {
@@ -22,10 +25,6 @@ export const replaceFileName = (fullPath: string, { name, extension }: { name: s
 	const oldExtension = oldFile.slice(oldFile.lastIndexOf('.') + 1);
 	filenameParts[filenameParts.length - 1] = `${name || oldName}.${extension || oldExtension}`;
 	return filenameParts.join('\\');
-};
-
-export const isMediaSupported = (path: string): boolean => {
-	return ['.mp4', '.png', '.jpg', '.jpeg'].some((ext) => path.toLowerCase().endsWith(ext));
 };
 
 export const noPadding = (label: string) => {

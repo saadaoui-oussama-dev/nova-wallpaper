@@ -1,6 +1,5 @@
 const { Tray, Menu } = require('electron');
-import eventsBus from '@/global/events';
-import { joinPublic, MenuOption } from '@/global/electron-utils';
+import { events, joinPublic, MenuOption } from '@/global/electron-utils';
 import { renderControls } from '@/tray/controls';
 
 let tray: Electron.Tray;
@@ -12,13 +11,13 @@ export const createTray = () => {
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 
-	eventsBus.$on('renderMenu', (options: MenuOption[]) => tray.setContextMenu(Menu.buildFromTemplate(options)));
+	events.$on('renderMenu', (options: MenuOption[]) => tray.setContextMenu(Menu.buildFromTemplate(options)));
 
-	eventsBus.$on('reloadMenu', () => {
+	events.$on('reloadMenu', () => {
 		const options: MenuOption[] = [];
 		renderControls(options);
-		eventsBus.$emit('renderMenu', options);
+		events.$emit('renderMenu', options);
 	});
 
-	eventsBus.$emit('reloadMenu');
+	events.$emit('reloadMenu');
 };

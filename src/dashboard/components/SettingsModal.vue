@@ -21,7 +21,6 @@
 <script lang="ts" setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/store';
-
 const store = useWallpaperStore();
 
 const props = defineProps({

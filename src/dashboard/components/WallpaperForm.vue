@@ -3,7 +3,7 @@
 		<div class="left-side">
 			<p class="title">Preview:</p>
 			<div class="preview">
-				<wallpaper-render :wallpaper="store.currentImporting" :settings="previewStyleVariables" :volume="volume" />
+				<wallpaper-preview :wallpaper="store.currentImporting" :settings="previewStyleVariables" :volume="volume" />
 			</div>
 		</div>
 		<div class="right-side">
@@ -22,12 +22,12 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
-import WallpaperRender from '@/dashboard/components/WallpaperRender.vue';
-import SettingsOption from '@/dashboard/components/SettingOption.vue';
-import { Settings, imageSettings, videoSettings } from '@/global/settings';
-
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
+
+import { Settings, imageSettings, videoSettings } from '@/global/settings';
+import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
+import SettingsOption from '@/dashboard/components/SettingOption.vue';
 
 const cloneSettings = (settings: Settings) => ({ direction: settings.direction, settings: [...settings.settings] });
 

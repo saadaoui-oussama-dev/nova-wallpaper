@@ -18,13 +18,13 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue';
+import { useWallpaperStore } from '@/store';
+const store = useWallpaperStore();
+
 import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
 import AddWallpapers from '@/dashboard/components/AddWallpapers.vue';
 import WallpaperForm from '@/dashboard/components/WallpaperForm.vue';
-
-import { useWallpaperStore } from '@/store';
-const store = useWallpaperStore();
 
 const splashscreen = ref(true);
 

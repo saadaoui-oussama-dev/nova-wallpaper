@@ -1,45 +1,43 @@
 type Event = (...args: any[]) => any;
 
-const events: { [key: string]: Event[] } = {};
+const eventsTracker: { [key: string]: Event[] } = {};
 
-const eventsBus = {
+export const events = {
 	$reserve: (event: string, callback: Event) => {
 		if (typeof event !== 'string' || typeof callback !== 'function') return;
-		events[event] = [callback];
+		eventsTracker[event] = [callback];
 	},
 
 	$on: (event: string, callback: Event) => {
 		if (typeof event !== 'string' || typeof callback !== 'function') return;
-		events[event] ? events[event].push(callback) : (events[event] = [callback]);
+		eventsTracker[event] ? eventsTracker[event].push(callback) : (eventsTracker[event] = [callback]);
 	},
 
 	$off: (event: string, callback: Event) => {
 		if (typeof event !== 'string' || typeof callback !== 'function') return;
-		if (events[event]) events[event] = events[event].filter((cb) => cb !== callback);
-		if (!events[event].length) delete events[event];
+		if (eventsTracker[event]) eventsTracker[event] = eventsTracker[event].filter((cb) => cb !== callback);
+		if (!eventsTracker[event].length) delete eventsTracker[event];
 	},
 
 	$offAll: (event: string) => {
-		if (typeof event === 'string') delete events[event];
+		if (typeof event === 'string') delete eventsTracker[event];
 	},
 
 	$emit: (event: string, ...args: any[]) => {
-		return typeof event === 'string' && events[event] ? events[event].map((cb) => cb(...args)) : [];
+		return typeof event === 'string' && eventsTracker[event] ? eventsTracker[event].map((cb) => cb(...args)) : [];
 	},
 
 	$get: (event: string): Event[] => {
-		return typeof event === 'string' && events[event] ? [...events[event]] : [];
+		return typeof event === 'string' && eventsTracker[event] ? [...eventsTracker[event]] : [];
 	},
 
 	$getNames: (): string[] => {
-		return Object.keys(events);
+		return Object.keys(eventsTracker);
 	},
 
 	$getAll: (): { [key: string]: Event[] } => {
-		return Object.fromEntries(Object.entries(events).map(([key, value]) => [key, [...value]]));
+		return Object.fromEntries(Object.entries(eventsTracker).map(([key, value]) => [key, [...value]]));
 	},
 };
 
-if (typeof window !== 'undefined') Object.assign(window, { eventsBus });
-
-export default eventsBus;
+if (typeof window !== 'undefined') Object.assign(window, { events });

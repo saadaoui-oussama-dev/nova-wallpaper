@@ -2,9 +2,7 @@ const { readdirSync, readFileSync } = require('fs');
 import { join } from 'path';
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
-import eventsBus from '@/global/events';
-import { getFileType, isMediaSupported, isSupported } from '@/global/utils';
-import { fileSizeChecker, joinPublic } from '@/global/electron-utils';
+import { events, getFileType, isSupported, fileSizeChecker, joinPublic } from '@/global/electron-utils';
 import { FilesInvokeAction, FilesResponse, FilesContentResponse } from '@/global/channel-types';
 
 let dashboard: BrowserWindow | undefined;
@@ -41,11 +39,11 @@ export const openDashboard = async () => {
 		}
 		dashboard.show();
 	} catch {
-		return eventsBus.$emit('dashboard', 'close');
+		return events.$emit('dashboard', 'close');
 	}
 };
 
-eventsBus.$on('dashboard', (action: string) => {
+events.$on('dashboard', (action: string) => {
 	if (!dashboard) return;
 	if (action === 'focus') return dashboard.focus();
 	if (action === 'minimize') return dashboard.minimize();
@@ -56,7 +54,7 @@ eventsBus.$on('dashboard', (action: string) => {
 });
 
 ipcMain.on('window', (_, key: string) => {
-	if (['close', 'minimize'].includes(key)) return eventsBus.$emit('dashboard', key);
+	if (['close', 'minimize'].includes(key)) return events.$emit('dashboard', key);
 });
 
 ipcMain.handle('files', async (_, action: FilesInvokeAction, path?: string) => {
@@ -87,7 +85,7 @@ ipcMain.handle('files', async (_, action: FilesInvokeAction, path?: string) => {
 
 				const content: FilesContentResponse[] = readdirSync(folderPath)
 					.map((filename: string): FilesContentResponse | undefined => {
-						if (!isMediaSupported(filename)) return;
+						if (!isSupported(filename, true)) return;
 						const absolutePath = join(folderPath, filename);
 						const error = fileSizeChecker(absolutePath);
 						return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
