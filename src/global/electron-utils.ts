@@ -1,6 +1,7 @@
-const { app } = require('electron');
+const { app, screen } = require('electron');
 const { join } = require('path');
 const { statSync } = require('fs');
+import { WindowResponse } from '@/global/channel-types';
 
 export * from '@/global/utils';
 
@@ -16,4 +17,12 @@ export const fileSizeChecker = (filePath: string): string => {
 	} catch {
 		return 'Unable to access the file.';
 	}
+};
+
+export const getAreas = (): WindowResponse => {
+	const $screen = screen.getPrimaryDisplay();
+	const { width: fw, height: fh } = $screen.size;
+	const { width: ww, height: wh } = $screen.workAreaSize;
+	const taskbar = { width: fw - ww, height: fh - wh };
+	return { fullscreen: { width: fw, height: fh }, workarea: { width: ww, height: wh }, taskbar };
 };

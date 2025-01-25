@@ -74,9 +74,10 @@ const rotateVertical = computed(
 
 <style scoped>
 .render {
+	--width: 251.33;
 	position: relative;
-	width: 251.33px;
-	aspect-ratio: 1920 / 1080;
+	width: calc(var(--width) * 1px);
+	aspect-ratio: var(--screen-width, 1920) / var(--screen-height, 1080);
 }
 
 .render.text {
@@ -95,8 +96,8 @@ const rotateVertical = computed(
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 251.33px;
-	height: 141.38px;
+	width: calc(var(--width) * 1px);
+	height: calc(var(--width) * var(--screen-height, 1080) * 1px / var(--screen-width, 1920));
 	display: block;
 	object-fit: cover;
 	transform: translate(-50%, -50%) rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
@@ -109,7 +110,7 @@ img.content {
 }
 
 .rotate-vertical .content {
-	width: 141.38px;
-	height: 251.33px;
+	height: calc(var(--width) * 1px);
+	width: calc(var(--width) * var(--screen-height, 1080) * 1px / var(--screen-width, 1920));
 }
 </style>

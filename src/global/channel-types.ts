@@ -1,4 +1,12 @@
-export type WindowChannelAction = 'minimize' | 'close';
+export type WindowSendAction = 'minimize' | 'close';
+
+export type WindowInvokeAction = 'get-areas';
+
+export type WindowResponse = {
+	fullscreen: { width: number; height: number };
+	workarea: { width: number; height: number };
+	taskbar: { width: number; height: number };
+};
 
 export type FilesInvokeAction = 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create' | 'get-url';
 

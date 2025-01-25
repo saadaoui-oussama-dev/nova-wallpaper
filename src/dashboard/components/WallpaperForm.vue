@@ -1,9 +1,11 @@
 <template>
 	<div class="wallpaper-form" v-if="store.currentImporting">
 		<div class="left-side">
-			<p class="title">Preview:</p>
-			<div class="preview">
-				<wallpaper-preview :wallpaper="store.currentImporting" :settings="previewStyleVariables" :volume="volume" />
+			<p class="title">
+				Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
+			</p>
+			<div class="preview" ref="preview-container">
+				<wallpaper-preview :wallpaper="store.currentImporting" :settings="previewStyles" :volume="volume" />
 			</div>
 		</div>
 		<div class="right-side">
@@ -21,7 +23,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
+import { NovaWallpaper } from '@/dashboard/preload';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
@@ -29,21 +32,36 @@ import { Settings, imageSettings, videoSettings } from '@/global/settings';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
 
+const preview = useTemplateRef('preview-container');
+
 const cloneSettings = (settings: Settings) => ({ direction: settings.direction, settings: [...settings.settings] });
 
 const properties = ref(cloneSettings(imageSettings));
+const dimensions = ref({ width: 1090, height: 1080 });
 
+const setDimensions = async () => {
+	if (!preview.value) return;
+	try {
+		const { fullscreen } = await NovaWallpaper.window.invoke('get-areas');
+		preview.value.style.setProperty('--screen-width', `${fullscreen.width}`);
+		preview.value.style.setProperty('--screen-height', `${fullscreen.height}`);
+		dimensions.value.width = fullscreen.width;
+		dimensions.value.height = fullscreen.height;
+	} catch {}
+};
+
+watch(preview, setDimensions);
 watch(
 	() => store.currentImporting,
-	(wallpaper) => {
-		console.log(wallpaper);
+	async (wallpaper) => {
+		setDimensions();
 		if (!wallpaper || wallpaper.type === 'image') properties.value = cloneSettings(imageSettings);
 		else if (wallpaper.type === 'video') properties.value = cloneSettings(videoSettings);
 		else properties.value = cloneSettings({ direction: 'row', settings: [] });
 	}
 );
 
-const previewStyleVariables = computed(() => {
+const previewStyles = computed(() => {
 	if (['image', 'video'].includes(store.currentImporting ? store.currentImporting.type : ''))
 		return Object.entries(computedSettings.value)
 			.map(([key, value]) => (key === 'flip' ? `--flip: ${value ? 180 : 0}` : `--${key}: ${value}`))
@@ -83,6 +101,11 @@ const volume = computed(() => (store.currentImporting ? (computedSettings.value.
 .title {
 	font-size: 18px;
 	margin-bottom: 15px;
+}
+
+.suffix {
+	font-size: 16px;
+	opacity: 0.7;
 }
 
 .preview {
