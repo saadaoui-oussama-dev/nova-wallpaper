@@ -22,7 +22,9 @@ export const fileSizeChecker = (filePath: string): string => {
 export const getAreas = (): WindowResponse => {
 	const $screen = screen.getPrimaryDisplay();
 	const { width: fw, height: fh } = $screen.size;
-	const { width: ww, height: wh } = $screen.workAreaSize;
+	let { width: ww, height: wh } = $screen.workAreaSize;
+	if (fw > ww) ww += 1;
+	if (fh > wh) wh += 1;
 	const taskbar = { width: fw - ww, height: fh - wh };
 	return { fullscreen: { width: fw, height: fh }, workarea: { width: ww, height: wh }, taskbar };
 };

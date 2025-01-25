@@ -18,6 +18,7 @@
 			playsinline
 		></video>
 		<img v-else class="content" :src="url" :style="settings" />
+		<div class="taskbar"></div>
 	</div>
 </template>
 
@@ -75,6 +76,7 @@ const rotateVertical = computed(
 <style scoped>
 .render {
 	--width: 251.33;
+	overflow: hidden;
 	position: relative;
 	width: calc(var(--width) * 1px);
 	aspect-ratio: var(--screen-width, 1920) / var(--screen-height, 1080);
@@ -97,10 +99,16 @@ const rotateVertical = computed(
 	top: 50%;
 	left: 50%;
 	width: calc(var(--width) * 1px);
-	height: calc(var(--width) * var(--screen-height, 1080) * 1px / var(--screen-width, 1920));
+	height: calc(var(--width) * var(--area-height, 1033) * 1px / var(--area-width, 1920));
 	display: block;
 	object-fit: cover;
-	transform: translate(-50%, -50%) rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
+	transform: translate(
+			-50%,
+			calc(
+				-50% - (var(--screen-height, 1080) - var(--area-height, 1033)) * var(--width) * 0.5px / var(--screen-width, 1920)
+			)
+		)
+		rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
 	filter: saturate(calc(var(--saturate) * 0.01)) contrast(calc(var(--contrast) * 1%))
 		brightness(calc(var(--brightness) * 1%)) hue-rotate(calc(var(--hue-rotate) * 1deg));
 }
@@ -111,6 +119,15 @@ img.content {
 
 .rotate-vertical .content {
 	height: calc(var(--width) * 1px);
-	width: calc(var(--width) * var(--screen-height, 1080) * 1px / var(--screen-width, 1920));
+	width: calc(var(--width) * var(--area-height, 1033) * 1px / var(--area-width, 1920));
+}
+
+.taskbar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: calc((var(--taskbar-height, 47)) * var(--width) * 1px / var(--screen-width, 1920));
+	background-color: var(--window-border);
 }
 </style>

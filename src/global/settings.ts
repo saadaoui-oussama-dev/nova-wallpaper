@@ -25,19 +25,19 @@ export type SliderOption = {
 
 export type OptionType = ToggleOption | RadioGroupOption | SliderOption;
 
-export type Settings = { direction: 'row'; settings: OptionType[] };
+export type Settings = { direction: 'row' | 'right' | 'row-right' | 'column' | 'column-right'; settings: OptionType[] };
 
 export const imageSettings: Settings = {
 	direction: 'row',
 	settings: [
 		{
-			label: 'Flip Image Horizontally',
+			label: 'Flip Horizontally',
 			type: 'checkbox',
 			name: 'flip',
 			value: false,
 		},
 		{
-			label: 'Rotate Image',
+			label: 'Rotation',
 			type: 'radio',
 			name: 'rotate',
 			value: 0,
@@ -90,7 +90,7 @@ export const imageSettings: Settings = {
 export const videoSettings: Settings = {
 	direction: 'row',
 	settings: [
-		...imageSettings.settings.map((opt) => ({ ...opt, label: opt.label.replace('Image', 'Video') })),
+		...imageSettings.settings.slice(0, 2),
 		{
 			label: 'Volume',
 			type: 'slider',
@@ -100,5 +100,6 @@ export const videoSettings: Settings = {
 			max: 100,
 			step: 1,
 		},
+		...imageSettings.settings.slice(2),
 	],
 };

@@ -4,13 +4,16 @@
 			<p class="title">
 				Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
 			</p>
-			<div class="preview" ref="preview-container">
-				<wallpaper-preview :wallpaper="store.currentImporting" :settings="previewStyles" :volume="volume" />
+			<div class="column">
+				<div class="preview" ref="preview-container">
+					<wallpaper-preview :wallpaper="store.currentImporting" :settings="previewStyles" :volume="volume" />
+				</div>
+				<settings-option direction="row" v-model="taskbarOption" />
 			</div>
 		</div>
 		<div class="right-side">
 			<p class="title">Settings:</p>
-			<div class="settings">
+			<div class="column">
 				<settings-option
 					v-for="(setting, index) in properties.settings"
 					:key="setting.name"
@@ -28,7 +31,7 @@ import { NovaWallpaper } from '@/dashboard/preload';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
-import { Settings, imageSettings, videoSettings } from '@/global/settings';
+import { Settings, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
 
@@ -39,21 +42,37 @@ const cloneSettings = (settings: Settings) => ({ direction: settings.direction, 
 const properties = ref(cloneSettings(imageSettings));
 const dimensions = ref({ width: 1090, height: 1080 });
 
+const taskbarOption = ref<ToggleOption>({
+	label: 'Exclude Taskbar',
+	type: 'checkbox',
+	name: 'taskbar',
+	value: true,
+});
+const areaType = computed(() => (taskbarOption.value.value ? 'workarea' : 'fullscreen'));
+
 const setDimensions = async () => {
-	if (!preview.value) return;
 	try {
-		const { fullscreen } = await NovaWallpaper.window.invoke('get-areas');
-		preview.value.style.setProperty('--screen-width', `${fullscreen.width}`);
-		preview.value.style.setProperty('--screen-height', `${fullscreen.height}`);
-		dimensions.value.width = fullscreen.width;
-		dimensions.value.height = fullscreen.height;
-	} catch {}
+		if (preview.value === null) return;
+		const response = await NovaWallpaper.window.invoke('get-areas');
+		preview.value.style.setProperty('--screen-width', `${response.fullscreen.width}`);
+		preview.value.style.setProperty('--screen-height', `${response.fullscreen.height}`);
+		preview.value.style.setProperty('--taskbar-width', `${response.taskbar.width}`);
+		preview.value.style.setProperty('--taskbar-height', `${response.taskbar.height}`);
+		preview.value.style.setProperty('--area-width', `${response[areaType.value].width}`);
+		preview.value.style.setProperty('--area-height', `${response[areaType.value].height}`);
+		dimensions.value.width = response[areaType.value].width;
+		dimensions.value.height = response[areaType.value].height;
+	} catch {
+		console.log();
+	}
 };
 
 watch(preview, setDimensions);
+watch(areaType, setDimensions);
 watch(
 	() => store.currentImporting,
 	async (wallpaper) => {
+		taskbarOption.value.value = true;
 		setDimensions();
 		if (!wallpaper || wallpaper.type === 'image') properties.value = cloneSettings(imageSettings);
 		else if (wallpaper.type === 'video') properties.value = cloneSettings(videoSettings);
@@ -98,6 +117,12 @@ const volume = computed(() => (store.currentImporting ? (computedSettings.value.
 	padding: 0 20px 0 10px;
 }
 
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
 .title {
 	font-size: 18px;
 	margin-bottom: 15px;
@@ -112,12 +137,6 @@ const volume = computed(() => (store.currentImporting ? (computedSettings.value.
 	width: 100%;
 	margin-inline: auto;
 	border: 1px solid var(--window-border);
-}
-
-.settings {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
 }
 
 .reset-button {
