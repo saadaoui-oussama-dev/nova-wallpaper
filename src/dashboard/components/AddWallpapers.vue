@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Component, ref } from 'vue';
+import { ref } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { events } from '@/global/utils';
 
@@ -39,7 +39,7 @@ events.$on('icon-add-toggle', (state: 'plus' | 'close') => {
 
 type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
 
-const icons: { [k in Option['type']]: Component } = {
+const icons: { [k in Option['type']]: any } = {
 	image: IconFileImage,
 	video: IconFileVideo,
 	webpage: IconFileWebpage,
@@ -94,7 +94,7 @@ const createWallpaper = async ({ type }: Option) => {
 	overflow: hidden;
 	height: 105px;
 	border: 2px solid var(--window-border);
-	border-radius: 13px;
+	border-radius: 7px;
 	cursor: pointer;
 	padding: 17px 10px 0px;
 	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, height 0.3s ease-in-out;

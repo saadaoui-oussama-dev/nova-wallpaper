@@ -1,19 +1,29 @@
 <template>
-	<div class="wallpaper-form" v-if="store.currentImporting">
+	<div class="wallpaper-form" v-if="wallpaper">
 		<div class="left-side">
-			<p class="title">
-				Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
-			</p>
-			<div class="column">
-				<div class="preview" ref="preview-container">
-					<wallpaper-preview :wallpaper="store.currentImporting" :settings="previewStyles" :volume="volume" />
+			<div class="section">
+				<p class="title">Name:</p>
+				<div class="column">
+					<input v-model="label" maxlength="30" />
 				</div>
-				<settings-option direction="row" v-model="taskbarOption" />
+			</div>
+
+			<div class="section">
+				<p class="title">
+					Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
+				</p>
+				<div class="column">
+					<div class="preview" ref="preview-container">
+						<wallpaper-preview :wallpaper="wallpaper" :settings="previewStyles" :volume="volume" />
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="right-side">
+
+		<div class="right-side section">
 			<p class="title">Settings:</p>
 			<div class="column">
+				<settings-option direction="row" v-model="taskbarOption" />
 				<settings-option
 					v-for="(setting, index) in properties.settings"
 					:key="setting.name"
@@ -34,20 +44,22 @@ const store = useWallpaperStore();
 import { Settings, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
+import { getFileName } from '@/global/utils';
+
+const wallpaper = computed(() => store.currentImporting);
+
+const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) : '');
+
+watch(label, () => {
+	label.value = getFileName(label.value, 'nameOnly', 30, false);
+});
 
 const preview = useTemplateRef('preview-container');
 
-const cloneSettings = (settings: Settings) => ({ direction: settings.direction, settings: [...settings.settings] });
-
-const properties = ref(cloneSettings(imageSettings));
 const dimensions = ref({ width: 1090, height: 1080 });
 
-const taskbarOption = ref<ToggleOption>({
-	label: 'Exclude Taskbar',
-	type: 'checkbox',
-	name: 'taskbar',
-	value: true,
-});
+const taskbarOption = ref<ToggleOption>({ label: 'Exclude Taskbar', type: 'checkbox', name: 'taskbar', value: true });
+
 const areaType = computed(() => (taskbarOption.value.value ? 'workarea' : 'fullscreen'));
 
 const setDimensions = async () => {
@@ -68,20 +80,24 @@ const setDimensions = async () => {
 };
 
 watch(preview, setDimensions);
+
 watch(areaType, setDimensions);
-watch(
-	() => store.currentImporting,
-	async (wallpaper) => {
-		taskbarOption.value.value = true;
-		setDimensions();
-		if (!wallpaper || wallpaper.type === 'image') properties.value = cloneSettings(imageSettings);
-		else if (wallpaper.type === 'video') properties.value = cloneSettings(videoSettings);
-		else properties.value = cloneSettings({ direction: 'row', settings: [] });
-	}
-);
+
+const cloneSettings = (settings: Settings) => ({ direction: settings.direction, settings: [...settings.settings] });
+
+const properties = ref(cloneSettings(imageSettings));
+
+watch(wallpaper, async () => {
+	setDimensions();
+	taskbarOption.value.value = true;
+	label.value = wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) || '' : '';
+	if (!wallpaper.value || wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
+	else if (wallpaper.value.type === 'video') properties.value = cloneSettings(videoSettings);
+	else properties.value = cloneSettings({ direction: 'row', settings: [] });
+});
 
 const previewStyles = computed(() => {
-	if (['image', 'video'].includes(store.currentImporting ? store.currentImporting.type : ''))
+	if (['image', 'video'].includes(wallpaper.value ? wallpaper.value.type : ''))
 		return Object.entries(computedSettings.value)
 			.map(([key, value]) => (key === 'flip' ? `--flip: ${value ? 180 : 0}` : `--${key}: ${value}`))
 			.join('; ');
@@ -99,7 +115,7 @@ const computedSettings = computed(() =>
 	Object.fromEntries(properties.value.settings.map((opt) => [opt.name, opt.value]))
 );
 
-const volume = computed(() => (store.currentImporting ? (computedSettings.value.volume as number) || 0 : 0));
+const volume = computed(() => (wallpaper.value ? (computedSettings.value.volume as number) || 0 : 0));
 </script>
 
 <style scoped>
@@ -117,15 +133,32 @@ const volume = computed(() => (store.currentImporting ? (computedSettings.value.
 	padding: 0 20px 0 10px;
 }
 
-.column {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
+.section {
+	margin-bottom: 18px;
+}
+
+.section:last-child {
+	margin-bottom: 0px;
 }
 
 .title {
 	font-size: 18px;
-	margin-bottom: 15px;
+	margin-bottom: 11px;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 11px;
+}
+
+input {
+	width: 100%;
+	padding: 10px;
+	border-radius: 7px;
+	border: 1px solid var(--window-border);
+	background-color: var(--titlebar-bg);
+	color: var(--text-color);
 }
 
 .suffix {
@@ -137,15 +170,5 @@ const volume = computed(() => (store.currentImporting ? (computedSettings.value.
 	width: 100%;
 	margin-inline: auto;
 	border: 1px solid var(--window-border);
-}
-
-.reset-button {
-	padding: 10px 15px;
-	background-color: var(--neutral-color);
-	color: var(--text-color);
-	border: 1px solid var(--window-border);
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
 }
 </style>

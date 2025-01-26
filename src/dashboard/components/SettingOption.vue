@@ -201,7 +201,6 @@ const change = (value: any) => {
 		var(--neutral-color) 100%
 	);
 	border-radius: 5px;
-	outline: none;
 	transition: background-color 0.3s ease;
 }
 

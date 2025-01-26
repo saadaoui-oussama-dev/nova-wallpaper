@@ -35,7 +35,12 @@ export const padding = (label: string, padding = true) => {
 	return `${noPadding(label)}${padding ? '        ' : ''}`;
 };
 
-export const getFileName = (name: string, type: 'path' | 'filename' | 'nameOnly', cutIn?: number): string => {
+export const getFileName = (
+	name: string,
+	type: 'path' | 'filename' | 'nameOnly',
+	cutIn?: number,
+	trim?: boolean
+): string => {
 	try {
 		if (type === 'path') {
 			const pathParts = name.split('\\');
@@ -48,7 +53,8 @@ export const getFileName = (name: string, type: 'path' | 'filename' | 'nameOnly'
 			type = 'nameOnly';
 		}
 		name = name.replace(/[^a-zA-Z0-9\sа-яёіїєґàáäâãåçèéêëìíîïñòóôõöùúüûýÿ]/gi, ' ');
-		name = name.replace(/\s+/g, ' ').trim();
+		name = name.replace(/\s+/g, ' ');
+		if (trim !== false) name = name.trim();
 		if (cutIn && cutIn > 2) name = name.substring(0, cutIn);
 		return name as string;
 	} catch {

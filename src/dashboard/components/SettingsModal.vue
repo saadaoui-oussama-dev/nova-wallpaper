@@ -71,7 +71,7 @@ watch(selectedFont, (newFont) => {
 .toggle-options {
 	display: inline-flex;
 	border: 1px solid var(--window-border);
-	border-radius: 4px;
+	border-radius: 7px;
 	overflow: hidden;
 	width: 300px;
 	background-color: var(--window-bg);
