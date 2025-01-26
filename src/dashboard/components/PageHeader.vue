@@ -1,6 +1,6 @@
 <template>
 	<div class="header">
-		<h1>{{ store.currentImporting ? 'Add Wallpaper' : 'Dashboard' }}</h1>
+		<h1>{{ store.currentImporting ? 'Parameters' : 'Add Wallpapers' }}</h1>
 
 		<div class="right-side">
 			<button v-show="!store.currentImporting && store.wallpapers.length" @click="toggleWallpapersAddSection">

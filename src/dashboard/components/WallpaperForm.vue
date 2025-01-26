@@ -22,12 +22,14 @@
 			<p class="title">Settings:</p>
 			<div class="settings column">
 				<settings-option direction="row" v-model="taskbarOption" />
-				<settings-option
-					v-for="(setting, index) in properties.settings"
-					:key="setting.name"
-					:direction="directionText"
-					v-model="properties.settings[index]"
-				/>
+				<template v-if="properties">
+					<settings-option
+						v-for="(setting, index) in properties.settings"
+						:key="setting.name"
+						:direction="directionText"
+						v-model="properties.settings[index]"
+					/>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -83,7 +85,7 @@ watch(areaType, setDimensions);
 
 const cloneSettings = (settings: Settings) => ({ direction: settings.direction, settings: [...settings.settings] });
 
-const properties = ref(cloneSettings(imageSettings));
+const properties = ref<Settings>();
 
 watch(wallpaper, async () => {
 	setDimensions();
@@ -103,15 +105,17 @@ const previewStyles = computed(() => {
 });
 
 const directionText = computed(() => {
+	if (!properties.value) return 'row';
 	if (`${properties.value.direction}`.toLowerCase() === 'column') return 'column';
 	if (`${properties.value.direction}`.toLowerCase() === 'column-right') return 'column-right';
 	else if (['row-right', 'right'].includes(`${properties.value.direction}`.toLowerCase())) return 'row-right';
 	else return 'row';
 });
 
-const computedSettings = computed(() =>
-	Object.fromEntries(properties.value.settings.map((opt) => [opt.name, opt.value]))
-);
+const computedSettings = computed(() => {
+	if (!properties.value) return {};
+	return Object.fromEntries(properties.value.settings.map((opt) => [opt.name, opt.value]));
+});
 
 const volume = computed(() => (wallpaper.value ? (computedSettings.value.volume as number) || 0 : 0));
 </script>
