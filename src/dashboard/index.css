@@ -3,6 +3,8 @@
 	--primary-color-active: #0074f0;
 	--neutral-color: #333333;
 	--neutral-color-active: #444444;
+	--danger-color: #a5352b;
+	--danger-color-hover: #bf2a1b;
 
 	--window-bg: #1e1e1e;
 	--window-border: #2e2e2e;
@@ -10,7 +12,21 @@
 
 	--titlebar-bg: #272727;
 	--titlebar-btn-hover: #ffffff33;
-	--titlebar-btn-danger-hover: #bf2a1b;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	border-radius: none;
+	background-color: var(--window-bg);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--titlebar-bg);
+	border-radius: 4px;
 }
 
 * {
@@ -63,8 +79,4 @@ body.ready > #app > .splashscreen > img {
 body > #app > .app {
 	height: 100%;
 	color: var(--text-color);
-}
-
-body.ready > #app > .app {
-	overflow: auto;
 }

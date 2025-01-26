@@ -56,7 +56,6 @@ onMounted(() => {
 
 #app .app .dashboard {
 	flex: 1;
-	margin-block: 20px;
 	overflow: hidden;
 }
 
@@ -70,5 +69,12 @@ onMounted(() => {
 
 #app .app .pages.second-page {
 	transform: translateX(-100vw);
+}
+
+#app .app .pages > * {
+	height: calc(100% - 20px);
+	padding-inline: 20px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 </style>

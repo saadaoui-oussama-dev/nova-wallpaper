@@ -1,28 +1,26 @@
 <template>
 	<div class="wallpaper-form" v-if="wallpaper">
-		<div class="left-side">
-			<div class="section">
-				<p class="title">Name:</p>
-				<div class="column">
-					<input v-model="label" maxlength="30" />
-				</div>
+		<div class="section">
+			<p class="title">Name:</p>
+			<div class="column">
+				<input v-model="label" maxlength="30" />
 			</div>
+		</div>
 
-			<div class="section">
-				<p class="title">
-					Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
-				</p>
-				<div class="column">
-					<div class="preview" ref="preview-container">
-						<wallpaper-preview :wallpaper="wallpaper" :settings="previewStyles" :volume="volume" />
-					</div>
+		<div class="section">
+			<p class="title">
+				Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
+			</p>
+			<div class="column">
+				<div class="preview" ref="preview-container">
+					<wallpaper-preview :wallpaper="wallpaper" :settings="previewStyles" :volume="volume" />
 				</div>
 			</div>
 		</div>
 
-		<div class="right-side section">
+		<div class="section">
 			<p class="title">Settings:</p>
-			<div class="column">
+			<div class="settings column">
 				<settings-option direction="row" v-model="taskbarOption" />
 				<settings-option
 					v-for="(setting, index) in properties.settings"
@@ -38,13 +36,13 @@
 <script lang="ts" setup>
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
+import { getFileName } from '@/global/utils';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
 import { Settings, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
-import { getFileName } from '@/global/utils';
 
 const wallpaper = computed(() => store.currentImporting);
 
@@ -119,20 +117,6 @@ const volume = computed(() => (wallpaper.value ? (computedSettings.value.volume 
 </script>
 
 <style scoped>
-.wallpaper-form {
-	display: flex;
-	height: 100%;
-}
-
-.wallpaper-form > .left-side {
-	padding: 0 10px 0 20px;
-}
-
-.wallpaper-form > .right-side {
-	flex: 1;
-	padding: 0 20px 0 10px;
-}
-
 .section {
 	margin-bottom: 18px;
 }
@@ -149,7 +133,7 @@ const volume = computed(() => (wallpaper.value ? (computedSettings.value.volume 
 .column {
 	display: flex;
 	flex-direction: column;
-	gap: 11px;
+	gap: 10px;
 }
 
 input {

@@ -10,7 +10,7 @@
 					class="toggle-option"
 					:class="{ selected: font.value === selectedFont }"
 				>
-					<input type="radio" :name="font.value" :value="font.value" v-model="selectedFont" class="hidden-radio" />
+					<input type="radio" :name="font.label" :value="font.value" v-model="selectedFont" class="hidden-radio" />
 					<span :class="`font-${font.value}`">{{ font.label }}</span>
 				</label>
 			</div>

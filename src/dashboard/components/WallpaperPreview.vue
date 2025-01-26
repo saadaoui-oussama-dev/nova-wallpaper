@@ -75,8 +75,7 @@ const rotateVertical = computed(
 
 <style scoped>
 .render {
-	--width: 251.33;
-	overflow: hidden;
+	--width: 450;
 	position: relative;
 	width: calc(var(--width) * 1px);
 	aspect-ratio: var(--screen-width, 1920) / var(--screen-height, 1080);
@@ -99,13 +98,13 @@ const rotateVertical = computed(
 	top: 50%;
 	left: 50%;
 	width: calc(var(--width) * 1px);
-	height: calc(var(--width) * var(--area-height, 1033) * 1px / var(--area-width, 1920));
+	height: calc(var(--area-height, 1033) * 1px * var(--width) / var(--area-width, 1920));
 	display: block;
 	object-fit: cover;
 	transform: translate(
 			-50%,
 			calc(
-				-50% - (var(--screen-height, 1080) - var(--area-height, 1033)) * var(--width) * 0.5px / var(--screen-width, 1920)
+				-50% - (var(--screen-height, 1080) - var(--area-height, 1033)) * 0.5px * var(--width) / var(--screen-width, 1920)
 			)
 		)
 		rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
@@ -119,7 +118,7 @@ img.content {
 
 .rotate-vertical .content {
 	height: calc(var(--width) * 1px);
-	width: calc(var(--width) * var(--area-height, 1033) * 1px / var(--area-width, 1920));
+	width: calc(var(--area-height, 1033) * 1px * var(--width) / var(--area-width, 1920));
 }
 
 .taskbar {
@@ -127,7 +126,7 @@ img.content {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: calc((var(--taskbar-height, 47)) * var(--width) * 1px / var(--screen-width, 1920));
+	height: calc((var(--taskbar-height, 47)) * 1px * var(--width) / var(--screen-width, 1920));
 	background-color: var(--window-border);
 }
 </style>

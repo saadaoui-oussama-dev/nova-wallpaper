@@ -103,7 +103,7 @@ const change = (value: any) => {
 
 .setting.row .label,
 .setting.row-right .label {
-	min-width: 29%;
+	min-width: 40%;
 }
 
 /* Checkbox */

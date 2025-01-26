@@ -1,9 +1,7 @@
 <template>
-	<div :class="`options${collapsed ? ' collapsed' : ''}`">
+	<div class="options">
 		<div v-for="option in options" :key="option ? option.label : 0">
-			<div v-if="!option"></div>
 			<div
-				v-else
 				:class="`option${option.class}`"
 				@mousedown="clicked(option, true)"
 				@mouseup="clicked(option, false)"
@@ -19,7 +17,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
-import { events } from '@/global/utils';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
@@ -30,12 +27,6 @@ import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
 import { useWallpaperStore, Wallpaper } from '@/store';
 const store = useWallpaperStore();
-
-const collapsed = ref(store.wallpapers.length > 0);
-
-events.$on('icon-add-toggle', (state: 'plus' | 'close') => {
-	collapsed.value = state === 'plus';
-});
 
 type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
 
@@ -48,19 +39,17 @@ const icons: { [k in Option['type']]: any } = {
 	create: IconFileAdd,
 };
 
-const options = ref<(Option | undefined)[]>([
+const options = ref<Option[]>([
 	{ label: 'Import Image', type: 'image', class: '' },
-	{ label: 'Import Video', type: 'video', class: '' },
-	{ label: 'Import Webpage', type: 'webpage', class: '' },
-	undefined,
 	{ label: 'Import Carousel Folder', type: 'folder', class: '' },
+	{ label: 'Import Video', type: 'video', class: '' },
 	{ label: 'Import Stickers Wallpaper', type: 'stickers', class: '' },
+	{ label: 'Import Webpage', type: 'webpage', class: '' },
 	{ label: 'Create Stickers Wallpaper', type: 'create', class: '' },
 ]);
 
 const clicked = (option: Option, isDown: boolean) => {
 	options.value = options.value.map((it) => {
-		if (!it) return it;
 		const className = it.label === option.label && isDown ? ' clicked' : '';
 		return { ...it, class: className };
 	});
@@ -79,29 +68,25 @@ const createWallpaper = async ({ type }: Option) => {
 
 <style scoped>
 .options {
-	height: 220px;
-	overflow: hidden;
 	display: grid;
-	grid-template-columns: repeat(3, 1fr) 0.4fr;
-	grid-template-rows: repeat(2, 1fr);
+	grid-template-columns: 0.95fr 1fr;
 	gap: 10px;
 	width: 100%;
-	padding-left: 20px;
-	transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+	padding-right: 35px;
 }
 
 .option {
-	overflow: hidden;
 	height: 105px;
 	border: 2px solid var(--window-border);
 	border-radius: 7px;
 	cursor: pointer;
-	padding: 17px 10px 0px;
-	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, height 0.3s ease-in-out;
+	padding: 15px 10px 15px;
+	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .option .option-label {
-	margin-top: 15px;
+	margin-top: 17px;
+	font-size: 14px;
 }
 
 .option:hover {
@@ -111,14 +96,5 @@ const createWallpaper = async ({ type }: Option) => {
 
 .option.clicked:hover {
 	transform: scale(0.97);
-}
-
-.collapsed {
-	height: 0px;
-	opacity: 0;
-}
-
-.collapsed .option {
-	height: 0px;
 }
 </style>

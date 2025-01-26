@@ -11,8 +11,8 @@ export const openDashboard = async () => {
 	if (dashboard) return dashboard.focus();
 
 	dashboard = new BrowserWindow({
-		width: 850,
-		height: 600,
+		width: 500,
+		height: 750,
 		frame: false,
 		show: false,
 		transparent: true,

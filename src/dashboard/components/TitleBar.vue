@@ -72,6 +72,6 @@ import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 }
 
 .titlebar-btn.close:hover {
-	background-color: var(--titlebar-btn-danger-hover);
+	background-color: var(--danger-color-hover);
 }
 </style>

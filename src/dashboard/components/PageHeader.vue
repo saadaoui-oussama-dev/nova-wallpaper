@@ -4,7 +4,7 @@
 
 		<div class="right-side">
 			<button v-show="!store.currentImporting && store.wallpapers.length" @click="toggleWallpapersAddSection">
-				<icon-add-close ref="addIcon" />
+				<icon-add ref="addIcon" />
 			</button>
 
 			<template v-if="store.currentImporting">
@@ -29,7 +29,7 @@ const store = useWallpaperStore();
 
 import SettingsModal from '@/dashboard/components/SettingsModal.vue';
 import IconSettings from '@/dashboard/icons/IconSettings.vue';
-import IconAddClose from '@/dashboard/icons/IconAddClose.vue';
+import IconAdd from '@/dashboard/icons/IconAdd.vue';
 
 const addIcon = ref<any>(null);
 const settingsVisible = ref(false);
@@ -47,7 +47,7 @@ const toggleWallpapersAddSection = () => {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 15px 20px 0px;
+	margin: 15px 20px;
 	padding-bottom: 20px;
 	border-bottom: 1px solid var(--window-border);
 }
