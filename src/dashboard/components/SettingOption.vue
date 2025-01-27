@@ -66,8 +66,10 @@ const getTrackBackgroundSize = () => {
 
 const emit = defineEmits(['change', 'update:modelValue']);
 
-const change = (value: any) => {
-	value = typeof value?.target?.value !== 'undefined' ? value.target.value : value;
+const change = (value: Event | string | number | boolean) => {
+	if (value && typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
+		if (value.target) value = (value.target as HTMLInputElement).value;
+	}
 	if (props.modelValue.type === 'slider') value = Number(value);
 	emit('update:modelValue', { ...props.modelValue, value });
 	emit('change');

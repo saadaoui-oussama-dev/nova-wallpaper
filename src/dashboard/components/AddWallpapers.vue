@@ -30,7 +30,7 @@ const store = useWallpaperStore();
 
 type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
 
-const icons: { [k in Option['type']]: any } = {
+const icons = {
 	image: IconFileImage,
 	video: IconFileVideo,
 	webpage: IconFileWebpage,

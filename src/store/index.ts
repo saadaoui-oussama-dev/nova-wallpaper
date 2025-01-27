@@ -11,7 +11,7 @@ export type Wallpaper = {
 	type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
 	path: string;
 	content: FilesContentResponse[];
-	settings: any;
+	settings: { [key: string]: string | number | boolean };
 };
 
 export interface State {

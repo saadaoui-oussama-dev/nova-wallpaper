@@ -1,7 +1,6 @@
 import * as Channels from '@/global/channel-types';
 
 type SendActionNotSupported = 'throw-error' | 'send-is-not-supported';
-type InvokeActionNotSupported = 'throw-error' | 'invoke-is-not-supported';
 
 type ChannelConnector<SendAction, ReceiveAction, ReceiveResponse> = {
 	on: (event: string, callback: (...data: any[]) => void) => void;
@@ -17,11 +16,11 @@ type NovaWallpaperPreload = {
 };
 
 export const NovaWallpaper: NovaWallpaperPreload = new Proxy<NovaWallpaperPreload>({} as NovaWallpaperPreload, {
-	get(target: any, prop: string) {
+	get(target: NovaWallpaperPreload, prop: 'window' | 'files' | 'json') {
 		if (prop in target) return target[prop];
 		else if ('NovaWallpaper' in window) {
 			Object.assign(NovaWallpaper, window.NovaWallpaper);
-			return (window.NovaWallpaper as any)[prop];
+			return NovaWallpaper[prop];
 		}
 	},
 });

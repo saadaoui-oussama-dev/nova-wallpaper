@@ -33,9 +33,13 @@ const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30
 
 watch(label, () => (label.value = getFileName(label.value, 'nameOnly', 30, false)));
 
-const settings = ref<{ taskbar: boolean; settings: { [key: string]: any } }>({ taskbar: false, settings: {} });
+const settings = ref<{ taskbar: boolean; settings: { [key: string]: string | number | boolean } }>({
+	taskbar: false,
+	settings: {},
+});
 
-const setSettings = (data: { taskbar: boolean; settings: { [key: string]: any } }) => (settings.value = data);
+const setSettings = (data: { taskbar: boolean; settings: { [key: string]: string | number | boolean } }) =>
+	(settings.value = data);
 
 watch(wallpaper, async () => {
 	if (!wallpaper.value) {

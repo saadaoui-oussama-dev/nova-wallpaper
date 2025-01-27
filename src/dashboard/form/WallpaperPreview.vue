@@ -8,7 +8,7 @@
 				<wallpaper-preview
 					:wallpaper="wallpaper"
 					:settings="previewStyles"
-					:volume="volume"
+					:volume="Number(volume)"
 					:preview="webpagePreviewURL"
 				/>
 			</div>
@@ -26,7 +26,7 @@ import { Wallpaper } from '@/store';
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: JSONResponse | null;
-	settings: { taskbar: boolean; settings: { [key: string]: any } };
+	settings: { taskbar: boolean; settings: { [key: string]: string | number | boolean } };
 }>();
 
 const preview = useTemplateRef('preview-container');

@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { defineProps, defineEmits, computed, onMounted, ref, watch } from 'vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
 
 import { Settings, OptionType, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
