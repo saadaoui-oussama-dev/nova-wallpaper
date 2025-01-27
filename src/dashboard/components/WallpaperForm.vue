@@ -25,7 +25,7 @@
 				<template v-if="properties">
 					<settings-option
 						v-for="(setting, index) in properties.settings"
-						:key="setting.name"
+						:key="index"
 						:direction="directionText"
 						v-model="properties.settings[index]"
 					/>
@@ -38,11 +38,11 @@
 <script lang="ts" setup>
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
-import { getFileName } from '@/global/utils';
+import { getFileName, replaceFileName } from '@/global/utils';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
-import { Settings, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
+import { OptionType, Settings, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
 
@@ -90,15 +90,53 @@ watch(areaType, setDimensions);
 
 const cloneSettings = (settings: Settings) => ({ direction: settings.direction, settings: [...settings.settings] });
 
-const properties = ref<Settings>();
+const properties = ref<Settings | null>(null);
 
 watch(wallpaper, async () => {
 	setDimensions();
 	taskbarOption.value.value = false;
 	label.value = wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) || '' : '';
-	if (!wallpaper.value || wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
+	if (!wallpaper.value) properties.value = null;
+	else if (wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
 	else if (wallpaper.value.type === 'video') properties.value = cloneSettings(videoSettings);
-	else properties.value = cloneSettings({ direction: 'row', settings: [] });
+	else if (wallpaper.value.type === 'webpage') {
+		const filename = replaceFileName(wallpaper.value.path, { name: 'settings', extension: 'json' });
+		const response = await NovaWallpaper.json.invoke('read', filename);
+		if (response.valid && Array.isArray(response.data.settings)) {
+			const settings = response.data.settings.map((opt: OptionType) => {
+				if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof opt.label !== 'string') return;
+				if (opt.type.toLocaleLowerCase().trim() === 'checkbox') {
+					opt.type = 'checkbox';
+					opt.value = Boolean(opt.value);
+				} else if (opt.type.toLocaleLowerCase().trim() === 'slider') {
+					opt.type = 'slider';
+					if (opt.type !== 'slider') return;
+					opt.min = Number(opt.min) || 0;
+					opt.max = Number(opt.max) || 100;
+					opt.step = Number(opt.step) || 1;
+					opt.max = opt.max <= opt.min ? opt.min + opt.step : opt.max;
+					opt.value = Number(opt.value) || opt.min;
+					if (opt.value > opt.max) opt.value = opt.max;
+					if (opt.value < opt.min) opt.value = opt.min;
+				} else if (opt.type.toLocaleLowerCase().trim() === 'radio') {
+					opt.type = 'radio';
+					if (opt.type !== 'radio') return;
+					let valueExist = false;
+					if (!Array.isArray(opt.options) || !opt.options.length) return;
+					const options = opt.options.map((option) => {
+						if (typeof option.label !== 'string') return;
+						if (typeof option.value !== 'string' && typeof option.value !== 'number') return;
+						if (option.value === opt.value) valueExist = true;
+						return { value: option.value, label: option.label };
+					});
+					opt.options = options.filter(Boolean) as { value: string; label: string }[];
+					if (!valueExist) opt.value = opt.options[0].value;
+				} else return;
+				return opt;
+			});
+			properties.value = { direction: response.data.direction, settings: settings.filter(Boolean) };
+		}
+	} else properties.value = null;
 });
 
 const previewStyles = computed(() => {
@@ -165,5 +203,63 @@ input {
 	width: fit-content;
 	margin-inline: auto;
 	border: 1px solid var(--window-border);
+}
+
+.query-param-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.title-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-bottom: 10px;
+}
+
+.title-bar > .title {
+	margin-bottom: 0px;
+}
+
+.icon-btn {
+	border-radius: 7px;
+	background: transparent;
+	border: none;
+	background-color: var(--neutral-color);
+	color: var(--text-color);
+	height: 32px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.3s ease;
+	-webkit-app-region: no-drag;
+}
+
+.icon-btn:not(.remove) {
+	padding: 0px 16px 0px 10px;
+}
+
+.icon-btn:not(.remove) > svg {
+	margin-right: 6px;
+}
+
+.icon-btn:not(.disabled):hover {
+	background-color: var(--neutral-color-active);
+}
+
+.icon-btn.remove.disabled {
+	width: 42px;
+	pointer-events: none;
+}
+
+.icon-btn.remove:not(.disabled) {
+	width: 42px;
+	background-color: var(--danger-color);
+}
+
+.icon-btn.remove:not(.disabled):hover {
+	background-color: var(--danger-color-hover);
 }
 </style>

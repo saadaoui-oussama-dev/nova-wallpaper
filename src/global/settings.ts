@@ -9,7 +9,7 @@ export type RadioGroupOption = {
 	type: 'radio';
 	label: string;
 	name: string;
-	value: number;
+	value: string | number;
 	options: { label: string; value: string | number }[];
 };
 
@@ -20,7 +20,7 @@ export type SliderOption = {
 	value: number;
 	min: number;
 	max: number;
-	step?: number;
+	step: number;
 };
 
 export type OptionType = ToggleOption | RadioGroupOption | SliderOption;

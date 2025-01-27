@@ -3,6 +3,7 @@ import { join } from 'path';
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
+import { readJson, writeJSON } from '@/global/json';
 import * as Channels from '@/global/channel-types';
 
 let dashboard: BrowserWindow | undefined;
@@ -60,6 +61,15 @@ ipcMain.on('window', (_, key: Channels.WindowSendAction) => {
 ipcMain.handle('window', (_, key: Channels.WindowInvokeAction) => {
 	if (key === 'get-areas') return getAreas();
 });
+
+ipcMain.handle(
+	'json',
+	(_, key: Channels.JSONInvokeAction, filename: string, dataOrIsArray?: any): Channels.JSONResponse => {
+		if (key === 'read') return readJson(filename, dataOrIsArray);
+		else if (key === 'write') return writeJSON(filename, dataOrIsArray);
+		return { exist: false, valid: false, data: null };
+	}
+);
 
 ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: string) => {
 	return new Promise<Channels.FilesResponse>((resolve) => {

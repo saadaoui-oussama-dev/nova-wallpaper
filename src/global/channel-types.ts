@@ -13,3 +13,7 @@ export type FilesInvokeAction = 'image' | 'video' | 'webpage' | 'folder' | 'stic
 export type FilesContentResponse = { filename: string; path: string; error?: string };
 
 export type FilesResponse = { error?: string; path?: string; content?: FilesContentResponse[] };
+
+export type JSONInvokeAction = 'read' | 'write';
+
+export type JSONResponse = { exist: boolean; valid: boolean; data: any };

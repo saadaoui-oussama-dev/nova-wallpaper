@@ -20,4 +20,5 @@ const ChannelConnector = (channel) => {
 contextBridge.exposeInMainWorld('NovaWallpaper', {
 	window: ChannelConnector('window'),
 	files: ChannelConnector('files'),
+	json: ChannelConnector('json'),
 });
