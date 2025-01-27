@@ -76,7 +76,6 @@ const createWallpaper = async ({ type }: Option) => {
 }
 
 .option {
-	height: 105px;
 	border: 2px solid var(--window-border);
 	border-radius: 7px;
 	cursor: pointer;
@@ -86,7 +85,6 @@ const createWallpaper = async ({ type }: Option) => {
 
 .option .option-label {
 	margin-top: 17px;
-	font-size: 14px;
 }
 
 .option:hover {

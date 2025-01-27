@@ -1,20 +1,20 @@
 <template>
 	<div class="wallpaper-form" v-if="wallpaper">
 		<div class="section">
-			<p class="title">Name:</p>
-			<div class="column">
-				<input v-model="label" maxlength="30" />
-			</div>
-		</div>
-
-		<div class="section">
 			<p class="title">
 				Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
 			</p>
 			<div class="column">
-				<div class="preview" ref="preview-container">
+				<div :class="`preview ${taskbarOption.value ? 'behind-taskbar' : ''}`" ref="preview-container">
 					<wallpaper-preview :wallpaper="wallpaper" :settings="previewStyles" :volume="volume" />
 				</div>
+			</div>
+		</div>
+
+		<div class="section">
+			<p class="title">Name:</p>
+			<div class="column">
+				<input v-model="label" placeholder="Wallpaper Label" maxlength="30" />
 			</div>
 		</div>
 
@@ -58,9 +58,14 @@ const preview = useTemplateRef('preview-container');
 
 const dimensions = ref({ width: 1090, height: 1080 });
 
-const taskbarOption = ref<ToggleOption>({ label: 'Exclude Taskbar', type: 'checkbox', name: 'taskbar', value: true });
+const taskbarOption = ref<ToggleOption>({
+	label: 'Show behind taskbar',
+	type: 'checkbox',
+	name: 'taskbar',
+	value: false,
+});
 
-const areaType = computed(() => (taskbarOption.value.value ? 'workarea' : 'fullscreen'));
+const areaType = computed(() => (taskbarOption.value.value ? 'fullscreen' : 'workarea'));
 
 const setDimensions = async () => {
 	try {
@@ -89,7 +94,7 @@ const properties = ref<Settings>();
 
 watch(wallpaper, async () => {
 	setDimensions();
-	taskbarOption.value.value = true;
+	taskbarOption.value.value = false;
 	label.value = wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) || '' : '';
 	if (!wallpaper.value || wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
 	else if (wallpaper.value.type === 'video') properties.value = cloneSettings(videoSettings);
@@ -130,8 +135,15 @@ const volume = computed(() => (wallpaper.value ? (computedSettings.value.volume 
 }
 
 .title {
-	font-size: 18px;
+	font-size: 17px;
+	font-weight: 700;
 	margin-bottom: 11px;
+}
+
+.suffix {
+	font-size: 14px;
+	font-weight: 400;
+	opacity: 0.7;
 }
 
 .column {
@@ -149,13 +161,8 @@ input {
 	color: var(--text-color);
 }
 
-.suffix {
-	font-size: 16px;
-	opacity: 0.7;
-}
-
 .preview {
-	width: 100%;
+	width: fit-content;
 	margin-inline: auto;
 	border: 1px solid var(--window-border);
 }

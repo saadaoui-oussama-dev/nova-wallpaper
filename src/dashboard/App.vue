@@ -52,6 +52,7 @@ onMounted(() => {
 #app .app {
 	display: flex;
 	flex-direction: column;
+	font-size: 14px;
 }
 
 #app .app .dashboard {

@@ -98,7 +98,6 @@ const change = (value: any) => {
 
 .setting > .label {
 	margin: 0;
-	font-size: 16px;
 }
 
 .setting.row .label,
@@ -184,8 +183,8 @@ const change = (value: any) => {
 .slider-container {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	width: 40%;
+	gap: 5px;
+	width: 48.5%;
 	min-width: 200px;
 }
 
@@ -224,7 +223,9 @@ const change = (value: any) => {
 }
 
 .slider-container .slider-value {
-	font-size: 14px;
+	text-align: right;
+	min-width: 23px;
+	font-size: 13px;
 	color: var(--text-color);
 }
 </style>

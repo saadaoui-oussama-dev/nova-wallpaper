@@ -75,7 +75,8 @@ const rotateVertical = computed(
 
 <style scoped>
 .render {
-	--width: 450;
+	--width: 300;
+	overflow: hidden;
 	position: relative;
 	width: calc(var(--width) * 1px);
 	aspect-ratio: var(--screen-width, 1920) / var(--screen-height, 1080);
@@ -112,13 +113,13 @@ const rotateVertical = computed(
 		brightness(calc(var(--brightness) * 1%)) hue-rotate(calc(var(--hue-rotate) * 1deg));
 }
 
-img.content {
-	image-rendering: -webkit-optimize-contrast;
-}
-
 .rotate-vertical .content {
 	height: calc(var(--width) * 1px);
 	width: calc(var(--area-height, 1033) * 1px * var(--width) / var(--area-width, 1920));
+}
+
+img.content {
+	image-rendering: -webkit-optimize-contrast;
 }
 
 .taskbar {
@@ -127,6 +128,14 @@ img.content {
 	left: 0;
 	width: 100%;
 	height: calc((var(--taskbar-height, 47)) * 1px * var(--width) / var(--screen-width, 1920));
-	background-color: var(--window-border);
+	background-color: #e2eef9;
+	background-image: url('@/dashboard/images/taskbar.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.behind-taskbar .taskbar {
+	opacity: 0.7;
 }
 </style>

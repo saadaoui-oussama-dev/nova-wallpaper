@@ -63,7 +63,6 @@ const toggleWallpapersAddSection = () => {
 	color: var(--text-color);
 	width: 32px;
 	height: 32px;
-	font-size: 14px;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -80,7 +79,6 @@ const toggleWallpapersAddSection = () => {
 	border: none;
 	border-radius: 7px;
 	cursor: pointer;
-	font-size: 14px;
 	font-weight: 500;
 	padding: 8px 20px;
 	transition: background-color 0.15s ease-in-out;

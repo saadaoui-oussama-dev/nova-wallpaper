@@ -45,7 +45,7 @@ import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 }
 
 .app-title {
-	font-size: 14px;
+	font-size: 13px;
 }
 
 .titlebar-right {
@@ -56,7 +56,6 @@ import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 	background: transparent;
 	border: none;
 	color: var(--text-color);
-	font-size: 14px;
 	width: 42px;
 	height: 32px;
 	cursor: pointer;
