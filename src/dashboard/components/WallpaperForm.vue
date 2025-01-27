@@ -21,7 +21,7 @@
 		<div class="section">
 			<p class="title">Settings:</p>
 			<div class="settings column">
-				<settings-option direction="row" v-model="taskbarOption" />
+				<settings-option :direction="directionText" v-model="taskbarOption" />
 				<template v-if="properties">
 					<settings-option
 						v-for="(setting, index) in properties.settings"
@@ -30,6 +30,25 @@
 						v-model="properties.settings[index]"
 					/>
 				</template>
+			</div>
+		</div>
+
+		<div class="section" v-if="wallpaper.type === 'webpage'">
+			<div class="title-bar">
+				<p class="title">Query parameters:</p>
+				<button class="icon-btn" @click="addQueryParameter"><icon-add small /> Add</button>
+			</div>
+			<div class="column query-params">
+				<div v-for="(param, index) in queryParameters" :key="index" class="query-param-row">
+					<input v-model="param.key" placeholder="Key" style="flex: 0.5" />
+					<input v-model="param.value" placeholder="Value" style="flex: 1" />
+					<button
+						:class="`icon-btn remove ${isQueryParamsEmpty() ? 'disabled' : ''}`"
+						@click="removeQueryParameter(index)"
+					>
+						<icon-delete />
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -45,6 +64,8 @@ const store = useWallpaperStore();
 import { OptionType, Settings, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import SettingsOption from '@/dashboard/components/SettingOption.vue';
+import IconAdd from '@/dashboard/icons/IconAdd.vue';
+import IconDelete from '@/dashboard/icons/IconDelete.vue';
 
 const wallpaper = computed(() => store.currentImporting);
 
@@ -96,8 +117,10 @@ watch(wallpaper, async () => {
 	setDimensions();
 	taskbarOption.value.value = false;
 	label.value = wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) || '' : '';
-	if (!wallpaper.value) properties.value = null;
-	else if (wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
+	if (!wallpaper.value) {
+		properties.value = null;
+		queryParameters.value = [{ key: '', value: '' }];
+	} else if (wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
 	else if (wallpaper.value.type === 'video') properties.value = cloneSettings(videoSettings);
 	else if (wallpaper.value.type === 'webpage') {
 		const filename = replaceFileName(wallpaper.value.path, { name: 'settings', extension: 'json' });
@@ -135,6 +158,12 @@ watch(wallpaper, async () => {
 				return opt;
 			});
 			properties.value = { direction: response.data.direction, settings: settings.filter(Boolean) };
+			if (Array.isArray(response.data['query-params']) && response.data['query-params'].length) {
+				queryParameters.value = response.data['query-params'].map((param) => ({
+					key: `${param.key || ''}`,
+					value: `${param.value || ''}`,
+				}));
+			}
 		}
 	} else properties.value = null;
 });
@@ -161,6 +190,23 @@ const computedSettings = computed(() => {
 });
 
 const volume = computed(() => (wallpaper.value ? (computedSettings.value.volume as number) || 0 : 0));
+
+const queryParameters = ref([{ key: '', value: '' }]);
+
+const addQueryParameter = () => {
+	queryParameters.value.push({ key: '', value: '' });
+};
+
+const removeQueryParameter = (index: number) => {
+	queryParameters.value.splice(index, 1);
+	if (!queryParameters.value.length) queryParameters.value.push({ key: '', value: '' });
+};
+
+const isQueryParamsEmpty = () => {
+	if (queryParameters.value.length > 1) return false;
+	if (!queryParameters.value.length) return true;
+	return !queryParameters.value[0].key && !queryParameters.value[0].value;
+};
 </script>
 
 <style scoped>
