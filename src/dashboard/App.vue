@@ -24,7 +24,7 @@ const store = useWallpaperStore();
 import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
 import AddWallpapers from '@/dashboard/components/AddWallpapers.vue';
-import WallpaperForm from '@/dashboard/components/WallpaperForm.vue';
+import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
 
 const splashscreen = ref(true);
 

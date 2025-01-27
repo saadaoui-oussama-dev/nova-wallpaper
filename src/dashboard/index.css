@@ -80,3 +80,12 @@ body > #app > .app {
 	height: 100%;
 	color: var(--text-color);
 }
+
+input:not([type='radio']):not([type='range']) {
+	width: 100%;
+	padding: 10px;
+	border-radius: 7px;
+	border: 1px solid var(--window-border);
+	background-color: var(--titlebar-bg);
+	color: var(--text-color);
+}
