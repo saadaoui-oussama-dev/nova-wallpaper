@@ -26,10 +26,15 @@
 import { defineProps, ref, useTemplateRef, onMounted, computed, watch } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { Wallpaper } from '@/store';
-import { replaceFileName } from '@/global/utils';
+import { isSupported, replaceFileName } from '@/global/utils';
 import { FilesResponse } from '@/global/channel-types';
 
-const props = defineProps<{ wallpaper: Wallpaper; settings: string; volume: number }>();
+const props = defineProps<{
+	wallpaper: Wallpaper;
+	settings: string;
+	volume: number;
+	preview: string;
+}>();
 
 const url = ref('');
 const error = ref('');
@@ -41,16 +46,27 @@ onMounted(setVolume);
 watch(video, setVolume);
 watch(() => props.volume, setVolume);
 
-onMounted(async () => {
-	try {
-		let data: FilesResponse = { path: '', error: '' };
-		if (props.wallpaper.type !== 'webpage') {
-			data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
-		} else {
-			const preview = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
+watch(
+	() => props.preview,
+	async () => {
+		try {
+			if (props.wallpaper.type !== 'webpage') return;
+			const data: FilesResponse = { path: '', error: '' };
+			const preview = [
+				['preview', 'png'],
+				['preview', 'jpg'],
+				['preview', 'jpeg'],
+				['preview', 'mp4'],
+			];
+			if (typeof props.preview === 'string' && props.preview && isSupported(props.preview, true)) {
+				const parts = props.preview.split('.');
+				const filename = parts.slice(0, parts.length - 1).join('.');
+				const extension = parts[parts.length - 1];
+				if (filename !== 'preview') preview.unshift([filename, extension]);
+			}
 			let cursor = 0;
 			while (!data.error && !data.path && cursor < preview.length) {
-				const path = replaceFileName(props.wallpaper.path, { name: 'preview', extension: preview[cursor] });
+				const path = replaceFileName(props.wallpaper.path, { name: preview[cursor][0], extension: preview[cursor][1] });
 				const response = await NovaWallpaper.files.invoke('get-url', path);
 				if (response.path) data.path = response.path;
 				else if (response.error?.includes('limit')) data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
@@ -58,8 +74,20 @@ onMounted(async () => {
 			}
 			if (cursor === preview.length)
 				data.error =
-					'<p>Webpages can only be<br />rendered, not previewed.</p><p style="margin-top: 5px; opacity: 0.5">You can include a preview.png file alongside the HTML file.</p>';
+					'<p>Webpages can only be<br />rendered, not previewed.</p><p style="margin-top: 5px; opacity: 0.5">You can include a preview.png file<br />alongside the HTML file.</p>';
+			if (data.error) error.value = data.error;
+			else if (data.path) url.value = data.path;
+			isVideo.value = url.value.startsWith('data:video') || url.value.endsWith('.mp4');
+		} catch {
+			url.value = '';
 		}
+	}
+);
+
+onMounted(async () => {
+	try {
+		if (props.wallpaper.type === 'webpage') return;
+		const data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
 		if (data.error) error.value = data.error;
 		else if (data.path) url.value = data.path;
 		isVideo.value = url.value.startsWith('data:video') || url.value.endsWith('.mp4');

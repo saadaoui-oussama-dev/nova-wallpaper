@@ -6,7 +6,12 @@
 			</p>
 			<div class="column">
 				<div :class="`preview ${taskbarOption.value ? 'behind-taskbar' : ''}`" ref="preview-container">
-					<wallpaper-preview :wallpaper="wallpaper" :settings="previewStyles" :volume="volume" />
+					<wallpaper-preview
+						:wallpaper="wallpaper"
+						:settings="previewStyles"
+						:volume="volume"
+						:preview="webpagePreviewURL"
+					/>
 				</div>
 			</div>
 		</div>
@@ -113,51 +118,60 @@ const cloneSettings = (settings: Settings) => ({ direction: settings.direction, 
 
 const properties = ref<Settings | null>(null);
 
+const webpagePreviewURL = ref<string>('');
+
 watch(wallpaper, async () => {
 	setDimensions();
 	taskbarOption.value.value = false;
 	label.value = wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) || '' : '';
 	if (!wallpaper.value) {
 		properties.value = null;
+		webpagePreviewURL.value = '';
 		queryParameters.value = [{ key: '', value: '' }];
 	} else if (wallpaper.value.type === 'image') properties.value = cloneSettings(imageSettings);
 	else if (wallpaper.value.type === 'video') properties.value = cloneSettings(videoSettings);
 	else if (wallpaper.value.type === 'webpage') {
 		const filename = replaceFileName(wallpaper.value.path, { name: 'settings', extension: 'json' });
 		const response = await NovaWallpaper.json.invoke('read', filename);
-		if (response.valid && Array.isArray(response.data.settings)) {
-			const settings = response.data.settings.map((opt: OptionType) => {
-				if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof opt.label !== 'string') return;
-				if (opt.type.toLocaleLowerCase().trim() === 'checkbox') {
-					opt.type = 'checkbox';
-					opt.value = Boolean(opt.value);
-				} else if (opt.type.toLocaleLowerCase().trim() === 'slider') {
-					opt.type = 'slider';
-					if (opt.type !== 'slider') return;
-					opt.min = Number(opt.min) || 0;
-					opt.max = Number(opt.max) || 100;
-					opt.step = Number(opt.step) || 1;
-					opt.max = opt.max <= opt.min ? opt.min + opt.step : opt.max;
-					opt.value = Number(opt.value) || opt.min;
-					if (opt.value > opt.max) opt.value = opt.max;
-					if (opt.value < opt.min) opt.value = opt.min;
-				} else if (opt.type.toLocaleLowerCase().trim() === 'radio') {
-					opt.type = 'radio';
-					if (opt.type !== 'radio') return;
-					let valueExist = false;
-					if (!Array.isArray(opt.options) || !opt.options.length) return;
-					const options = opt.options.map((option) => {
-						if (typeof option.label !== 'string') return;
-						if (typeof option.value !== 'string' && typeof option.value !== 'number') return;
-						if (option.value === opt.value) valueExist = true;
-						return { value: option.value, label: option.label };
-					});
-					opt.options = options.filter(Boolean) as { value: string; label: string }[];
-					if (!valueExist) opt.value = opt.options[0].value;
-				} else return;
-				return opt;
-			});
-			properties.value = { direction: response.data.direction, settings: settings.filter(Boolean) };
+		if (response.valid) {
+			if (typeof response.data.preview === 'string') {
+				webpagePreviewURL.value = response.data.preview;
+				console.log(response.data.preview);
+			} else webpagePreviewURL.value = 'watcher-stimulation';
+			if (Array.isArray(response.data.settings) && response.data.settings.length) {
+				const settings = response.data.settings.map((opt: OptionType) => {
+					if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof opt.label !== 'string') return;
+					if (opt.type.toLocaleLowerCase().trim() === 'checkbox') {
+						opt.type = 'checkbox';
+						opt.value = Boolean(opt.value);
+					} else if (opt.type.toLocaleLowerCase().trim() === 'slider') {
+						opt.type = 'slider';
+						if (opt.type !== 'slider') return;
+						opt.min = Number(opt.min) || 0;
+						opt.max = Number(opt.max) || 100;
+						opt.step = Number(opt.step) || 1;
+						opt.max = opt.max <= opt.min ? opt.min + opt.step : opt.max;
+						opt.value = Number(opt.value) || opt.min;
+						if (opt.value > opt.max) opt.value = opt.max;
+						if (opt.value < opt.min) opt.value = opt.min;
+					} else if (opt.type.toLocaleLowerCase().trim() === 'radio') {
+						opt.type = 'radio';
+						if (opt.type !== 'radio') return;
+						let valueExist = false;
+						if (!Array.isArray(opt.options) || !opt.options.length) return;
+						const options = opt.options.map((option) => {
+							if (typeof option.label !== 'string') return;
+							if (typeof option.value !== 'string' && typeof option.value !== 'number') return;
+							if (option.value === opt.value) valueExist = true;
+							return { value: option.value, label: option.label };
+						});
+						opt.options = options.filter(Boolean) as { value: string; label: string }[];
+						if (!valueExist) opt.value = opt.options[0].value;
+					} else return;
+					return opt;
+				});
+				properties.value = { direction: response.data.direction, settings: settings.filter(Boolean) };
+			}
 			if (Array.isArray(response.data['query-params']) && response.data['query-params'].length) {
 				queryParameters.value = response.data['query-params'].map((param) => ({
 					key: `${param.key || ''}`,
