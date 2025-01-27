@@ -99,13 +99,13 @@ const rotateVertical = computed(
 	top: 50%;
 	left: 50%;
 	width: calc(var(--width) * 1px);
-	height: calc(var(--area-height, 1033) * 1px * var(--width) / var(--area-width, 1920));
+	height: calc((var(--area-height, 1033) + 1) * 1px * var(--width) / var(--area-width, 1920));
 	display: block;
 	object-fit: cover;
 	transform: translate(
 			-50%,
 			calc(
-				-50% - (var(--screen-height, 1080) - var(--area-height, 1033)) * 0.5px * var(--width) / var(--screen-width, 1920)
+				-50% - (var(--screen-height, 1080) - var(--area-height, 1033) - 1) * 0.5px * var(--width) / var(--screen-width, 1920)
 			)
 		)
 		rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
@@ -115,7 +115,7 @@ const rotateVertical = computed(
 
 .rotate-vertical .content {
 	height: calc(var(--width) * 1px);
-	width: calc(var(--area-height, 1033) * 1px * var(--width) / var(--area-width, 1920));
+	width: calc((var(--area-height, 1033) + 1) * 1px * var(--width) / var(--area-width, 1920));
 }
 
 img.content {
