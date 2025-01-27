@@ -20,7 +20,7 @@ export const NovaWallpaper: NovaWallpaperPreload = new Proxy<NovaWallpaperPreloa
 		if (prop in target) return target[prop];
 		else if ('NovaWallpaper' in window) {
 			Object.assign(NovaWallpaper, window.NovaWallpaper);
-			return NovaWallpaper[prop];
+			return (window.NovaWallpaper as NovaWallpaperPreload)[prop];
 		}
 	},
 });
