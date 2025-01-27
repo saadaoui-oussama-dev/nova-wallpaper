@@ -1,7 +1,7 @@
 <template>
 	<div class="titlebar">
 		<div class="titlebar-left">
-			<img src="/imgs/logo.png" alt="" class="app-logo" />
+			<img src="/img/logo.png" alt="" class="app-logo" />
 			<span class="app-title">Nova Wallpaper</span>
 		</div>
 		<div class="titlebar-right">

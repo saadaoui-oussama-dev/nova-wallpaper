@@ -18,7 +18,7 @@
 			playsinline
 		></video>
 		<img v-else class="content" :src="url" :style="settings" />
-		<div class="taskbar"></div>
+		<img class="taskbar" src="/img/taskbar.png" alt="" />
 	</div>
 </template>
 
@@ -157,10 +157,7 @@ img.content {
 	width: 100%;
 	height: calc((var(--taskbar-height, 47)) * 1px * var(--width) / var(--screen-width, 1920));
 	background-color: #e2eef9;
-	background-image: url('@/dashboard/images/taskbar.png');
-	background-size: contain;
-	background-position: center;
-	background-repeat: no-repeat;
+	object-fit: contain;
 }
 
 .behind-taskbar .taskbar {

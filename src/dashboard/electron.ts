@@ -19,7 +19,7 @@ export const openDashboard = async () => {
 		transparent: true,
 		resizable: false,
 		title: 'Nova Wallpaper',
-		icon: joinPublic('@/public/imgs/logo.png'),
+		icon: joinPublic('@/public/img/logo.png'),
 		webPreferences: {
 			devTools: false,
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,

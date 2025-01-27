@@ -1,6 +1,6 @@
 <template>
 	<div v-if="splashscreen" class="splashscreen">
-		<img alt="Vue logo" src="/imgs/logo.png" width="150" />
+		<img src="/img/logo.png" width="150" alt="" />
 	</div>
 	<div :class="`app font-${settings.font}`">
 		<title-bar v-show="!splashscreen" />
