@@ -1,14 +1,15 @@
 <template>
-	<div class="section">
+	<div class="section" v-if="queryParameters.length">
 		<div class="title-container">
 			<p class="title">Query parameters:</p>
-			<button class="icon-btn" @click="addQueryParameter"><icon-add small /> Add</button>
+			<!-- <button class="icon-btn" @click="addQueryParameter"><icon-add small /> Add</button> -->
 		</div>
 		<div class="column query-params" ref="list">
 			<div v-for="(param, index) in queryParameters" :key="index" class="query-param-row">
-				<input v-model="param.key" placeholder="Key" style="flex: 0.5" />
+				<input v-model="param.key" disabled placeholder="Key" style="width: 40%" />
 				<input v-model="param.value" placeholder="Value" style="flex: 1" />
 				<button
+					v-if="false"
 					:class="`icon-btn remove ${isQueryParamsEmpty() ? 'disabled' : ''}`"
 					@click="removeQueryParameter(index)"
 				>
@@ -21,13 +22,13 @@
 
 <script lang="ts" setup>
 import { defineProps, useTemplateRef, ref, watch } from 'vue';
-import IconAdd from '@/dashboard/icons/IconAdd.vue';
-import IconDelete from '@/dashboard/icons/IconDelete.vue';
+// import IconAdd from '@/dashboard/icons/IconAdd.vue';
+// import IconDelete from '@/dashboard/icons/IconDelete.vue';
 import { JSONResponse } from '@/global/channel-types';
 import { Wallpaper } from '@/store';
 
 const list = useTemplateRef('list');
-const queryParameters = ref([{ key: '', value: '' }]);
+const queryParameters = ref<{ key: string; value: string }[]>([]);
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
@@ -41,8 +42,8 @@ watch(
 		if (!Array.isArray(props.json.data['query-params']) || !props.json.data['query-params'].length)
 			return clearQueryParams();
 		queryParameters.value = props.json.data['query-params'].map((param) => ({
-			key: `${param.key || ''}`,
-			value: `${param.value || ''}`,
+			key: `${param.key ? param.key || '' : ''}`,
+			value: `${param.value ? param.value || '' : ''}`,
 		}));
 	}
 );
@@ -61,7 +62,8 @@ const removeQueryParameter = (index: number) => {
 };
 
 const clearQueryParams = () => {
-	queryParameters.value = [{ key: '', value: '' }];
+	queryParameters.value = [];
+	// queryParameters.value = [{ key: '', value: '' }];
 };
 
 const isQueryParamsEmpty = () => {

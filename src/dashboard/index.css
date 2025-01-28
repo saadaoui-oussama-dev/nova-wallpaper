@@ -83,7 +83,7 @@ body > #app > .app {
 
 input:not([type='radio']):not([type='range']) {
 	width: 100%;
-	padding: 10px;
+	padding: 7px 10px;
 	border-radius: 7px;
 	border: 1px solid var(--window-border);
 	background-color: var(--titlebar-bg);

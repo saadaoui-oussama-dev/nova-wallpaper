@@ -8,6 +8,7 @@
 			</div>
 		</div>
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
+		<wallpaper-permissions v-if="wallpaper.type === 'webpage'" :wallpaper="wallpaper" :json="wallpaperJSON" />
 		<wallpaper-query-params v-if="wallpaper.type === 'webpage'" :wallpaper="wallpaper" :json="wallpaperJSON" />
 	</div>
 </template>
@@ -23,6 +24,7 @@ import { JSONResponse } from '@/global/channel-types';
 
 import WallpaperPreview from '@/dashboard/form/WallpaperPreview.vue';
 import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
+import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
 import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
 
 const wallpaper = computed<Wallpaper | null>(() => store.currentImporting);
