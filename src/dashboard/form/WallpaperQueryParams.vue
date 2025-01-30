@@ -2,9 +2,9 @@
 	<div class="section" v-if="queryParameters.length">
 		<div class="title-container">
 			<p class="title">Query parameters:</p>
-			<!-- <button class="icon-btn" @click="addQueryParameter"><icon-add small /> Add</button> -->
+			<button v-if="false" class="icon-btn" @click="addQueryParameter"><icon-add small /> Add</button>
 		</div>
-		<div class="column query-params" ref="list">
+		<div class="column" ref="list">
 			<div v-for="(param, index) in queryParameters" :key="index" class="query-param-row">
 				<input v-model="param.key" disabled placeholder="Key" style="width: 40%" />
 				<input v-model="param.value" placeholder="Value" style="flex: 1" />
@@ -22,8 +22,8 @@
 
 <script lang="ts" setup>
 import { defineProps, useTemplateRef, ref, watch } from 'vue';
-// import IconAdd from '@/dashboard/icons/IconAdd.vue';
-// import IconDelete from '@/dashboard/icons/IconDelete.vue';
+import IconAdd from '@/dashboard/icons/IconAdd.vue';
+import IconDelete from '@/dashboard/icons/IconDelete.vue';
 import { JSONResponse } from '@/global/channel-types';
 import { Wallpaper } from '@/store';
 

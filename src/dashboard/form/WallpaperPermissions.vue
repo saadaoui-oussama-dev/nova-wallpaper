@@ -1,10 +1,13 @@
 <template>
 	<div class="section" v-if="permissions.length">
-		<p class="title">Permissions:</p>
-		<div class="column query-params" ref="list">
-			<div v-for="(param, index) in permissions" :key="index" class="permission-row">
-				<p style="width: 40%">{{ param.label }}</p>
-				<input v-model="param.value" placeholder="Value" style="flex: 1" />
+		<p class="title">Permissions: <span class="suffix">(Grant access to (only) open/execute files)</span></p>
+		<div class="column" ref="list">
+			<div v-for="(option, index) in permissions" :key="index" class="permission-row">
+				<p style="width: 40%">{{ option.label }}</p>
+				<input v-model="option.value" :placeholder="getPlaceholder(option)" style="flex: 1" :class="option.type" />
+				<button v-if="option.type !== 'url'" class="browse" @click="bindFilePath(option)">
+					<span style="opacity: 0.75">Browse...</span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -14,8 +17,11 @@
 import { defineProps, ref, watch } from 'vue';
 import { JSONResponse } from '@/global/channel-types';
 import { Wallpaper } from '@/store';
+import { NovaWallpaper } from '../preload';
 
-const permissions = ref<{ type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string }[]>([]);
+type PermissionOption = { type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string };
+
+const permissions = ref<PermissionOption[]>([]);
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
@@ -39,6 +45,24 @@ watch(
 		permissions.value = list.filter((opt) => opt !== null);
 	}
 );
+
+const getPlaceholder = (option: PermissionOption) => {
+	return option.type === 'executable'
+		? 'Enter a file path (.exe)'
+		: option.type === 'url'
+		? 'Enter a website URL'
+		: 'Enter a folder path';
+};
+
+const bindFilePath = async (option: PermissionOption) => {
+	if (option.type === 'url') return;
+	const { path, error } = await NovaWallpaper.files.invoke(option.type, undefined, true);
+	if (error || !path) {
+		return console.log({ error });
+	} else {
+		option.value = path;
+	}
+};
 </script>
 
 <style scoped>
@@ -46,5 +70,35 @@ watch(
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	position: relative;
+}
+
+input.folder,
+input.executable {
+	padding-right: 72px !important;
+}
+
+.browse {
+	position: absolute;
+}
+
+.browse {
+	color: var(--text-color);
+	background-color: var(--neutral-color);
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	font-weight: 100;
+	height: calc(100% - 8px);
+	margin: 4px 4px 4px 0;
+	padding: 4px 10px;
+	transition: background-color 0.15s ease-in-out;
+	border: 1px solid var(--window-border);
+	font-size: 11px;
+	right: 0;
+}
+
+.browse:hover {
+	background-color: var(--neutral-color-active);
 }
 </style>

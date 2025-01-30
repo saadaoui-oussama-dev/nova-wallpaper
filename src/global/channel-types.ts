@@ -8,7 +8,15 @@ export type WindowResponse = {
 	taskbar: { width: number; height: number };
 };
 
-export type FilesInvokeAction = 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create' | 'get-url';
+export type FilesInvokeAction =
+	| 'image'
+	| 'video'
+	| 'webpage'
+	| 'folder'
+	| 'stickers'
+	| 'create'
+	| 'executable'
+	| 'get-url';
 
 export type FilesContentResponse = { filename: string; path: string; error?: string };
 

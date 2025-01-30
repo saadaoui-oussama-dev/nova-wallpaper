@@ -71,7 +71,7 @@ ipcMain.handle(
 	}
 );
 
-ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: string) => {
+ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: string, onlyFolder?: boolean) => {
 	return new Promise<Channels.FilesResponse>((resolve) => {
 		if (action === 'get-url' && path) {
 			if (!isSupported(path)) return resolve({ error: 'Unsupported file type.' });
@@ -85,6 +85,7 @@ ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: str
 			dialog.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] }).then((result) => {
 				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
 				const absolutePath = result.filePaths[0];
+				if (action === 'executable') return resolve({ path: absolutePath, content: [] });
 				if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type.' });
 				const error = fileSizeChecker(absolutePath);
 				resolve(error ? { error } : { path: absolutePath, content: [] });
@@ -96,6 +97,7 @@ ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: str
 			dialog.showOpenDialog(dashboard, { properties: ['openDirectory'] }).then((result) => {
 				if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
 				const folderPath = result.filePaths[0];
+				if (onlyFolder) return resolve({ path: folderPath, content: [] });
 
 				const content: Channels.FilesContentResponse[] = readdirSync(folderPath)
 					.map((filename: string): Channels.FilesContentResponse | undefined => {
@@ -112,6 +114,7 @@ ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: str
 		if (action === 'image') return openFile('Images', ['png', 'jpg', 'jpeg']);
 		if (action === 'video') return openFile('Videos', ['mp4']);
 		if (action === 'webpage') return openFile('Webpages', ['html']);
+		if (action === 'executable') return openFile('Programs', ['exe']);
 		if (action === 'folder') return openDirectory();
 		resolve({ error: `${action}: This action is not supported` });
 	});
