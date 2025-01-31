@@ -61,8 +61,8 @@ watch(
 				opt.min = Number(opt.min) || 0;
 				opt.max = Number(opt.max) || 100;
 				opt.step = Number(opt.step) || 1;
-				opt.max = opt.max <= opt.min ? opt.min + opt.step : opt.max;
-				opt.value = Number(opt.value) || opt.min;
+				opt.max = opt.max < opt.min + opt.step ? opt.min + opt.step : opt.max;
+				opt.value = Number(opt.value) || 0;
 				if (opt.value > opt.max) opt.value = opt.max;
 				if (opt.value < opt.min) opt.value = opt.min;
 			} else if (opt.type.toLocaleLowerCase().trim() === 'radio') {

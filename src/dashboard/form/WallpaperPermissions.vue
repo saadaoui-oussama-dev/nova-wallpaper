@@ -4,7 +4,13 @@
 		<div class="column" ref="list">
 			<div v-for="(option, index) in permissions" :key="index" class="permission-row">
 				<p style="width: 40%">{{ option.label }}</p>
-				<input v-model="option.value" :placeholder="getPlaceholder(option)" style="flex: 1" :class="option.type" />
+				<input
+					v-model="option.value"
+					@change="emit('change', [...permissions])"
+					:placeholder="getPlaceholder(option)"
+					style="flex: 1"
+					:class="option.type"
+				/>
 				<button v-if="option.type !== 'url'" class="browse" @click="bindFilePath(option)">
 					<span style="opacity: 0.75">Browse...</span>
 				</button>
@@ -14,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, watch } from 'vue';
+import { defineProps, defineEmits, ref, watch } from 'vue';
 import { JSONResponse } from '@/global/channel-types';
 import { Wallpaper } from '@/store';
 import { NovaWallpaper } from '../preload';
@@ -31,9 +37,9 @@ const props = defineProps<{
 watch(
 	() => props.json,
 	() => {
-		if (!props.json || !props.json.data || props.wallpaper.type !== 'webpage') return (permissions.value = []);
+		if (!props.json || !props.json.data || props.wallpaper.type !== 'webpage') return setPermissions([]);
 		if (!Array.isArray(props.json.data['permissions']) || !props.json.data['permissions'].length)
-			return (permissions.value = []);
+			return setPermissions([]);
 		const names: string[] = [];
 		const list = props.json.data['permissions'].map((option) => {
 			if (!option || typeof option.name !== 'string' || !option.name) return null;
@@ -42,7 +48,7 @@ watch(
 			names.push(option.name);
 			return { type: option.type, name: option.name, label: `${option.label ? option.label : option.name}`, value: '' };
 		});
-		permissions.value = list.filter((opt) => opt !== null);
+		setPermissions(list.filter((opt) => opt !== null));
 	}
 );
 
@@ -62,6 +68,13 @@ const bindFilePath = async (option: PermissionOption) => {
 	} else {
 		option.value = path;
 	}
+};
+
+const emit = defineEmits(['change']);
+
+const setPermissions = (data: PermissionOption[]) => {
+	permissions.value = [...data];
+	emit('change', [...data]);
 };
 </script>
 

@@ -8,13 +8,15 @@
 			</div>
 		</div>
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
-		<wallpaper-permissions v-if="wallpaper.type === 'webpage'" :wallpaper="wallpaper" :json="wallpaperJSON" />
-		<wallpaper-query-params v-if="wallpaper.type === 'webpage'" :wallpaper="wallpaper" :json="wallpaperJSON" />
+		<template v-if="wallpaper.type === 'webpage'">
+			<wallpaper-permissions :wallpaper="wallpaper" :json="wallpaperJSON" @change="setPermissions" />
+			<wallpaper-query-params :wallpaper="wallpaper" :json="wallpaperJSON" @change="setQueryParams" />
+		</template>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, defineExpose } from 'vue';
 import { useWallpaperStore, Wallpaper } from '@/store';
 const store = useWallpaperStore();
 
@@ -35,15 +37,11 @@ const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30
 
 watch(label, () => (label.value = getFileName(label.value, 'nameOnly', 30, false)));
 
-const settings = ref<{ taskbar: boolean; settings: { [key: string]: string | number | boolean } }>({
-	taskbar: false,
-	settings: {},
-});
-
-const setSettings = (data: { taskbar: boolean; settings: { [key: string]: string | number | boolean } }) =>
-	(settings.value = data);
-
 watch(wallpaper, async () => {
+	setSettings({ taskbar: false, settings: {} });
+	setPermissions([]);
+	setQueryParams([]);
+
 	if (!wallpaper.value) {
 		wallpaperJSON.value = null;
 		label.value = '';
@@ -62,6 +60,41 @@ watch(wallpaper, async () => {
 		}
 	}
 });
+
+const settings = ref<{ taskbar: boolean; settings: { [key: string]: string | number | boolean } }>({
+	taskbar: false,
+	settings: {},
+});
+
+const permissions = ref<{ type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string }[]>([]);
+
+const queryParams = ref<{ key: string; value: string }[]>([]);
+
+const setSettings = (data: { taskbar: boolean; settings: { [key: string]: string | number | boolean } }) =>
+	(settings.value = data);
+
+const setPermissions = (
+	data: { type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string }[]
+) => (permissions.value = data);
+
+const setQueryParams = (data: { key: string; value: string }[]) => (queryParams.value = data);
+
+const save = () => {
+	label.value = getFileName(label.value, 'nameOnly', 30);
+	const permissionsOptions = permissions.value.map((opt) => {
+		opt.value = opt.value.trim();
+		if (opt.value.startsWith('"')) opt.value = opt.value.slice(1);
+		if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1);
+		return { name: opt.name, type: opt.type, value: opt.value };
+	});
+	console.log(label.value);
+	console.log(settings.value.taskbar);
+	console.log({ ...settings.value.settings });
+	console.log([...permissionsOptions]);
+	console.log([...queryParams.value]);
+};
+
+defineExpose({ save });
 </script>
 
 <style>

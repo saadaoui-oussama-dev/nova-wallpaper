@@ -4,8 +4,8 @@
 
 		<div class="right-side">
 			<template v-if="store.currentImporting">
-				<button class="text-btn" @click="store.cancelImporting">Cancel</button>
-				<button class="text-btn primary">Save</button>
+				<button class="text-btn" @click="store.cancelImporting">Discard</button>
+				<button class="text-btn primary" @click="emit('save')">Save</button>
 			</template>
 
 			<button v-else class="settings-icon" @click="settingsVisible = true">
@@ -18,12 +18,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
 import SettingsModal from '@/dashboard/components/SettingsModal.vue';
 import IconSettings from '@/dashboard/icons/IconSettings.vue';
+
+const emit = defineEmits(['save']);
 
 const settingsVisible = ref(false);
 </script>

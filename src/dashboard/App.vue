@@ -4,20 +4,20 @@
 	</div>
 	<div :class="`app font-${settings.font}`">
 		<title-bar v-show="!splashscreen" />
-		<page-header v-show="!splashscreen" />
+		<page-header v-show="!splashscreen" @save="save" />
 		<div class="dashboard" v-show="!splashscreen">
 			<div :class="`pages${store.currentImporting ? ' second-page' : ''}`">
 				<div class="main">
 					<add-wallpapers />
 				</div>
-				<wallpaper-form />
+				<wallpaper-form ref="form" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, useTemplateRef, onMounted, computed } from 'vue';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
@@ -29,6 +29,12 @@ import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
 const splashscreen = ref(true);
 
 const settings = computed(() => store.settings);
+
+const form = useTemplateRef('form');
+
+const save = () => {
+	if (form.value) form.value.save();
+};
 
 onMounted(() => {
 	setTimeout(() => document.body.classList.add('ready'), 2000);
