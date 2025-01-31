@@ -2,7 +2,7 @@
 	<div v-if="splashscreen" class="splashscreen">
 		<img src="/img/logo.png" width="150" alt="" />
 	</div>
-	<div :class="`app font-${settings.font}`">
+	<div class="app">
 		<title-bar v-show="!splashscreen" />
 		<page-header v-show="!splashscreen" @save="save" />
 		<div class="dashboard" v-show="!splashscreen">
@@ -28,8 +28,6 @@ import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
 
 const splashscreen = ref(true);
 
-const settings = computed(() => store.settings);
-
 const form = useTemplateRef('form');
 
 const save = () => {
@@ -42,19 +40,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
-#app .app:not(.font-standard):not(.font-handwritten),
-#app .app.font-standard,
-.font-standard:not(#app .app) {
-	font-family: system-ui, 'Trebuchet MS', 'Segoe UI', Helvetica, Arial;
-}
-
-#app .app.font-handwritten,
-.font-handwritten:not(#app .app) {
-	font-family: cursive, 'Comic Sans MS', 'Trebuchet MS', system-ui, 'Segoe UI', Helvetica, Arial;
-	font-size: 0.93em;
-}
-
+<style scoped>
 #app .app {
 	display: flex;
 	flex-direction: column;

@@ -1,10 +1,6 @@
 import { defineStore } from 'pinia';
 import { FilesContentResponse } from '@/global/channel-types';
 
-export type Settings = {
-	font: 'standard' | 'handwritten';
-};
-
 export type Wallpaper = {
 	id: string;
 	label: string;
@@ -26,10 +22,6 @@ export const useWallpaperStore = defineStore('wallpaper', {
 	}),
 
 	actions: {
-		updateSettings(newSettings: Partial<Settings>) {
-			this.settings = { ...this.settings, ...newSettings };
-		},
-
 		prepareToAddWallpaper(wallpaper: Wallpaper) {
 			this.currentImporting = wallpaper;
 		},

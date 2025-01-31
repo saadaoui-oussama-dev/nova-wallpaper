@@ -83,8 +83,8 @@ const save = () => {
 	label.value = getFileName(label.value, 'nameOnly', 30);
 	const permissionsOptions = permissions.value.map((opt) => {
 		opt.value = opt.value.trim();
-		if (opt.value.startsWith('"')) opt.value = opt.value.slice(1);
-		if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1);
+		if (opt.value.startsWith('"')) opt.value = opt.value.slice(1).trim();
+		if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1).trim();
 		return { name: opt.name, type: opt.type, value: opt.value };
 	});
 	console.log(label.value);

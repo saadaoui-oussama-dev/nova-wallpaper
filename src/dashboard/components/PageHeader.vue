@@ -7,27 +7,16 @@
 				<button class="text-btn" @click="store.cancelImporting">Discard</button>
 				<button class="text-btn primary" @click="emit('save')">Save</button>
 			</template>
-
-			<button v-else class="settings-icon" @click="settingsVisible = true">
-				<icon-settings />
-			</button>
 		</div>
-
-		<settings-modal :visible="settingsVisible" @close="settingsVisible = false" />
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { ref, defineEmits } from 'vue';
-import { useWallpaperStore } from '@/store';
-const store = useWallpaperStore();
-
-import SettingsModal from '@/dashboard/components/SettingsModal.vue';
-import IconSettings from '@/dashboard/icons/IconSettings.vue';
-
+import { defineEmits } from 'vue';
 const emit = defineEmits(['save']);
 
-const settingsVisible = ref(false);
+import { useWallpaperStore } from '@/store';
+const store = useWallpaperStore();
 </script>
 
 <style scoped>

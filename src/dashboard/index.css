@@ -35,6 +35,7 @@
 	box-sizing: border-box;
 	user-select: none;
 	outline: none;
+	font-family: system-ui, 'Trebuchet MS', 'Segoe UI', Helvetica, Arial;
 }
 
 body {
