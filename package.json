@@ -2,19 +2,18 @@
 	"name": "nova-wallpaper",
 	"version": "0.1.0",
 	"private": true,
+	"main": "background.js",
 	"scripts": {
-		"vue:serve": "vue-cli-service serve",
-		"vue:build": "vue-cli-service build",
 		"lint": "vue-cli-service lint",
-		"build": "vue-cli-service electron:build",
 		"serve": "vue-cli-service electron:serve",
+		"build": "vue-cli-service electron:build",
 		"postinstall": "electron-builder install-app-deps",
 		"postuninstall": "electron-builder install-app-deps"
 	},
-	"main": "background.js",
 	"dependencies": {
 		"@electron/remote": "^2.1.2",
 		"core-js": "^3.8.3",
+		"nedb": "^1.8.0",
 		"pinia": "^2.3.1",
 		"vue": "^3.2.13"
 	},

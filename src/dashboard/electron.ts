@@ -4,6 +4,7 @@ import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
 import { readJson, writeJSON } from '@/global/json';
+import { openDatabase } from '@/store/database';
 import * as Channels from '@/global/channel-types';
 
 let dashboard: BrowserWindow | undefined;
@@ -54,22 +55,28 @@ events.$on('dashboard', (action: string) => {
 	}
 });
 
-ipcMain.on('window', (_, key: Channels.WindowSendAction) => {
-	if (['close', 'minimize'].includes(key)) return events.$emit('dashboard', key);
+ipcMain.on('window', (_, action: Channels.WindowSendAction) => {
+	if (['close', 'minimize'].includes(action)) return events.$emit('dashboard', action);
 });
 
-ipcMain.handle('window', (_, key: Channels.WindowInvokeAction) => {
-	if (key === 'get-areas') return getAreas();
+ipcMain.handle('window', (_, action: Channels.WindowInvokeAction) => {
+	if (action === 'get-areas') return getAreas();
 });
 
-ipcMain.handle(
-	'json',
-	(_, key: Channels.JSONInvokeAction, filename: string, dataOrIsArray?: any): Channels.JSONResponse => {
-		if (key === 'read') return readJson(filename, dataOrIsArray);
-		else if (key === 'write') return writeJSON(filename, dataOrIsArray);
-		return { exist: false, valid: false, data: null };
-	}
-);
+ipcMain.handle('json', (_, action: Channels.JSONInvokeAction, filename: string, dataOrIsArray?: any) => {
+	return new Promise<Channels.JSONResponse>((resolve) => {
+		if (action === 'read') resolve(readJson(filename, dataOrIsArray));
+		else if (action === 'write') resolve(writeJSON(filename, dataOrIsArray));
+		else resolve({ exist: false, valid: false, data: null });
+	});
+});
+
+ipcMain.handle('database', (_, action: Channels.DatabaseInvokeAction, table: string, content: any) => {
+	return new Promise<Channels.DatabaseResponse>((resolve) => {
+		if (action === 'insert') return resolve(openDatabase().insert({ ...content, table }));
+		resolve({ doc: null, error: `${action}: This action is not supported` });
+	});
+});
 
 ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: string, onlyFolder?: boolean) => {
 	return new Promise<Channels.FilesResponse>((resolve) => {

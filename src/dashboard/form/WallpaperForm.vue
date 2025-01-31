@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, defineExpose } from 'vue';
+import { ref, watch, defineExpose } from 'vue';
 import { useWallpaperStore, Wallpaper, Settings, Permission, Query } from '@/store';
 const store = useWallpaperStore();
 
@@ -29,15 +29,22 @@ import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
 import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
 import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
 
-const wallpaper = computed<Wallpaper | null>(() => store.formWallpaper);
-
 const wallpaperJSON = ref<JSONResponse | null>(null);
+
+let wallpaper = ref<Wallpaper | null>(null);
 
 const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) : '');
 
 watch(label, () => (label.value = getFileName(label.value, 'nameOnly', 30, false)));
 
+watch(
+	() => store.formWallpaper,
+	() => (wallpaper.value = store.formWallpaper)
+);
+
 watch(wallpaper, async () => {
+	if (saving.value.lastRef === wallpaper.value) return;
+
 	setSettings({ taskbar: false, settings: {} });
 	setPermissions([]);
 	setQueryParams([]);
@@ -48,7 +55,7 @@ watch(wallpaper, async () => {
 		return;
 	}
 
-	label.value = getFileName(wallpaper.value.path, 'path', 30) || '';
+	label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
 	if (wallpaper.value.type === 'webpage') {
 		try {
 			const filename = replaceFileName(wallpaper.value.path, { name: 'settings', extension: 'json' });
@@ -76,10 +83,13 @@ const setPermissions = (data: Permission[]) => (permissions.value = data);
 
 const setQueryParams = (data: Query[]) => (queryParams.value = data);
 
-const save = () => {
-	if (!wallpaper.value) return;
+const saving = ref<{ state: boolean; lastRef: Wallpaper | undefined }>({ state: false, lastRef: undefined });
+
+const save = async () => {
+	if (saving.value.state || !wallpaper.value) return;
+	saving.value.state = true;
 	label.value = getFileName(label.value, 'nameOnly', 30);
-	store.addWallpaper({
+	const ref = {
 		...wallpaper.value,
 		label: label.value,
 		taskbar: settings.value.taskbar,
@@ -91,7 +101,11 @@ const save = () => {
 			if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1).trim();
 			return { ...opt };
 		}),
-	});
+		content: [],
+	};
+	saving.value.lastRef = ref;
+	await store.addWallpaper(ref);
+	saving.value.state = false;
 };
 
 defineExpose({ save });

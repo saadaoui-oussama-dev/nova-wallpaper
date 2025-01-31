@@ -25,3 +25,7 @@ export type FilesResponse = { error?: string; path?: string; content?: FilesCont
 export type JSONInvokeAction = 'read' | 'write';
 
 export type JSONResponse = { exist: boolean; valid: boolean; data: any };
+
+export type DatabaseInvokeAction = 'read' | 'insert';
+
+export type DatabaseResponse = { doc: any; error: string };

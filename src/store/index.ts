@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { FilesContentResponse } from '@/global/channel-types';
+import { NovaWallpaper } from '@/dashboard/preload';
 
 export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
 
@@ -15,6 +16,7 @@ export type Wallpaper = {
 	type: WallpaperType;
 	path: string;
 	content: FilesContentResponse[];
+	favorite: boolean;
 	taskbar: boolean;
 	settings: Settings;
 	permissions: Permission[];
@@ -39,6 +41,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				path,
 				content,
 				taskbar: false,
+				favorite: false,
 				settings: {},
 				permissions: [],
 				queryParams: [],
@@ -49,8 +52,14 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			this.formWallpaper = null;
 		},
 
-		addWallpaper(wallpaper: Wallpaper) {
-			console.log(wallpaper);
+		async addWallpaper(wallpaper: Wallpaper) {
+			const { doc, error } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
+			if (error) {
+				console.log({ error });
+			} else {
+				wallpaper.id = doc._id;
+				this.formWallpaper = wallpaper;
+			}
 		},
 	},
 });

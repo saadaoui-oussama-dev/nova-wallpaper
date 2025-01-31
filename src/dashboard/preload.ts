@@ -13,6 +13,7 @@ type NovaWallpaperPreload = {
 	window: ChannelConnector<Channels.WindowSendAction, Channels.WindowInvokeAction, Channels.WindowResponse>;
 	files: ChannelConnector<SendActionNotSupported, Channels.FilesInvokeAction, Channels.FilesResponse>;
 	json: ChannelConnector<SendActionNotSupported, Channels.JSONInvokeAction, Channels.JSONResponse>;
+	database: ChannelConnector<SendActionNotSupported, Channels.DatabaseInvokeAction, Channels.DatabaseResponse>;
 };
 
 export const NovaWallpaper: NovaWallpaperPreload = new Proxy<NovaWallpaperPreload>({} as NovaWallpaperPreload, {

@@ -5,11 +5,11 @@ const ChannelConnector = (channel) => {
 	return {
 		on: (event, callback) => {
 			if (callbacks[event]) ipcRenderer.off(event, callbacks[event]);
-			callbacks[event] = (_, ...data) => callback(...data);
+			callbacks[event] = (_, key, ...data) => key === channel && callback(...data);
 			ipcRenderer.on(event, callbacks[event]);
 		},
 		off: (event) => {
-			ipcRenderer.off(event, callbacks[event]);
+			if (callbacks[event]) ipcRenderer.off(event, callbacks[event]);
 			delete callbacks[event];
 		},
 		send: (key, ...data) => ipcRenderer.send(channel, key, ...data),
@@ -21,4 +21,5 @@ contextBridge.exposeInMainWorld('NovaWallpaper', {
 	window: ChannelConnector('window'),
 	files: ChannelConnector('files'),
 	json: ChannelConnector('json'),
+	database: ChannelConnector('database'),
 });
