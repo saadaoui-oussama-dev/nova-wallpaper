@@ -6,7 +6,7 @@
 		<title-bar v-show="!splashscreen" />
 		<page-header v-show="!splashscreen" @save="save" />
 		<div class="dashboard" v-show="!splashscreen">
-			<div :class="`pages${store.currentImporting ? ' second-page' : ''}`">
+			<div :class="`pages${store.formWallpaper ? ' second-page' : ''}`">
 				<div class="main">
 					<add-wallpapers />
 				</div>

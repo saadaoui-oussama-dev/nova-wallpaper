@@ -1,33 +1,56 @@
 import { defineStore } from 'pinia';
 import { FilesContentResponse } from '@/global/channel-types';
 
+export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
+
+export type Settings = { [key: string]: string | number | boolean };
+
+export type Permission = { type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string };
+
+export type Query = { key: string; value: string };
+
 export type Wallpaper = {
 	id: string;
 	label: string;
-	type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
+	type: WallpaperType;
 	path: string;
 	content: FilesContentResponse[];
-	settings: { [key: string]: string | number | boolean };
+	taskbar: boolean;
+	settings: Settings;
+	permissions: Permission[];
+	queryParams: Query[];
 };
 
 export interface State {
-	settings: Settings;
-	currentImporting: Wallpaper | null;
+	formWallpaper: Wallpaper | null;
 }
 
 export const useWallpaperStore = defineStore('wallpaper', {
 	state: (): State => ({
-		settings: { font: 'standard' },
-		currentImporting: null,
+		formWallpaper: null,
 	}),
 
 	actions: {
-		prepareToAddWallpaper(wallpaper: Wallpaper) {
-			this.currentImporting = wallpaper;
+		prepareToAddWallpaper(type: WallpaperType, path: string, content: FilesContentResponse[]) {
+			this.formWallpaper = {
+				id: '',
+				label: '',
+				type,
+				path,
+				content,
+				taskbar: false,
+				settings: {},
+				permissions: [],
+				queryParams: [],
+			};
 		},
 
-		cancelImporting() {
-			this.currentImporting = null;
+		discardAdding() {
+			this.formWallpaper = null;
+		},
+
+		addWallpaper(wallpaper: Wallpaper) {
+			console.log(wallpaper);
 		},
 	},
 });

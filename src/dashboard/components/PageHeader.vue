@@ -1,10 +1,10 @@
 <template>
 	<div class="header">
-		<h1>{{ store.currentImporting ? 'Parameters' : 'Add Wallpapers' }}</h1>
+		<h1>{{ store.formWallpaper ? 'Parameters' : 'Add Wallpapers' }}</h1>
 
 		<div class="right-side">
-			<template v-if="store.currentImporting">
-				<button class="text-btn" @click="store.cancelImporting">Discard</button>
+			<template v-if="store.formWallpaper">
+				<button class="text-btn" @click="store.discardAdding">Discard</button>
 				<button class="text-btn primary" @click="emit('save')">Save</button>
 			</template>
 		</div>

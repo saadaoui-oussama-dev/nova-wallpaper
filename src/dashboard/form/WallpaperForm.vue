@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch, defineExpose } from 'vue';
-import { useWallpaperStore, Wallpaper } from '@/store';
+import { useWallpaperStore, Wallpaper, Settings, Permission, Query } from '@/store';
 const store = useWallpaperStore();
 
 import { getFileName, replaceFileName } from '@/global/utils';
@@ -29,7 +29,7 @@ import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
 import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
 import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
 
-const wallpaper = computed<Wallpaper | null>(() => store.currentImporting);
+const wallpaper = computed<Wallpaper | null>(() => store.formWallpaper);
 
 const wallpaperJSON = ref<JSONResponse | null>(null);
 
@@ -61,37 +61,37 @@ watch(wallpaper, async () => {
 	}
 });
 
-const settings = ref<{ taskbar: boolean; settings: { [key: string]: string | number | boolean } }>({
+const settings = ref<{ taskbar: boolean; settings: Settings }>({
 	taskbar: false,
 	settings: {},
 });
 
-const permissions = ref<{ type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string }[]>([]);
+const permissions = ref<Permission[]>([]);
 
-const queryParams = ref<{ key: string; value: string }[]>([]);
+const queryParams = ref<Query[]>([]);
 
-const setSettings = (data: { taskbar: boolean; settings: { [key: string]: string | number | boolean } }) =>
-	(settings.value = data);
+const setSettings = (data: { taskbar: boolean; settings: Settings }) => (settings.value = data);
 
-const setPermissions = (
-	data: { type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string }[]
-) => (permissions.value = data);
+const setPermissions = (data: Permission[]) => (permissions.value = data);
 
-const setQueryParams = (data: { key: string; value: string }[]) => (queryParams.value = data);
+const setQueryParams = (data: Query[]) => (queryParams.value = data);
 
 const save = () => {
+	if (!wallpaper.value) return;
 	label.value = getFileName(label.value, 'nameOnly', 30);
-	const permissionsOptions = permissions.value.map((opt) => {
-		opt.value = opt.value.trim();
-		if (opt.value.startsWith('"')) opt.value = opt.value.slice(1).trim();
-		if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1).trim();
-		return { name: opt.name, type: opt.type, value: opt.value };
+	store.addWallpaper({
+		...wallpaper.value,
+		label: label.value,
+		taskbar: settings.value.taskbar,
+		settings: { ...settings.value.settings },
+		queryParams: queryParams.value.map((opt) => ({ key: opt.key, value: opt.value })),
+		permissions: permissions.value.map((opt) => {
+			opt.value = opt.value.trim();
+			if (opt.value.startsWith('"')) opt.value = opt.value.slice(1).trim();
+			if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1).trim();
+			return { ...opt };
+		}),
 	});
-	console.log(label.value);
-	console.log(settings.value.taskbar);
-	console.log({ ...settings.value.settings });
-	console.log([...permissionsOptions]);
-	console.log([...queryParams.value]);
 };
 
 defineExpose({ save });

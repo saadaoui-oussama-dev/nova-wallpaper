@@ -22,12 +22,10 @@
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import { JSONResponse } from '@/global/channel-types';
-import { Wallpaper } from '@/store';
+import { Wallpaper, Permission } from '@/store';
 import { NovaWallpaper } from '../preload';
 
-type PermissionOption = { type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string };
-
-const permissions = ref<PermissionOption[]>([]);
+const permissions = ref<Permission[]>([]);
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
@@ -52,7 +50,7 @@ watch(
 	}
 );
 
-const getPlaceholder = (option: PermissionOption) => {
+const getPlaceholder = (option: Permission) => {
 	return option.type === 'executable'
 		? 'Enter a file path (.exe)'
 		: option.type === 'url'
@@ -60,7 +58,7 @@ const getPlaceholder = (option: PermissionOption) => {
 		: 'Enter a folder path';
 };
 
-const bindFilePath = async (option: PermissionOption) => {
+const bindFilePath = async (option: Permission) => {
 	if (option.type === 'url') return;
 	const { path, error } = await NovaWallpaper.files.invoke(option.type, undefined, true);
 	if (error || !path) {
@@ -72,7 +70,7 @@ const bindFilePath = async (option: PermissionOption) => {
 
 const emit = defineEmits(['change']);
 
-const setPermissions = (data: PermissionOption[]) => {
+const setPermissions = (data: Permission[]) => {
 	permissions.value = [...data];
 	emit('change', [...data]);
 };

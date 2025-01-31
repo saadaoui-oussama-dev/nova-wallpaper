@@ -25,11 +25,9 @@ import { defineProps, defineEmits, useTemplateRef, ref, watch } from 'vue';
 import IconAdd from '@/dashboard/icons/IconAdd.vue';
 import IconDelete from '@/dashboard/icons/IconDelete.vue';
 import { JSONResponse } from '@/global/channel-types';
-import { Wallpaper } from '@/store';
+import { Wallpaper, Query } from '@/store';
 
-type QueryParam = { key: string; value: string };
-
-const queryParams = ref<QueryParam[]>([]);
+const queryParams = ref<Query[]>([]);
 
 const list = useTemplateRef('list');
 

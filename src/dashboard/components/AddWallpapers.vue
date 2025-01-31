@@ -25,7 +25,7 @@ import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
-import { useWallpaperStore, Wallpaper } from '@/store';
+import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
 type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
@@ -60,8 +60,7 @@ const createWallpaper = async ({ type }: Option) => {
 	if (error || !path || !content) {
 		return console.log({ error });
 	} else if (type !== 'create') {
-		const wallpaper: Wallpaper = { id: '', label: '', type, path, content, settings: {} };
-		store.prepareToAddWallpaper(wallpaper);
+		store.prepareToAddWallpaper(type, path, content);
 	}
 };
 </script>
