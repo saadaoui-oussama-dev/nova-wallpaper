@@ -25,12 +25,14 @@ export type Wallpaper = {
 };
 
 export interface State {
+	wallpapers: Wallpaper[];
 	data: { [key: string]: { preview: Promise<FilesResponse> | null; json: Promise<JSONResponse> | null } };
 	formWallpaper: Wallpaper | null;
 }
 
 export const useWallpaperStore = defineStore('wallpaper', {
 	state: (): State => ({
+		wallpapers: [],
 		data: {},
 		formWallpaper: null,
 	}),
@@ -52,6 +54,11 @@ export const useWallpaperStore = defineStore('wallpaper', {
 		},
 
 		discardAdding() {
+			if (this.formWallpaper) {
+				if (this.wallpapers.every((wallpaper) => this.formWallpaper && wallpaper.path !== this.formWallpaper.path)) {
+					if (this.formWallpaper) delete this.data[this.formWallpaper.path];
+				}
+			}
 			this.formWallpaper = null;
 		},
 
@@ -62,6 +69,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			} else {
 				wallpaper.id = doc._id;
 				this.formWallpaper = wallpaper;
+				this.wallpapers = [...this.wallpapers, wallpaper];
 			}
 		},
 
