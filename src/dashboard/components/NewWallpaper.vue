@@ -1,5 +1,5 @@
 <template>
-	<div class="options">
+	<div :class="`options ${visible ? ' ' : 'collapsed'}`">
 		<div v-for="option in options" :key="option ? option.label : 0">
 			<div
 				:class="`option${option.class}`"
@@ -15,7 +15,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
+import { useWallpaperStore } from '@/store';
 import { NovaWallpaper } from '@/dashboard/preload';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
@@ -25,7 +26,10 @@ import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
-import { useWallpaperStore } from '@/store';
+const emit = defineEmits(['close']);
+
+const props = defineProps<{ visible: boolean }>();
+
 const store = useWallpaperStore();
 
 type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
@@ -60,6 +64,7 @@ const createWallpaper = async ({ type }: Option) => {
 	if (error || !path || !content) {
 		return console.log({ error });
 	} else if (type !== 'create') {
+		emit('close');
 		store.prepareToAddWallpaper(type, path, content);
 	}
 };
@@ -68,10 +73,14 @@ const createWallpaper = async ({ type }: Option) => {
 <style scoped>
 .options {
 	display: grid;
-	grid-template-columns: 0.95fr 1fr;
+	grid-template-columns: 1fr 1fr;
 	gap: 10px;
-	width: 100%;
-	padding-right: 35px;
+	padding: 0 25px 0 0px;
+	background-color: var(--window-bg);
+	height: 314px;
+	overflow: hidden;
+	opacity: 1;
+	transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .option {
@@ -79,7 +88,18 @@ const createWallpaper = async ({ type }: Option) => {
 	border-radius: 7px;
 	cursor: pointer;
 	padding: 15px 10px 15px;
-	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+	height: 98px;
+	overflow: hidden;
+	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, height 0.3s ease-in-out;
+}
+
+.options.collapsed {
+	height: 0;
+	opacity: 0;
+}
+
+.options.collapsed .option {
+	height: 0;
 }
 
 .option .option-label {

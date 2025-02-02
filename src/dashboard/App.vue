@@ -4,11 +4,12 @@
 	</div>
 	<div class="app">
 		<title-bar v-show="!splashscreen" />
-		<page-header v-show="!splashscreen" @save="save" />
+		<page-header v-show="!splashscreen" :visible="visible" @open="open" @save="save" />
 		<div class="dashboard" v-show="!splashscreen">
-			<div :class="`pages${store.formWallpaper ? ' second-page' : ''}`">
+			<new-wallpaper :visible="visible" @close="open(false)" />
+			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
 				<div class="main">
-					<add-wallpapers />
+					<new-wallpaper :visible="visible" @close="open(false)" />
 				</div>
 				<wallpaper-form ref="form" />
 			</div>
@@ -17,18 +18,24 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef, onMounted, computed } from 'vue';
+import { ref, useTemplateRef, onMounted } from 'vue';
 import { useWallpaperStore } from '@/store';
 const store = useWallpaperStore();
 
 import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
-import AddWallpapers from '@/dashboard/components/AddWallpapers.vue';
+import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
 import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
 
 const splashscreen = ref(true);
 
+const visible = ref(false);
+
 const form = useTemplateRef('form');
+
+const open = (value: boolean) => {
+	visible.value = value;
+};
 
 const save = () => {
 	if (form.value) form.value.save();
@@ -60,7 +67,7 @@ onMounted(() => {
 	transition: transform 0.3s ease-in-out;
 }
 
-#app .app .pages.second-page {
+#app .app .pages.page-2 {
 	transform: translateX(-100vw);
 }
 

@@ -1,21 +1,29 @@
 <template>
 	<div class="header">
-		<h1>{{ store.formWallpaper ? 'Parameters' : 'Add Wallpapers' }}</h1>
+		<h1>{{ store.formWallpaper ? 'Parameters' : 'Wallpapers' }}</h1>
 
 		<div class="right-side">
 			<template v-if="store.formWallpaper">
 				<button class="text-btn" @click="store.discardAdding">Discard</button>
 				<button class="text-btn primary" @click="emit('save')">Save</button>
 			</template>
+
+			<template v-else>
+				<button v-if="visible" class="fixed text-btn" @click="emit('open', false)">Cancel</button>
+				<button v-else class="fixed text-btn primary" @click="emit('open', true)">Add</button>
+			</template>
 		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { defineEmits } from 'vue';
-const emit = defineEmits(['save']);
-
+import { defineProps, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/store';
+
+const emit = defineEmits(['save', 'open']);
+
+const props = defineProps<{ visible: boolean }>();
+
 const store = useWallpaperStore();
 </script>
 
@@ -63,6 +71,10 @@ const store = useWallpaperStore();
 
 .text-btn:hover {
 	background-color: var(--neutral-color-active);
+}
+
+.fixed {
+	width: 85px;
 }
 
 .primary {
