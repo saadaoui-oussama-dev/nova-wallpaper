@@ -1,6 +1,6 @@
 <template>
 	<div :class="`options ${visible ? ' ' : 'collapsed'}`">
-		<div v-for="option in options" :key="option ? option.label : 0">
+		<div v-for="option in options" :key="option.label">
 			<div
 				:class="`option${option.class}`"
 				@mousedown="clicked(option, true)"
@@ -16,12 +16,11 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import { useWallpaperStore } from '@/store';
+import { useWallpaperStore, WallpaperType } from '@/store';
 import { NovaWallpaper } from '@/dashboard/preload';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
-import IconFileVideo from '@/dashboard/icons/IconFileVideo.vue';
 import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
@@ -32,11 +31,10 @@ const props = defineProps<{ visible: boolean }>();
 
 const store = useWallpaperStore();
 
-type Option = { label: string; type: 'image' | 'video' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
+type Option = { label: string; type: 'media' | 'webpage' | 'folder' | 'stickers' | 'create'; class: string };
 
 const icons = {
-	image: IconFileImage,
-	video: IconFileVideo,
+	media: IconFileImage,
 	webpage: IconFileWebpage,
 	folder: IconFolderMedia,
 	stickers: IconFileObjects,
@@ -44,12 +42,11 @@ const icons = {
 };
 
 const options = ref<Option[]>([
-	{ label: 'Import Image', type: 'image', class: '' },
-	{ label: 'Import Carousel Folder', type: 'folder', class: '' },
-	{ label: 'Import Video', type: 'video', class: '' },
 	{ label: 'Import Stickers Wallpaper', type: 'stickers', class: '' },
-	{ label: 'Import Webpage', type: 'webpage', class: '' },
 	{ label: 'Create Stickers Wallpaper', type: 'create', class: '' },
+	{ label: 'Import Image/Video', type: 'media', class: '' },
+	{ label: 'Import Carousel Folder', type: 'folder', class: '' },
+	{ label: 'Import Webpage', type: 'webpage', class: '' },
 ]);
 
 const clicked = (option: Option, isDown: boolean) => {
@@ -65,7 +62,10 @@ const createWallpaper = async ({ type }: Option) => {
 		return console.log({ error });
 	} else if (type !== 'create') {
 		emit('close');
-		store.prepareToAddWallpaper(type, path, content);
+		let selectedType: WallpaperType = 'image';
+		if (path.toLocaleLowerCase().endsWith('.mp4')) selectedType = 'video';
+		else if (path.toLocaleLowerCase().endsWith('.html')) selectedType = 'webpage';
+		store.prepareToAddWallpaper(selectedType, path, content);
 	}
 };
 </script>

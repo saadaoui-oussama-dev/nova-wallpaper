@@ -118,10 +118,9 @@ ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: str
 			});
 		};
 
-		if (action === 'image') return openFile('Images', ['png', 'jpg', 'jpeg']);
-		if (action === 'video') return openFile('Videos', ['mp4']);
-		if (action === 'webpage') return openFile('Webpages', ['html']);
-		if (action === 'executable') return openFile('Programs', ['exe']);
+		if (action === 'media') return openFile('Media', ['png', 'jpg', 'jpeg', 'mp4']);
+		if (action === 'webpage') return openFile('Webpage', ['html']);
+		if (action === 'executable') return openFile('Program File', ['exe']);
 		if (action === 'folder') return openDirectory();
 		resolve({ error: `${action}: This action is not supported` });
 	});

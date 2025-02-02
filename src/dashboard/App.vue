@@ -6,7 +6,6 @@
 		<title-bar v-show="!splashscreen" />
 		<page-header v-show="!splashscreen" :visible="visible" @open="open" @save="save" />
 		<div class="dashboard" v-show="!splashscreen">
-			<new-wallpaper :visible="visible" @close="open(false)" />
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
 				<div class="main">
 					<new-wallpaper :visible="visible" @close="open(false)" />
