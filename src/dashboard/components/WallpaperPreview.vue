@@ -1,56 +1,104 @@
 <template>
-	<div class="render text" v-if="error">
-		<p v-html="error"></p>
-	</div>
-	<div class="render text" v-else-if="!url">
-		<p>Loading...</p>
-	</div>
-	<div :class="`render ${rotateVertical ? 'rotate-vertical' : ''}`" v-else>
-		<video
-			v-if="isVideo"
-			ref="video"
-			class="content"
-			:style="settings"
-			:src="url"
-			:muted="wallpaper.type !== 'video'"
-			autoplay
-			loop
-			playsinline
-		></video>
-		<img v-else class="content" :src="url" :style="settings" />
-		<img class="taskbar" src="/img/taskbar.png" alt="" />
+	<div class="section">
+		<p class="title">
+			Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
+		</p>
+		<div class="column">
+			<div :class="`preview ${settings && settings.taskbar ? 'behind-taskbar' : ''}`" ref="container">
+				<div class="render text" v-if="renderError">
+					<p v-html="renderError"></p>
+				</div>
+				<div class="render text" v-else-if="!base64url">
+					<p>Loading...</p>
+				</div>
+				<div :class="`render ${previewStyles.rotate ? 'rotate-vertical' : ''}`" v-else>
+					<video
+						v-if="isVideo"
+						ref="video"
+						class="content"
+						:style="previewStyles.styles"
+						:src="base64url"
+						:muted="wallpaper.type !== 'video'"
+						autoplay
+						loop
+						playsinline
+					></video>
+					<img v-else class="content" :src="base64url" :style="previewStyles.styles" />
+					<img class="taskbar" src="/img/taskbar.png" alt="" />
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, useTemplateRef, onMounted, computed, watch } from 'vue';
+import { defineProps, defineEmits, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
-import { Wallpaper } from '@/store';
 import { isSupported, replaceFileName } from '@/global/utils';
-import { FilesResponse } from '@/global/channel-types';
+import { FilesResponse, JSONResponse } from '@/global/channel-types';
+import { Wallpaper } from '@/store';
+
+const emit = defineEmits(['setBase64']);
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
-	settings: string;
-	volume: number;
-	preview: string;
+	json?: JSONResponse | null;
+	settings?: { taskbar: boolean; settings: { [key: string]: string | number | boolean } };
+	muted: boolean;
 }>();
 
-const url = ref('');
-const error = ref('');
+// Preview Div Dimensions
+
+const container = useTemplateRef('container');
+
+const dimensions = ref({ width: 1090, height: 1080 });
+
+const areaType = computed(() => ((props.settings || props.wallpaper).taskbar ? 'fullscreen' : 'workarea'));
+
+const setDimensions = async () => {
+	try {
+		if (container.value === null) return;
+		const response = await NovaWallpaper.window.invoke('get-areas');
+		container.value.style.setProperty('--screen-width', `${response.fullscreen.width}`);
+		container.value.style.setProperty('--screen-height', `${response.fullscreen.height}`);
+		container.value.style.setProperty('--taskbar-width', `${response.taskbar.width}`);
+		container.value.style.setProperty('--taskbar-height', `${response.taskbar.height}`);
+		container.value.style.setProperty('--area-width', `${response[areaType.value].width}`);
+		container.value.style.setProperty('--area-height', `${response[areaType.value].height}`);
+		dimensions.value.width = response[areaType.value].width;
+		dimensions.value.height = response[areaType.value].height;
+	} catch {
+		console.log();
+	}
+};
+
+watch(container, setDimensions);
+
+watch(areaType, setDimensions);
+
+// Preview URL
+
+const base64url = ref('');
+
+const renderError = ref('');
+
 const isVideo = ref(false);
 
-const video = useTemplateRef('video');
-const setVolume = () => props.wallpaper.type === 'video' && video.value && (video.value.volume = props.volume / 100);
-onMounted(setVolume);
-watch(video, setVolume);
-watch(() => props.volume, setVolume);
-
 watch(
-	() => props.preview,
+	() => props.json,
 	async () => {
 		try {
-			if (props.wallpaper.type !== 'webpage') return;
+			if (props.wallpaper.type === 'image' || props.wallpaper.type === 'video') {
+				const data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
+				if (data.error) renderError.value = data.error;
+				else if (data.path) {
+					base64url.value = data.path;
+					emit('setBase64', data.path);
+				}
+				isVideo.value = base64url.value.startsWith('data:video') || base64url.value.endsWith('.mp4');
+				return;
+			}
+
 			const data: FilesResponse = { path: '', error: '' };
 			const preview = [
 				['preview', 'png'],
@@ -58,12 +106,15 @@ watch(
 				['preview', 'jpeg'],
 				['preview', 'mp4'],
 			];
-			if (typeof props.preview === 'string' && props.preview && isSupported(props.preview, true)) {
-				const parts = props.preview.split('.');
-				const filename = parts.slice(0, parts.length - 1).join('.');
-				const extension = parts[parts.length - 1];
-				if (filename !== 'preview') preview.unshift([filename, extension]);
+			if (props.json && props.json.data && typeof props.json.data.preview === 'string') {
+				if (props.json.data.preview && isSupported(props.json.data.preview, true)) {
+					const parts = props.json.data.preview.split('.');
+					const filename = parts.slice(0, parts.length - 1).join('.');
+					const extension = parts[parts.length - 1];
+					if (filename !== 'preview') preview.unshift([filename, extension]);
+				}
 			}
+
 			let cursor = 0;
 			while (!data.error && !data.path && cursor < preview.length) {
 				const path = replaceFileName(props.wallpaper.path, { name: preview[cursor][0], extension: preview[cursor][1] });
@@ -75,38 +126,55 @@ watch(
 			if (cursor === preview.length)
 				data.error =
 					'<p>Webpages can only be<br />rendered, not previewed.</p><p style="margin-top: 5px; opacity: 0.5">You can include a preview.png file<br />alongside the HTML file.</p>';
-			if (data.error) error.value = data.error;
-			else if (data.path) url.value = data.path;
-			isVideo.value = url.value.startsWith('data:video') || url.value.endsWith('.mp4');
+			if (data.error) renderError.value = data.error;
+			else if (data.path) {
+				base64url.value = data.path;
+				emit('setBase64', data.path);
+			}
+			isVideo.value = base64url.value.startsWith('data:video') || base64url.value.endsWith('.mp4');
 		} catch {
-			url.value = '';
+			base64url.value = '';
 		}
 	}
 );
 
-onMounted(async () => {
-	try {
-		if (props.wallpaper.type === 'webpage') return;
-		const data = await NovaWallpaper.files.invoke('get-url', props.wallpaper.path);
-		if (data.error) error.value = data.error;
-		else if (data.path) url.value = data.path;
-		isVideo.value = url.value.startsWith('data:video') || url.value.endsWith('.mp4');
-	} catch (e) {
-		url.value = '';
-	}
+// Preview Options
+
+const previewStyles = computed(() => {
+	if (!['image', 'video'].includes(props.wallpaper.type)) return { styles: '', rotate: false };
+	const styles = Object.entries((props.settings || props.wallpaper).settings)
+		.map(([key, value]) => (key === 'flip' ? `--flip: ${value ? 180 : 0}` : `--${key}: ${value}`))
+		.join('; ');
+	return { styles, rotate: styles.includes('--rotate: 90') || styles.includes('--rotate: -90') };
 });
 
-const rotateVertical = computed(
-	() => props.settings.includes('--rotate: 90') || props.settings.includes('--rotate: -90')
-);
+const volume = computed(() => {
+	if (props.muted || props.wallpaper.type !== 'video') return 0;
+	return Number((props.settings || props.wallpaper).settings.volume) || 0;
+});
+
+const video = useTemplateRef('video');
+
+const setVolume = () => props.wallpaper.type === 'video' && video.value && (video.value.volume = volume.value / 100);
+
+onMounted(setVolume);
+
+watch(video, setVolume);
+
+watch(volume, setVolume);
 </script>
 
 <style scoped>
+.preview {
+	width: fit-content;
+	margin-inline: auto;
+	border: 1px solid var(--window-border);
+}
+
 .render {
-	--width: 300;
 	overflow: hidden;
 	position: relative;
-	width: calc(var(--width) * 1px);
+	width: calc(var(--width, 300) * 1px);
 	aspect-ratio: var(--screen-width, 1920) / var(--screen-height, 1080);
 }
 
@@ -126,14 +194,14 @@ const rotateVertical = computed(
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: calc(var(--width) * 1px);
-	height: calc((var(--area-height, 1033) + 1) * 1px * var(--width) / var(--area-width, 1920));
+	width: calc(var(--width, 300) * 1px);
+	height: calc((var(--area-height, 1033) + 1) * 1px * var(--width, 300) / var(--area-width, 1920));
 	display: block;
 	object-fit: cover;
 	transform: translate(
 			-50%,
 			calc(
-				-50% - (var(--screen-height, 1080) - var(--area-height, 1033) - 1) * 0.5px * var(--width) / var(--screen-width, 1920)
+				-50% - (var(--screen-height, 1080) - var(--area-height, 1033) - 1) * 0.5px * var(--width, 300) / var(--screen-width, 1920)
 			)
 		)
 		rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
@@ -142,8 +210,8 @@ const rotateVertical = computed(
 }
 
 .rotate-vertical .content {
-	height: calc(var(--width) * 1px);
-	width: calc((var(--area-height, 1033) + 1) * 1px * var(--width) / var(--area-width, 1920));
+	height: calc(var(--width, 300) * 1px);
+	width: calc((var(--area-height, 1033) + 1) * 1px * var(--width, 300) / var(--area-width, 1920));
 }
 
 img.content {
@@ -155,7 +223,7 @@ img.content {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: calc((var(--taskbar-height, 47)) * 1px * var(--width) / var(--screen-width, 1920));
+	height: calc((var(--taskbar-height, 47)) * 1px * var(--width, 300) / var(--screen-width, 1920));
 	background-color: #e2eef9;
 	object-fit: contain;
 }

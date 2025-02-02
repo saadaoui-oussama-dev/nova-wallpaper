@@ -1,6 +1,6 @@
 <template>
 	<div class="wallpaper-form" v-if="wallpaper">
-		<wallpaper-preview :wallpaper="wallpaper" :json="wallpaperJSON" :settings="settings" />
+		<wallpaper-preview :wallpaper="wallpaper" :json="wallpaperJSON" :settings="settings" :muted="false" />
 		<div class="section">
 			<p class="title">Name:</p>
 			<div class="column">
@@ -25,7 +25,7 @@ import { getFileName, replaceFileName } from '@/global/utils';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { JSONResponse } from '@/global/channel-types';
 
-import WallpaperPreview from '@/dashboard/form/WallpaperPreview.vue';
+import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
 import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
 import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
