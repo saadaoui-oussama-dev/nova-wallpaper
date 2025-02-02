@@ -1,6 +1,6 @@
 <template>
 	<div class="wallpaper-form" v-if="wallpaper">
-		<wallpaper-preview :wallpaper="wallpaper" :json="wallpaperJSON" :settings="settings" :muted="false" />
+		<wallpaper-preview :wallpaper="wallpaper" :settings="settings" :muted="false" />
 		<div class="section">
 			<p class="title">Name:</p>
 			<div class="column">
@@ -19,10 +19,7 @@
 <script lang="ts" setup>
 import { ref, watch, defineExpose } from 'vue';
 import { useWallpaperStore, Wallpaper, Settings, Permission, Query } from '@/store';
-const store = useWallpaperStore();
-
-import { getFileName, replaceFileName } from '@/global/utils';
-import { NovaWallpaper } from '@/dashboard/preload';
+import { getFileName } from '@/global/utils';
 import { JSONResponse } from '@/global/channel-types';
 
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
@@ -30,9 +27,11 @@ import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
 import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
 import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
 
+const store = useWallpaperStore();
+
 const wallpaperJSON = ref<JSONResponse | null>(null);
 
-let wallpaper = ref<Wallpaper | null>(null);
+const wallpaper = ref<Wallpaper | null>(null);
 
 const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) : '');
 
@@ -53,30 +52,13 @@ watch(wallpaper, async () => {
 	if (!wallpaper.value) {
 		wallpaperJSON.value = null;
 		label.value = '';
-		return;
-	}
-
-	label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
-
-	if (wallpaper.value.type === 'image' || wallpaper.value.type === 'video') {
-		await new Promise((resolve) => setTimeout(resolve, 1));
-		wallpaperJSON.value = { valid: true, exist: true, data: { settings: ['media-settings'] } };
-	} else if (wallpaper.value.type === 'webpage') {
-		try {
-			const filename = replaceFileName(wallpaper.value.path, { name: 'settings', extension: 'json' });
-			const res = await NovaWallpaper.json.invoke('read', filename);
-			if (res.valid) wallpaperJSON.value = res;
-		} catch {
-			wallpaperJSON.value = null;
-			return;
-		}
+	} else {
+		label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
+		wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
 	}
 });
 
-const settings = ref<{ taskbar: boolean; settings: Settings }>({
-	taskbar: false,
-	settings: {},
-});
+const settings = ref<{ taskbar: boolean; settings: Settings }>({ taskbar: false, settings: {} });
 
 const permissions = ref<Permission[]>([]);
 
