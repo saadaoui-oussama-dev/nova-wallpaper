@@ -38,18 +38,14 @@ const taskbarSetting = ref<ToggleOption>({
 	value: false,
 });
 
-const setMediaSettings = () => {
-	if (props.wallpaper.type === 'image') setSettings(imageSettings);
-	else if (props.wallpaper.type === 'video') setSettings(videoSettings);
-};
-onMounted(setMediaSettings);
-watch(() => props.wallpaper, setMediaSettings);
-
 watch(
 	() => props.json,
 	() => {
-		if (!props.json || !props.json.data || props.wallpaper.type !== 'webpage') return setSettings(null);
-		if (!Array.isArray(props.json.data['settings']) || !props.json.data['settings'].length) return setSettings(null);
+		if (!props.json || !props.json.data || !Array.isArray(props.json.data.settings) || !props.json.data.settings.length)
+			return setSettings(null);
+		if (props.wallpaper.type === 'image') return setSettings(imageSettings);
+		else if (props.wallpaper.type === 'video') return setSettings(videoSettings);
+
 		const properties = props.json.data.settings.map((opt: OptionType) => {
 			if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof opt.label !== 'string') return;
 			if (opt.type.toLocaleLowerCase().trim() === 'checkbox') {

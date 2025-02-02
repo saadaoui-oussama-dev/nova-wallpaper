@@ -13,6 +13,7 @@
 			<wallpaper-query-params :wallpaper="wallpaper" :json="wallpaperJSON" @change="setQueryParams" />
 		</template>
 	</div>
+	<div v-else></div>
 </template>
 
 <script lang="ts" setup>
@@ -56,7 +57,11 @@ watch(wallpaper, async () => {
 	}
 
 	label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
-	if (wallpaper.value.type === 'webpage') {
+
+	if (wallpaper.value.type === 'image' || wallpaper.value.type === 'video') {
+		await new Promise((resolve) => setTimeout(resolve, 1));
+		wallpaperJSON.value = { valid: true, exist: true, data: { settings: ['media-settings'] } };
+	} else if (wallpaper.value.type === 'webpage') {
 		try {
 			const filename = replaceFileName(wallpaper.value.path, { name: 'settings', extension: 'json' });
 			const res = await NovaWallpaper.json.invoke('read', filename);

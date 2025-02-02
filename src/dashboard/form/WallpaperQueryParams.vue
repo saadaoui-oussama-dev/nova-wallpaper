@@ -2,7 +2,7 @@
 	<div class="section" v-if="queryParams.length">
 		<div class="title-container">
 			<p class="title">Query parameters:</p>
-			<button v-if="false" class="icon-btn" @click="addQueryParameter"><icon-add small /> Add</button>
+			<button v-if="false" class="icon-btn" @click="addQueryParameter"><icon-add /> Add</button>
 		</div>
 		<div class="column" ref="list">
 			<div v-for="(param, index) in queryParams" :key="index" class="query-param-row">
