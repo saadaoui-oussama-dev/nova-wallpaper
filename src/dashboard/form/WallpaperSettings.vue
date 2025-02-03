@@ -17,12 +17,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, computed, onMounted, ref, watch } from 'vue';
-import SettingsOption from '@/dashboard/components/SettingOption.vue';
+import { defineProps, defineEmits, computed, ref, watch } from 'vue';
+import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
 import { Settings, OptionType, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
-import { JSONResponse } from '@/global/channel-types';
-import { Wallpaper } from '@/store';
+import { JSONResponse } from '@/dashboard/channels';
+import { Wallpaper } from '@/dashboard/store';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;

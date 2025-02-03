@@ -5,7 +5,7 @@
 			:key="wallpaper.id"
 			class="card"
 			:class="{ active: wallpaper.id === store.activeWallpaper }"
-			@click="store.setActiveWallpaper(wallpaper.id)"
+			@click="store.setActiveWallpaper(wallpaper)"
 		>
 			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
 
@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useWallpaperStore, Wallpaper } from '@/store';
+import { useWallpaperStore, Wallpaper } from '@/dashboard/store';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 
 const store = useWallpaperStore();

@@ -1,7 +1,7 @@
 const { app, screen } = require('electron');
 const { join } = require('path');
 const { statSync } = require('fs');
-import { WindowResponse } from '@/global/channel-types';
+import { WindowResponse } from '@/dashboard/channels';
 
 export * from '@/global/utils';
 

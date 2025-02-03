@@ -24,8 +24,8 @@
 import { defineProps, defineEmits, useTemplateRef, ref, watch } from 'vue';
 import IconAdd from '@/dashboard/icons/IconAdd.vue';
 import IconDelete from '@/dashboard/icons/IconDelete.vue';
-import { JSONResponse } from '@/global/channel-types';
-import { Wallpaper, Query } from '@/store';
+import { JSONResponse } from '@/dashboard/channels';
+import { Wallpaper, Query } from '@/dashboard/store';
 
 const queryParams = ref<Query[]>([]);
 

@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, onMounted } from 'vue';
-import { useWallpaperStore } from '@/store';
+import { useWallpaperStore } from '@/dashboard/store';
 const store = useWallpaperStore();
 
 import TitleBar from '@/dashboard/components/TitleBar.vue';

@@ -4,8 +4,8 @@ import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
 import { readJson, writeJSON } from '@/global/json';
-import { openDatabase } from '@/store/database';
-import * as Channels from '@/global/channel-types';
+import { openDatabase } from '@/global/database';
+import * as Channels from '@/dashboard/channels';
 
 let dashboard: BrowserWindow | undefined;
 

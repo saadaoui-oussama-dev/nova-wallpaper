@@ -21,8 +21,8 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, watch } from 'vue';
-import { JSONResponse } from '@/global/channel-types';
-import { Wallpaper, Permission } from '@/store';
+import { JSONResponse } from '@/dashboard/channels';
+import { Wallpaper, Permission } from '@/dashboard/store';
 import { NovaWallpaper } from '../preload';
 
 const permissions = ref<Permission[]>([]);

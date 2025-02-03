@@ -1,4 +1,4 @@
-import * as Channels from '@/global/channel-types';
+import * as Channels from '@/dashboard/channels';
 
 type SendActionNotSupported = 'throw-error' | 'send-is-not-supported';
 

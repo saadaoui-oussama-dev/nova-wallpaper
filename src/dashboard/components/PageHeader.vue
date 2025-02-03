@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue';
-import { useWallpaperStore } from '@/store';
+import { useWallpaperStore } from '@/dashboard/store';
 
 const emit = defineEmits(['save', 'open']);
 

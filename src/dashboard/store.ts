@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { isSupported, replaceFileName } from '@/global/utils';
-import { FilesContentResponse, FilesResponse, JSONResponse } from '@/global/channel-types';
+import { FilesContentResponse, FilesResponse, JSONResponse } from '@/dashboard/channels';
 
 export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
 
@@ -85,10 +85,10 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
-		async setActiveWallpaper(id: string) {
+		async setActiveWallpaper(wallpaper: Wallpaper) {
 			try {
-				const { doc } = await NovaWallpaper.database.invoke('update', 'active', { value: id });
-				if (doc === 0) await NovaWallpaper.database.invoke('insert', 'active', { value: id });
+				const { doc } = await NovaWallpaper.database.invoke('update', 'active', { value: wallpaper.id });
+				if (doc === 0) await NovaWallpaper.database.invoke('insert', 'active', { value: wallpaper.id });
 				await this.readData();
 			} catch {
 				console.log();

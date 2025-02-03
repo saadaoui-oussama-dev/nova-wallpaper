@@ -18,9 +18,9 @@
 
 <script lang="ts" setup>
 import { ref, watch, defineExpose } from 'vue';
-import { useWallpaperStore, Wallpaper, Settings, Permission, Query } from '@/store';
+import { useWallpaperStore, Wallpaper, Settings, Permission, Query } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
-import { JSONResponse } from '@/global/channel-types';
+import { JSONResponse } from '@/dashboard/channels';
 
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
