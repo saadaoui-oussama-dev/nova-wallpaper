@@ -72,6 +72,7 @@ const createWallpaper = async ({ type }: Option) => {
 
 <style scoped>
 .options {
+	width: 460px;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 10px;
