@@ -38,6 +38,19 @@ export const useWallpaperStore = defineStore('wallpaper', {
 	}),
 
 	actions: {
+		async readWallpapers() {
+			try {
+				const response = await NovaWallpaper.database.invoke('read', 'wallpaper');
+				if (Array.isArray(response.doc)) {
+					response.doc.forEach((wallpaper: Wallpaper) => {
+						if (this.wallpapers.every((w) => wallpaper.id !== w.id)) this.wallpapers.push(wallpaper);
+					});
+				}
+			} catch {
+				console.log();
+			}
+		},
+
 		prepareToAddWallpaper(type: WallpaperType, path: string, content: FilesContentResponse[]) {
 			this.formWallpaper = {
 				id: '',
@@ -67,9 +80,9 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			if (error) {
 				console.log({ error });
 			} else {
-				wallpaper.id = doc._id;
+				wallpaper.id = doc.id;
 				this.formWallpaper = wallpaper;
-				this.wallpapers = [...this.wallpapers, wallpaper];
+				this.wallpapers = [...this.wallpapers, { ...wallpaper }];
 			}
 		},
 

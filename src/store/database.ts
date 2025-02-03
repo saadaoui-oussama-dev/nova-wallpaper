@@ -5,7 +5,8 @@ const NeDB = require('nedb');
 import { DatabaseResponse } from '@/global/channel-types';
 
 type DatabaseInterface = {
-	insert: (data: { [key: string]: any }) => Promise<DatabaseResponse>;
+	insert: (table: string, data: { [key: string]: any }) => Promise<DatabaseResponse>;
+	read: (table: string, query?: { [key: string]: any }) => Promise<DatabaseResponse>;
 };
 
 let db: any;
@@ -16,17 +17,30 @@ export const openDatabase = (): DatabaseInterface => {
 	const dbPath = path.join(app.getPath('userData'), 'data.db');
 	db = new NeDB({ filename: dbPath, autoload: true });
 	dbInterface = {
-		insert(data: { [key: string]: any }): Promise<DatabaseResponse> {
+		insert(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
 			return new Promise<DatabaseResponse>((resolve) => {
-				db.insert(data, function (error: Error | string, newDoc: any) {
+				db.insert({ table, data }, function (error: Error | string, newDoc: any) {
 					if (error) {
 						resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
 					} else {
-						resolve({ doc: newDoc, error: '' });
+						resolve({ doc: { ...data, id: newDoc._id }, error: '' });
+					}
+				});
+			});
+		},
+
+		read(table: string, query: { [key: string]: any } = {}): Promise<DatabaseResponse> {
+			return new Promise<DatabaseResponse>((resolve) => {
+				db.find({ ...query, table }, (error: Error | string, rows: { data: { [key: string]: any }; _id: string }[]) => {
+					if (error) {
+						resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
+					} else {
+						resolve({ doc: rows.map(({ data, _id }) => ({ ...data, id: _id })), error: '' });
 					}
 				});
 			});
 		},
 	};
+
 	return dbInterface;
 };

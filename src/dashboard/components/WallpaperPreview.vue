@@ -1,6 +1,6 @@
 <template>
 	<div class="section">
-		<p class="title">
+		<p v-if="!onlyPreview" class="title">
 			Preview: <span class="suffix">({{ dimensions.width }} * {{ dimensions.height }})</span>
 		</p>
 		<div class="column">
@@ -44,6 +44,7 @@ const props = defineProps<{
 	wallpaper: Wallpaper;
 	settings?: { taskbar: boolean; settings: { [key: string]: string | number | boolean } };
 	muted: boolean;
+	onlyPreview?: boolean;
 }>();
 
 // Preview Div Dimensions
@@ -96,9 +97,9 @@ const setURL = async () => {
 	}
 };
 
-onMounted(() => store.data[props.wallpaper.path] && setURL());
+onMounted(() => store.data && setURL());
 
-watch(() => store.data[props.wallpaper.path], setURL);
+watch(() => store.data, setURL);
 
 // Preview Options
 
@@ -155,7 +156,7 @@ watch(volume, setVolume);
 	top: 50%;
 	left: 50%;
 	width: calc(var(--width, 300) * 1px);
-	height: calc((var(--area-height, 1033) + 1) * 1px * var(--width, 300) / var(--area-width, 1920));
+	height: calc((var(--area-height, 1033) + 2) * 1px * var(--width, 300) / var(--area-width, 1920));
 	display: block;
 	object-fit: cover;
 	transform: translate(
@@ -171,7 +172,7 @@ watch(volume, setVolume);
 
 .rotate-vertical .content {
 	height: calc(var(--width, 300) * 1px);
-	width: calc((var(--area-height, 1033) + 1) * 1px * var(--width, 300) / var(--area-width, 1920));
+	width: calc((var(--area-height, 1033) + 2) * 1px * var(--width, 300) / var(--area-width, 1920));
 }
 
 img.content {

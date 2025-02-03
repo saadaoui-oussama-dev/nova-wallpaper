@@ -76,6 +76,7 @@ const createWallpaper = async ({ type }: Option) => {
 	grid-template-columns: 1fr 1fr;
 	gap: 10px;
 	padding: 0 25px 0 0px;
+	margin-bottom: 40px;
 	background-color: var(--window-bg);
 	height: 314px;
 	overflow: hidden;

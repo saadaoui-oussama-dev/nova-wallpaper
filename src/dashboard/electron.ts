@@ -71,12 +71,16 @@ ipcMain.handle('json', (_, action: Channels.JSONInvokeAction, filename: string, 
 	});
 });
 
-ipcMain.handle('database', (_, action: Channels.DatabaseInvokeAction, table: string, content: any) => {
-	return new Promise<Channels.DatabaseResponse>((resolve) => {
-		if (action === 'insert') return resolve(openDatabase().insert({ ...content, table }));
-		resolve({ doc: null, error: `${action}: This action is not supported` });
-	});
-});
+ipcMain.handle(
+	'database',
+	(_, action: Channels.DatabaseInvokeAction, table: string, dataOrQuery: { [key: string]: any }) => {
+		return new Promise<Channels.DatabaseResponse>((resolve) => {
+			if (action === 'insert') return resolve(openDatabase().insert(table, dataOrQuery));
+			if (action === 'read') return resolve(openDatabase().read(table, dataOrQuery));
+			resolve({ doc: null, error: `${action}: This action is not supported` });
+		});
+	}
+);
 
 ipcMain.handle('files', async (_, action: Channels.FilesInvokeAction, path?: string, onlyFolder?: boolean) => {
 	return new Promise<Channels.FilesResponse>((resolve) => {

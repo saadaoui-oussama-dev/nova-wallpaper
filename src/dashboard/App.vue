@@ -9,6 +9,7 @@
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
 				<div class="main">
 					<new-wallpaper :visible="visible" @close="open(false)" />
+					<wallpapers-list />
 				</div>
 				<wallpaper-form ref="form" />
 			</div>
@@ -23,6 +24,7 @@ const store = useWallpaperStore();
 
 import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
+import WallpapersList from '@/dashboard/components/WallpapersList.vue';
 import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
 import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
 
@@ -40,9 +42,11 @@ const save = () => {
 	if (form.value) form.value.save();
 };
 
-onMounted(() => {
-	setTimeout(() => document.body.classList.add('ready'), 2000);
-	setTimeout(() => (splashscreen.value = false), 3000);
+onMounted(async () => {
+	await Promise.all([store.readWallpapers(), new Promise((resolve) => setTimeout(resolve, 1500))]);
+	if (!store.wallpapers.length) visible.value = true;
+	document.body.classList.add('ready');
+	setTimeout(() => (splashscreen.value = false), 1000);
 });
 </script>
 
@@ -62,7 +66,7 @@ onMounted(() => {
 	width: 200vw;
 	height: 100%;
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: 1fr 1fr;
 	transition: transform 0.3s ease-in-out;
 }
 

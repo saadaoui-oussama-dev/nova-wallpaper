@@ -78,6 +78,7 @@ const save = async () => {
 	label.value = getFileName(label.value, 'nameOnly', 30);
 	const ref = {
 		...wallpaper.value,
+		id: '',
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },

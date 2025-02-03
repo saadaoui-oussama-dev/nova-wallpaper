@@ -97,7 +97,7 @@ input.executable {
 	color: var(--text-color);
 	background-color: var(--neutral-color);
 	border: none;
-	border-radius: 3px;
+	border-radius: 4px;
 	cursor: pointer;
 	font-weight: 100;
 	height: calc(100% - 8px);
