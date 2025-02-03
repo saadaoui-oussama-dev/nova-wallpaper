@@ -1,6 +1,6 @@
 <template>
 	<div class="section" v-if="permissions.length">
-		<p class="title">Permissions: <span class="suffix">(Grant access (only) to open/execute files)</span></p>
+		<p class="title">Permissions: <span class="suffix">(Grant access { only } to open/execute files)</span></p>
 		<div class="column" ref="list">
 			<div v-for="(option, index) in permissions" :key="index" class="permission-row">
 				<p style="width: 40%">{{ option.label }}</p>
