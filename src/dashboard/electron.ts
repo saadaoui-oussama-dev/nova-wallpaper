@@ -55,6 +55,10 @@ events.$on('dashboard', (action: string) => {
 	}
 });
 
+events.$on('active-changed', () => {
+	if (dashboard) dashboard.webContents.send('refresh', 'database');
+});
+
 ipcMain.on('window', (_, action: Channels.WindowSendAction) => {
 	if (['close', 'minimize'].includes(action)) return events.$emit('dashboard', action);
 });
@@ -75,10 +79,12 @@ ipcMain.handle(
 	'database',
 	(_, action: Channels.DatabaseInvokeAction, table: string, dataOrQuery: { [key: string]: any }) => {
 		return new Promise<Channels.DatabaseResponse>((resolve) => {
-			if (action === 'insert') return resolve(openDatabase().insert(table, dataOrQuery));
 			if (action === 'read') return resolve(openDatabase().read(table, dataOrQuery));
-			if (action === 'update') return resolve(openDatabase().update(table, dataOrQuery));
-			resolve({ doc: null, error: `${action}: This action is not supported` });
+			else if (action !== 'insert' && action !== 'update')
+				return resolve({ doc: null, error: `${action}: This action is not supported` });
+			if (action === 'insert') resolve(openDatabase().insert(table, dataOrQuery));
+			else if (action === 'update') resolve(openDatabase().update(table, dataOrQuery));
+			events.$emit('reloadMenu');
 		});
 	}
 );

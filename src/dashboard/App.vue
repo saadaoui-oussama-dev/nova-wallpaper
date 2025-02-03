@@ -19,6 +19,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, onMounted } from 'vue';
+import { NovaWallpaper } from '@/dashboard/preload';
 import { useWallpaperStore } from '@/dashboard/store';
 const store = useWallpaperStore();
 
@@ -43,6 +44,7 @@ const save = () => {
 };
 
 onMounted(async () => {
+	NovaWallpaper.database.on('refresh', () => store.readData());
 	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) visible.value = true;
 	document.body.classList.add('ready');

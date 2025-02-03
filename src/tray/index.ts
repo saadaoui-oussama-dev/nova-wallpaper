@@ -1,6 +1,7 @@
 const { Tray, Menu } = require('electron');
 import { events, joinPublic, MenuOption } from '@/global/electron-utils';
 import { renderControls } from '@/tray/controls';
+import { renderFavorites } from '@/tray/favorites';
 
 let tray: Electron.Tray;
 
@@ -13,8 +14,9 @@ export const createTray = () => {
 
 	events.$on('renderMenu', (options: MenuOption[]) => tray.setContextMenu(Menu.buildFromTemplate(options)));
 
-	events.$on('reloadMenu', () => {
+	events.$on('reloadMenu', async () => {
 		const options: MenuOption[] = [];
+		if (!(await renderFavorites(options))) return;
 		renderControls(options);
 		events.$emit('renderMenu', options);
 	});

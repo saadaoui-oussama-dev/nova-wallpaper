@@ -16,6 +16,7 @@ export const openDatabase = () => {
 	const db = new NeDB({ filename: dbPath, autoload: true });
 	database = {
 		read(table: string, query: { [key: string]: any } = {}): Promise<DatabaseResponse> {
+			query = Object.fromEntries(Object.entries(query).map(([k, v]) => [`data.${k}`, v]));
 			return new Promise<DatabaseResponse>((resolve) => {
 				db.find({ ...query, table })
 					.sort({ createdAt: -1 })
