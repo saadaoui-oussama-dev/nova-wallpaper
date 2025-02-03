@@ -77,6 +77,7 @@ ipcMain.handle(
 		return new Promise<Channels.DatabaseResponse>((resolve) => {
 			if (action === 'insert') return resolve(openDatabase().insert(table, dataOrQuery));
 			if (action === 'read') return resolve(openDatabase().read(table, dataOrQuery));
+			if (action === 'update') return resolve(openDatabase().update(table, dataOrQuery));
 			resolve({ doc: null, error: `${action}: This action is not supported` });
 		});
 	}

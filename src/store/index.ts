@@ -25,6 +25,7 @@ export type Wallpaper = {
 };
 
 export interface State {
+	activeWallpaper: string;
 	wallpapers: Wallpaper[];
 	data: { [key: string]: { preview: Promise<FilesResponse> | null; json: Promise<JSONResponse> | null } };
 	formWallpaper: Wallpaper | null;
@@ -32,20 +33,23 @@ export interface State {
 
 export const useWallpaperStore = defineStore('wallpaper', {
 	state: (): State => ({
+		activeWallpaper: '',
 		wallpapers: [],
 		data: {},
 		formWallpaper: null,
 	}),
 
 	actions: {
-		async readWallpapers() {
+		async readData() {
 			try {
-				const response = await NovaWallpaper.database.invoke('read', 'wallpaper');
-				if (Array.isArray(response.doc)) {
-					response.doc.forEach((wallpaper: Wallpaper) => {
+				const { doc } = await NovaWallpaper.database.invoke('read', 'wallpaper');
+				if (Array.isArray(doc)) {
+					doc.forEach((wallpaper: Wallpaper) => {
 						if (this.wallpapers.every((w) => wallpaper.id !== w.id)) this.wallpapers.push(wallpaper);
 					});
 				}
+				const { doc: active } = await NovaWallpaper.database.invoke('read', 'active');
+				this.activeWallpaper = active[0].value;
 			} catch {
 				console.log();
 			}
@@ -76,12 +80,22 @@ export const useWallpaperStore = defineStore('wallpaper', {
 		},
 
 		async addWallpaper(wallpaper: Wallpaper) {
-			const { doc, error } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
-			if (error) {
-				console.log({ error });
-			} else {
-				this.wallpapers = [{ ...wallpaper, id: doc.id }, ...this.wallpapers];
+			try {
+				const { doc } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
 				this.formWallpaper = null;
+				await this.setActiveWallpaper(doc.id);
+			} catch {
+				console.log();
+			}
+		},
+
+		async setActiveWallpaper(id: string) {
+			try {
+				const { doc } = await NovaWallpaper.database.invoke('update', 'active', { value: id });
+				if (doc === 0) await NovaWallpaper.database.invoke('insert', 'active', { value: id });
+				await this.readData();
+			} catch {
+				console.log();
 			}
 		},
 

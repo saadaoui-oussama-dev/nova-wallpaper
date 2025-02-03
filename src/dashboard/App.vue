@@ -43,7 +43,7 @@ const save = () => {
 };
 
 onMounted(async () => {
-	await Promise.all([store.readWallpapers(), new Promise((resolve) => setTimeout(resolve, 1500))]);
+	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) visible.value = true;
 	document.body.classList.add('ready');
 	setTimeout(() => (splashscreen.value = false), 1000);

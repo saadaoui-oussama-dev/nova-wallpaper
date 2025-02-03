@@ -1,12 +1,11 @@
 <template>
-	<div v-if="wallpapers.length === 0" class="empty-state">List is empty</div>
-	<div v-else class="wallpapers">
+	<div v-if="wallpapers.length !== 0" class="wallpapers">
 		<div
 			v-for="wallpaper in wallpapers"
 			:key="wallpaper.id"
 			class="card"
-			:class="{ active: wallpaper.id === activeWallpaperId }"
-			@click="setActive(wallpaper.id)"
+			:class="{ active: wallpaper.id === store.activeWallpaper }"
+			@click="store.setActiveWallpaper(wallpaper.id)"
 		>
 			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
 
@@ -25,18 +24,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useWallpaperStore, Wallpaper } from '@/store';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 
 const store = useWallpaperStore();
 const wallpapers = computed(() => store.wallpapers);
-const activeWallpaperId = ref<string | null>(null);
-
-const setActive = (id: string) => {
-	activeWallpaperId.value = id;
-	console.log('Active wallpaper:', id);
-};
 
 const toggleFavorite = (wallpaper: Wallpaper) => {
 	wallpaper.favorite = !wallpaper.favorite;
@@ -111,12 +104,6 @@ const editWallpaper = (wallpaper: Wallpaper) => {
 }
 
 .edit {
-	font-size: 16px;
-}
-
-.empty-state {
-	text-align: center;
-	color: #aaa;
 	font-size: 16px;
 }
 </style>

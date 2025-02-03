@@ -18,6 +18,6 @@ export type JSONInvokeAction = 'read' | 'write';
 
 export type JSONResponse = { exist: boolean; valid: boolean; data: any };
 
-export type DatabaseInvokeAction = 'read' | 'insert';
+export type DatabaseInvokeAction = 'read' | 'insert' | 'update';
 
 export type DatabaseResponse = { doc: any; error: string };
