@@ -10,7 +10,7 @@
 			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
 
 			<div class="info">
-				<span class="label">{{ wallpaper.label }}</span>
+				<span class="label">{{ getFileName(`${wallpaper.label || ''}`, 'name', 25) }}</span>
 				<div class="actions">
 					<button class="icon-btn star" @click.stop="store.toggleFavorite(wallpaper)">
 						{{ wallpaper.favorite ? '★' : '☆' }}
@@ -27,6 +27,7 @@
 import { computed } from 'vue';
 import { useWallpaperStore, Wallpaper } from '@/dashboard/store';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
+import { getFileName } from '@/global/utils';
 
 const store = useWallpaperStore();
 const wallpapers = computed(() => store.wallpapers);

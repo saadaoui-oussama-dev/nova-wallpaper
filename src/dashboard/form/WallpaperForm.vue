@@ -4,7 +4,7 @@
 		<div class="section">
 			<p class="title">Name:</p>
 			<div class="column">
-				<input v-model="label" placeholder="Wallpaper Label" maxlength="30" />
+				<input v-model="label" placeholder="Wallpaper Label" maxlength="25" />
 			</div>
 		</div>
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
@@ -33,9 +33,9 @@ const wallpaperJSON = ref<JSONResponse | null>(null);
 
 const wallpaper = ref<Wallpaper | null>(null);
 
-const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 30) : '');
+const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 25) : '');
 
-watch(label, () => (label.value = getFileName(label.value, 'name', 30, false)));
+watch(label, () => (label.value = getFileName(label.value, 'name', 25, false)));
 
 watch(
 	() => store.formWallpaper,
@@ -49,14 +49,14 @@ watch(
 			wallpaperJSON.value = null;
 			label.value = '';
 		} else {
-			label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
+			label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 25) || '';
 			wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
 			if (wallpaperJSON.value.valid) {
 				if (typeof wallpaperJSON.value.data.name !== 'string') wallpaperJSON.value.data.name = '';
 				if (typeof wallpaperJSON.value.data.label !== 'string') wallpaperJSON.value.data.label = '';
 				const { name, label: l } = wallpaperJSON.value.data;
 				label.value =
-					wallpaper.value.label || getFileName(l, 'name', 30) || getFileName(name, 'name', 30) || label.value;
+					wallpaper.value.label || getFileName(l, 'name', 25) || getFileName(name, 'name', 25) || label.value;
 			}
 		}
 	}
@@ -79,7 +79,7 @@ const saving = ref<boolean>(false);
 const save = async () => {
 	if (saving.value || !wallpaper.value) return;
 	saving.value = true;
-	label.value = getFileName(label.value, 'name', 30);
+	label.value = getFileName(label.value, 'name', 25);
 	await store.addWallpaper({
 		...wallpaper.value,
 		label: label.value,
