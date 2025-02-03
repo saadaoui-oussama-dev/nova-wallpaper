@@ -81,7 +81,7 @@ const createWallpaper = async ({ type }: Option) => {
 	height: 314px;
 	overflow: hidden;
 	opacity: 1;
-	transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+	transition: margin-bottom 0.3s ease-in-out, opacity 0.3s ease-in-out, height 0.3s ease-in-out;
 }
 
 .option {
@@ -97,6 +97,7 @@ const createWallpaper = async ({ type }: Option) => {
 .options.collapsed {
 	height: 0;
 	opacity: 0;
+	margin-bottom: 0px;
 }
 
 .options.collapsed .option {

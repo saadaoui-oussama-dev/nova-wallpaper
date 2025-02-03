@@ -80,9 +80,8 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			if (error) {
 				console.log({ error });
 			} else {
-				wallpaper.id = doc.id;
-				this.formWallpaper = wallpaper;
-				this.wallpapers = [...this.wallpapers, { ...wallpaper }];
+				this.wallpapers = [{ ...wallpaper, id: doc.id }, ...this.wallpapers];
+				this.formWallpaper = null;
 			}
 		},
 

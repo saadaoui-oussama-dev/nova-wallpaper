@@ -39,24 +39,21 @@ watch(label, () => (label.value = getFileName(label.value, 'nameOnly', 30, false
 
 watch(
 	() => store.formWallpaper,
-	() => (wallpaper.value = store.formWallpaper)
-);
+	async () => {
+		wallpaper.value = store.formWallpaper;
+		setSettings({ taskbar: false, settings: {} });
+		setPermissions([]);
+		setQueryParams([]);
 
-watch(wallpaper, async () => {
-	if (saving.value.lastRef === wallpaper.value) return;
-
-	setSettings({ taskbar: false, settings: {} });
-	setPermissions([]);
-	setQueryParams([]);
-
-	if (!wallpaper.value) {
-		wallpaperJSON.value = null;
-		label.value = '';
-	} else {
-		label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
-		wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
+		if (!wallpaper.value) {
+			wallpaperJSON.value = null;
+			label.value = '';
+		} else {
+			label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 30) || '';
+			wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
+		}
 	}
-});
+);
 
 const settings = ref<{ taskbar: boolean; settings: Settings }>({ taskbar: false, settings: {} });
 
@@ -70,15 +67,14 @@ const setPermissions = (data: Permission[]) => (permissions.value = data);
 
 const setQueryParams = (data: Query[]) => (queryParams.value = data);
 
-const saving = ref<{ state: boolean; lastRef: Wallpaper | undefined }>({ state: false, lastRef: undefined });
+const saving = ref<boolean>(false);
 
 const save = async () => {
-	if (saving.value.state || !wallpaper.value) return;
-	saving.value.state = true;
+	if (saving.value || !wallpaper.value) return;
+	saving.value = true;
 	label.value = getFileName(label.value, 'nameOnly', 30);
-	const ref = {
+	await store.addWallpaper({
 		...wallpaper.value,
-		id: '',
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
@@ -90,10 +86,8 @@ const save = async () => {
 			return { ...opt };
 		}),
 		content: [],
-	};
-	saving.value.lastRef = ref;
-	await store.addWallpaper(ref);
-	saving.value.state = false;
+	});
+	saving.value = false;
 };
 
 defineExpose({ save });
