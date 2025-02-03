@@ -55,7 +55,8 @@ watch(
 				if (typeof wallpaperJSON.value.data.name !== 'string') wallpaperJSON.value.data.name = '';
 				if (typeof wallpaperJSON.value.data.label !== 'string') wallpaperJSON.value.data.label = '';
 				const { name, label: l } = wallpaperJSON.value.data;
-				label.value = wallpaper.value.label || getFileName(l, 'name', 30) || getFileName(name, 'name', 30);
+				label.value =
+					wallpaper.value.label || getFileName(l, 'name', 30) || getFileName(name, 'name', 30) || label.value;
 			}
 		}
 	}
