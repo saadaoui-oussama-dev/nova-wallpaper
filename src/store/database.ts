@@ -10,7 +10,7 @@ type DatabaseInterface = {
 };
 
 let db: any;
-let dbInterface: any;
+let dbInterface: DatabaseInterface;
 
 export const openDatabase = (): DatabaseInterface => {
 	if (dbInterface) return dbInterface;
@@ -19,11 +19,11 @@ export const openDatabase = (): DatabaseInterface => {
 	dbInterface = {
 		insert(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
 			return new Promise<DatabaseResponse>((resolve) => {
-				db.insert({ table, data }, function (error: Error | string, newDoc: any) {
+				db.insert({ table, data, createdAt: Date.now() }, function (error: Error | string, newDoc: any) {
 					if (error) {
 						resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
 					} else {
-						resolve({ doc: { ...data, id: newDoc._id }, error: '' });
+						resolve({ doc: { ...data, createdAt: newDoc.createdAt, id: newDoc._id }, error: '' });
 					}
 				});
 			});
@@ -31,13 +31,15 @@ export const openDatabase = (): DatabaseInterface => {
 
 		read(table: string, query: { [key: string]: any } = {}): Promise<DatabaseResponse> {
 			return new Promise<DatabaseResponse>((resolve) => {
-				db.find({ ...query, table }, (error: Error | string, rows: { data: { [key: string]: any }; _id: string }[]) => {
-					if (error) {
-						resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
-					} else {
-						resolve({ doc: rows.map(({ data, _id }) => ({ ...data, id: _id })), error: '' });
-					}
-				});
+				db.find({ ...query, table })
+					.sort({ createdAt: -1 })
+					.exec((error: Error | string, rows: { data: { [key: string]: any }; _id: string }[]) => {
+						if (error) {
+							resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
+						} else {
+							resolve({ doc: rows.map(({ data, _id }) => ({ ...data, id: _id })), error: '' });
+						}
+					});
 			});
 		},
 	};
