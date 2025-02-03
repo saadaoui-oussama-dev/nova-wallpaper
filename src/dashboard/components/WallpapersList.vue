@@ -12,7 +12,7 @@
 			<div class="info">
 				<span class="label">{{ wallpaper.label }}</span>
 				<div class="actions">
-					<button class="icon-btn star" @click.stop="toggleFavorite(wallpaper)">
+					<button class="icon-btn star" @click.stop="store.toggleFavorite(wallpaper)">
 						{{ wallpaper.favorite ? '★' : '☆' }}
 					</button>
 
@@ -31,14 +31,7 @@ import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 const store = useWallpaperStore();
 const wallpapers = computed(() => store.wallpapers);
 
-const toggleFavorite = (wallpaper: Wallpaper) => {
-	wallpaper.favorite = !wallpaper.favorite;
-	console.log('Toggled favorite:', wallpaper);
-};
-
-const editWallpaper = (wallpaper: Wallpaper) => {
-	console.log('Edit wallpaper:', wallpaper);
-};
+const editWallpaper = (wallpaper: Wallpaper) => console.log('Edit wallpaper:', wallpaper);
 </script>
 
 <style scoped>

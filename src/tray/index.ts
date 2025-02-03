@@ -16,7 +16,7 @@ export const createTray = () => {
 
 	events.$on('reloadMenu', async () => {
 		const options: MenuOption[] = [];
-		if (!(await renderFavorites(options))) return;
+		await renderFavorites(options);
 		renderControls(options);
 		events.$emit('renderMenu', options);
 	});

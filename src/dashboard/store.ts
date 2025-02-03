@@ -95,6 +95,11 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
+		async toggleFavorite(wallpaper: Wallpaper) {
+			await NovaWallpaper.database.invoke('update', 'wallpaper', { id: wallpaper.id, favorite: !wallpaper.favorite });
+			await this.readData();
+		},
+
 		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<JSONResponse> {
 			const src = this.data[wallpaper.path];
 			forceFetch = forceFetch || !src || !src.json;
