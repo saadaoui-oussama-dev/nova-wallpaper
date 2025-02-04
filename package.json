@@ -1,7 +1,13 @@
 {
 	"name": "nova-wallpaper",
+	"productName": "Nova Wallpaper",
+	"description": "Nova Wallpaper",
+	"author": "Oussama Saadaoui",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/saadaoui-oussama-dev/nova-wallpaper"
+	},
 	"version": "0.1.0",
-	"private": true,
 	"main": "background.js",
 	"scripts": {
 		"lint": "vue-cli-service lint",
@@ -11,14 +17,11 @@
 		"postuninstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
-		"@electron/remote": "^2.1.2",
-		"core-js": "^3.8.3",
 		"nedb": "^1.8.0",
 		"pinia": "^2.3.1",
 		"vue": "^3.2.13"
 	},
 	"devDependencies": {
-		"@types/electron-devtools-installer": "^2.2.0",
 		"@types/node": "16",
 		"@typescript-eslint/eslint-plugin": "^5.4.0",
 		"@typescript-eslint/parser": "^5.4.0",
@@ -27,8 +30,7 @@
 		"@vue/cli-plugin-typescript": "~5.0.0",
 		"@vue/cli-service": "~5.0.0",
 		"@vue/eslint-config-typescript": "^9.1.0",
-		"electron": "^13.0.0",
-		"electron-devtools-installer": "^3.1.0",
+		"electron": "33.2.1",
 		"eslint": "^7.32.0",
 		"eslint-plugin-vue": "^8.0.3",
 		"ts-loader": "^8.2.0",

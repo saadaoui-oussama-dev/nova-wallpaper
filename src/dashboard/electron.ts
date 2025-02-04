@@ -25,8 +25,7 @@ export const openDashboard = async () => {
 			devTools: false,
 			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-			enableRemoteModule: true,
-			preload: joinPublic('@/public/scripts/preload.js'),
+			preload: joinPublic('@/public/js/preload.js'),
 		},
 	});
 
