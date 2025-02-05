@@ -13,7 +13,7 @@
 				<span class="label">{{ getFileName(`${wallpaper.label || ''}`, 'name', 25) }}</span>
 
 				<div class="menu-container">
-					<button class="menu-btn" @click.stop="wallpaper.id === activeMenu ? closeMenu() : openMenu(wallpaper.id)">
+					<button class="menu-btn" @click.stop="wallpaper.id === activeMenu ? closeMenu() : openMenu(wallpaper)">
 						⋮
 					</button>
 					<div v-if="activeMenu === wallpaper.id" class="context-menu">
@@ -47,6 +47,7 @@ const onAnyClick = (id?: string): boolean => {
 	const current = clickTimeoutId.value ? clickTimeoutId.value.id : '';
 	if (clickTimeoutId.value) clearTimeout(clickTimeoutId.value.timeout);
 	clickTimeoutId.value = null;
+	if (id && id !== activeMenu.value) closeMenu();
 	return current === id;
 };
 
@@ -58,15 +59,15 @@ const openMenuOrSetAsActive = async (wallpaper: Wallpaper) => {
 			id: wallpaper.id,
 			timeout: setTimeout(() => {
 				clickTimeoutId.value = null;
-				openMenu(wallpaper.id);
+				openMenu(wallpaper);
 			}, 300) as unknown as number,
 		};
 	}
 };
 
-const openMenu = (id: string) => {
+const openMenu = (wallpaper: Wallpaper) => {
 	onAnyClick();
-	activeMenu.value = id;
+	activeMenu.value = wallpaper.id;
 };
 
 const closeMenu = () => {
@@ -75,17 +76,17 @@ const closeMenu = () => {
 };
 
 const toggleFavorite = (wallpaper: Wallpaper) => {
-	onAnyClick();
+	onAnyClick(wallpaper.id);
 	store.toggleFavorite(wallpaper);
 };
 
 const editWallpaper = (wallpaper: Wallpaper) => {
-	onAnyClick();
+	onAnyClick(wallpaper.id);
 	console.log('Edit wallpaper:', wallpaper);
 };
 
 const setActiveWallpaper = (wallpaper: Wallpaper) => {
-	onAnyClick();
+	onAnyClick(wallpaper.id);
 	store.setActiveWallpaper(wallpaper);
 	setTimeout(closeMenu, 100);
 };
