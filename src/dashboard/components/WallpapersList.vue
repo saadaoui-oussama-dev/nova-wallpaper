@@ -5,18 +5,24 @@
 			:key="wallpaper.id"
 			class="card"
 			:class="{ active: wallpaper.id === store.activeWallpaper }"
-			@click="store.setActiveWallpaper(wallpaper)"
+			@click.stop="openMenuOrSetAsActive(wallpaper)"
 		>
 			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
 
 			<div class="info">
 				<span class="label">{{ getFileName(`${wallpaper.label || ''}`, 'name', 25) }}</span>
-				<div class="actions">
-					<button class="icon-btn star" @click.stop="store.toggleFavorite(wallpaper)">
-						{{ wallpaper.favorite ? '★' : '☆' }}
-					</button>
 
-					<button class="icon-btn edit" @click.stop="editWallpaper(wallpaper)">✎</button>
+				<div class="menu-container">
+					<button class="menu-btn" @click.stop="wallpaper.id === activeMenu ? closeMenu() : openMenu(wallpaper.id)">
+						⋮
+					</button>
+					<div v-if="activeMenu === wallpaper.id" class="context-menu">
+						<button @click.stop="toggleFavorite(wallpaper)">
+							{{ wallpaper.favorite ? 'Remove from favorites' : 'Add to favorites' }}
+						</button>
+						<button @click.stop="editWallpaper(wallpaper)">Edit Settings</button>
+						<button @click.stop="setActiveWallpaper(wallpaper)">Set as active</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -24,15 +30,69 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWallpaperStore, Wallpaper } from '@/dashboard/store';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import { getFileName } from '@/global/utils';
 
 const store = useWallpaperStore();
+
 const wallpapers = computed(() => store.wallpapers);
 
-const editWallpaper = (wallpaper: Wallpaper) => console.log('Edit wallpaper:', wallpaper);
+const activeMenu = ref<string | null>(null);
+
+const clickTimeoutId = ref<{ id: string; timeout: number } | null>(null);
+
+const onAnyClick = (id?: string): boolean => {
+	const current = clickTimeoutId.value ? clickTimeoutId.value.id : '';
+	if (clickTimeoutId.value) clearTimeout(clickTimeoutId.value.timeout);
+	clickTimeoutId.value = null;
+	return current === id;
+};
+
+const openMenuOrSetAsActive = async (wallpaper: Wallpaper) => {
+	if (onAnyClick(wallpaper.id)) {
+		setActiveWallpaper(wallpaper);
+	} else {
+		clickTimeoutId.value = {
+			id: wallpaper.id,
+			timeout: setTimeout(() => {
+				clickTimeoutId.value = null;
+				openMenu(wallpaper.id);
+			}, 300) as unknown as number,
+		};
+	}
+};
+
+const openMenu = (id: string) => {
+	onAnyClick();
+	activeMenu.value = id;
+};
+
+const closeMenu = () => {
+	onAnyClick();
+	activeMenu.value = null;
+};
+
+const toggleFavorite = (wallpaper: Wallpaper) => {
+	onAnyClick();
+	store.toggleFavorite(wallpaper);
+};
+
+const editWallpaper = (wallpaper: Wallpaper) => {
+	onAnyClick();
+	console.log('Edit wallpaper:', wallpaper);
+};
+
+const setActiveWallpaper = (wallpaper: Wallpaper) => {
+	onAnyClick();
+	store.setActiveWallpaper(wallpaper);
+	setTimeout(closeMenu, 100);
+};
+
+onMounted(() => document.addEventListener('click', closeMenu));
+
+onUnmounted(() => document.removeEventListener('click', closeMenu));
 </script>
 
 <style scoped>
@@ -56,6 +116,7 @@ const editWallpaper = (wallpaper: Wallpaper) => console.log('Edit wallpaper:', w
 	background-color: var(--neutral-color-normal);
 	border: 2px solid var(--neutral-color-normal);
 	transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+	position: relative;
 }
 
 .card:hover {
@@ -74,30 +135,57 @@ const editWallpaper = (wallpaper: Wallpaper) => console.log('Edit wallpaper:', w
 	width: 100%;
 	flex: 1;
 	margin-top: 8px;
+	position: relative;
 }
 
-.actions {
-	display: flex;
-	gap: 6px;
+.menu-container {
+	position: relative;
+	height: 100%;
+	right: -12px;
 }
 
-.icon-btn {
+.menu-btn {
+	height: 100%;
 	background: none;
 	border: none;
 	color: white;
 	cursor: pointer;
-	font-size: 16px;
+	font-size: 18px;
+	padding-inline: 12px;
+	border-radius: 7px;
 }
 
-.icon-btn:hover {
+.menu-btn:hover {
 	color: #ffcc00;
 }
 
-.star {
-	font-size: 18px;
+.context-menu {
+	position: absolute;
+	bottom: 0;
+	right: 20px;
+	background: var(--neutral-color);
+	border-radius: 6px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	padding: 6px 0;
+	width: 170px;
+	z-index: 100;
 }
 
-.edit {
-	font-size: 16px;
+.context-menu button {
+	background: none;
+	border: none;
+	width: 100%;
+	padding: 8px 12px;
+	text-align: left;
+	color: white;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color 0.2s;
+}
+
+.context-menu button:hover {
+	background-color: var(--primary-color);
 }
 </style>
