@@ -22,7 +22,9 @@
 							{{ wallpaper.favorite ? 'Remove from favorites' : 'Add to favorites' }}
 						</button>
 						<button @click.stop="editWallpaper(wallpaper)">Edit Settings</button>
-						<button @click.stop="setActiveWallpaper(wallpaper)">Set as active</button>
+						<button @click.stop="setActiveWallpaper(wallpaper)">
+							{{ wallpaper.id === store.activeWallpaper ? 'Deactivate wallpaper' : 'Activate wallpaper' }}
+						</button>
 					</div>
 				</div>
 			</div>
@@ -88,8 +90,10 @@ const editWallpaper = (wallpaper: Wallpaper) => {
 
 const setActiveWallpaper = (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
-	store.setActiveWallpaper(wallpaper);
-	setTimeout(closeMenu, 100);
+	setTimeout(() => {
+		closeMenu();
+		store.setActiveWallpaper(wallpaper.id === store.activeWallpaper ? null : wallpaper);
+	}, 100);
 };
 
 onMounted(() => document.addEventListener('click', closeMenu));

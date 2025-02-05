@@ -85,10 +85,14 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
-		async setActiveWallpaper(wallpaper: Wallpaper) {
+		async setActiveWallpaper(wallpaper: Wallpaper | null) {
 			try {
-				const { doc } = await NovaWallpaper.database.invoke('update', 'active', { value: wallpaper.id });
-				if (doc === 0) await NovaWallpaper.database.invoke('insert', 'active', { value: wallpaper.id });
+				if (!wallpaper) {
+					await NovaWallpaper.database.invoke('update', 'active', { value: '' });
+				} else {
+					const { doc } = await NovaWallpaper.database.invoke('update', 'active', { value: wallpaper.id });
+					if (doc === 0) await NovaWallpaper.database.invoke('insert', 'active', { value: wallpaper.id });
+				}
 				await this.readData();
 			} catch {
 				console.log();
@@ -192,7 +196,6 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				}
 			} catch {
 				data.error = 'Unable to access the file.';
-				console.log();
 			}
 
 			resolver(data);
