@@ -79,7 +79,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			try {
 				const { doc } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
 				this.formWallpaper = null;
-				await this.setActiveWallpaper(doc.id);
+				await this.setActiveWallpaper(doc as Wallpaper);
 			} catch {
 				console.log();
 			}
