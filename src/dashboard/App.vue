@@ -7,7 +7,7 @@
 		<page-header v-show="!splashscreen" :visible="visible" @open="open" @save="save" />
 		<div class="dashboard" v-show="!splashscreen">
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
-				<div class="main">
+				<div class="main" ref="main">
 					<new-wallpaper :visible="visible" @close="open(false)" />
 					<wallpapers-list />
 				</div>
@@ -33,10 +33,13 @@ const splashscreen = ref(true);
 
 const visible = ref(false);
 
+const main = useTemplateRef('main');
+
 const form = useTemplateRef('form');
 
 const open = (value: boolean) => {
 	visible.value = value;
+	if (main.value && value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const save = () => {
