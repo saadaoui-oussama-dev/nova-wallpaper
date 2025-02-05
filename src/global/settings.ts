@@ -1,31 +1,38 @@
-export type ToggleOption = {
-	type: 'checkbox';
-	label: string;
-	name: string;
-	value: boolean;
-};
-
-export type RadioGroupOption = {
-	type: 'radio';
-	label: string;
-	name: string;
-	value: string | number;
-	options: { label: string; value: string | number }[];
-};
-
 export type SliderOption = {
-	type: 'slider';
-	label: string;
+	type: 'slider' | 'range';
+	label?: string;
+	text?: string;
 	name: string;
 	value: number;
 	min: number;
 	max: number;
 	step: number;
+	tick?: number | number[];
 };
 
-export type OptionType = ToggleOption | RadioGroupOption | SliderOption;
+export type ToggleOption = {
+	type: 'toggle' | 'checkbox';
+	label?: string;
+	text?: string;
+	name: string;
+	value: boolean;
+};
 
-export type Settings = { direction: 'row' | 'right' | 'row-right' | 'column' | 'column-right'; settings: OptionType[] };
+export type RadioGroupOption = {
+	type: 'radio' | 'radio-group' | 'radioGroup';
+	label?: string;
+	text?: string;
+	name: string;
+	value: string | number;
+	options: { label?: string; text?: string; value: string | number }[];
+};
+
+export type OptionType = SliderOption | ToggleOption | RadioGroupOption;
+
+export type Settings = {
+	direction: 'row' | 'right' | 'row-right' | 'rowRight' | 'column' | 'column-right' | 'columnRight';
+	settings: OptionType[];
+};
 
 export const imageSettings: Settings = {
 	direction: 'row',

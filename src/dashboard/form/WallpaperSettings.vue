@@ -38,6 +38,9 @@ const taskbarSetting = ref<ToggleOption>({
 	value: false,
 });
 
+const label = ({ label, text }: { label?: string; text?: string }) =>
+	typeof label === 'string' ? label : typeof text === 'string' ? text : undefined;
+
 watch(
 	() => props.json,
 	() => {
@@ -47,11 +50,11 @@ watch(
 		else if (props.wallpaper.type === 'video') return setSettings(videoSettings);
 
 		const properties = props.json.data.settings.map((opt: OptionType) => {
-			if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof opt.label !== 'string') return;
-			if (opt.type.toLocaleLowerCase().trim() === 'checkbox') {
+			if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof label(opt) !== 'string') return;
+			if (['checkbox', 'toggle'].includes(opt.type.toLocaleLowerCase().trim())) {
 				opt.type = 'checkbox';
 				opt.value = Boolean(opt.value);
-			} else if (opt.type.toLocaleLowerCase().trim() === 'slider') {
+			} else if (['slider', 'range'].includes(opt.type.toLocaleLowerCase().trim())) {
 				opt.type = 'slider';
 				if (opt.type !== 'slider') return;
 				opt.min = Number(opt.min) || 0;
@@ -61,16 +64,16 @@ watch(
 				opt.value = Number(opt.value) || 0;
 				if (opt.value > opt.max) opt.value = opt.max;
 				if (opt.value < opt.min) opt.value = opt.min;
-			} else if (opt.type.toLocaleLowerCase().trim() === 'radio') {
+			} else if (['radio', 'radio-group', 'radiogroup'].includes(opt.type.toLocaleLowerCase().trim())) {
 				opt.type = 'radio';
 				if (opt.type !== 'radio') return;
 				let valueExist = false;
 				if (!Array.isArray(opt.options) || !opt.options.length) return;
 				const options = opt.options.map((option) => {
-					if (typeof option.label !== 'string') return;
+					if (typeof label(option) !== 'string') return;
 					if (typeof option.value !== 'string' && typeof option.value !== 'number') return;
 					if (option.value === opt.value) valueExist = true;
-					return { value: option.value, label: option.label };
+					return { value: option.value, label: label(option) };
 				});
 				opt.options = options.filter(Boolean) as { value: string; label: string }[];
 				if (!valueExist) opt.value = opt.options[0].value;
@@ -83,9 +86,11 @@ watch(
 
 const directionText = computed(() => {
 	if (!settings.value) return 'row';
-	if (`${settings.value.direction}`.toLowerCase() === 'column') return 'column';
-	if (`${settings.value.direction}`.toLowerCase() === 'column-right') return 'column-right';
-	else if (['row-right', 'right'].includes(`${settings.value.direction}`.toLowerCase())) return 'row-right';
+	if (`${settings.value.direction}`.toLowerCase().trim() === 'column') return 'column';
+	if (['column-right', 'columnright'].includes(`${settings.value.direction}`.toLowerCase().trim()))
+		return 'column-right';
+	else if (['right', 'row-right', 'rowright'].includes(`${settings.value.direction}`.toLowerCase().trim()))
+		return 'row-right';
 	else return 'row';
 });
 
