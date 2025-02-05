@@ -14,6 +14,7 @@
 
 				<div class="menu-container">
 					<button class="menu-btn" @click.stop="wallpaper.id === activeMenu ? closeMenu() : openMenu(wallpaper)">
+						<span v-if="wallpaper.favorite" class="favorite">★</span>
 						⋮
 					</button>
 					<div v-if="activeMenu === wallpaper.id" class="context-menu">
@@ -154,6 +155,11 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	font-size: 18px;
 	padding-inline: 12px;
 	border-radius: 7px;
+}
+
+.menu-btn .favorite {
+	font-size: 15px;
+	padding-right: 2px;
 }
 
 .menu-btn:hover {
