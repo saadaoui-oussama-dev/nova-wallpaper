@@ -10,7 +10,7 @@
 			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
 
 			<div class="info">
-				<span class="label">{{ getFileName(`${wallpaper.label || ''}`, 'name', 25) }}</span>
+				<span class="label">{{ getFileName(wallpaper.label, 'name', 25) }}</span>
 
 				<div class="menu-container">
 					<button class="menu-btn favorite" @click.stop="toggleFavorite(wallpaper)">

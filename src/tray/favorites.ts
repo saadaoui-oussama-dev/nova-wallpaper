@@ -9,7 +9,7 @@ export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
 
 		const wallpapers: MenuOption[] = list.map((wallpaper: Wallpaper, index: number) => ({
-			label: padding(getFileName(`${wallpaper.label || ''}`, 'name', 25) || `Wallpaper ${index + 1}`),
+			label: padding(getFileName(wallpaper.label, 'name', 25) || `Wallpaper ${index + 1}`),
 			type: 'checkbox',
 			checked: active === wallpaper.id,
 			click: () => {
@@ -21,7 +21,7 @@ export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 			},
 		}));
 
-		options.push(...wallpapers.slice(0, wallpapers.length > 9 ? 7 : undefined));
+		options.push(...wallpapers.slice(0, 9));
 	} catch {
 		console.log();
 	}

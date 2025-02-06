@@ -41,6 +41,7 @@ export const getFileName = (
 	cutIn?: number,
 	trim?: boolean
 ): string => {
+	if (typeof name !== 'string' || !name) return '';
 	try {
 		if (type === 'path') {
 			const pathParts = name.split('\\');

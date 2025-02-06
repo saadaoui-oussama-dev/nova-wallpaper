@@ -51,12 +51,9 @@ watch(
 		} else {
 			label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 25) || '';
 			wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
-			if (wallpaperJSON.value.valid) {
-				if (typeof wallpaperJSON.value.data.name !== 'string') wallpaperJSON.value.data.name = '';
-				if (typeof wallpaperJSON.value.data.label !== 'string') wallpaperJSON.value.data.label = '';
-				const { name, label: l } = wallpaperJSON.value.data;
-				label.value =
-					wallpaper.value.label || getFileName(l, 'name', 25) || getFileName(name, 'name', 25) || label.value;
+			if (wallpaperJSON.value.valid && !wallpaper.value.label) {
+				const { name, label: lbl } = wallpaperJSON.value.data;
+				label.value = getFileName(lbl, 'name', 25) || getFileName(name, 'name', 25) || label.value;
 			}
 		}
 	}
