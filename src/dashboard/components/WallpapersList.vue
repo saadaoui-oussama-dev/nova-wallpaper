@@ -25,7 +25,7 @@
 						<button @click.stop="toggleFavorite(wallpaper)">
 							{{ wallpaper.favorite ? 'Remove from favorites' : 'Add to favorites' }}
 						</button>
-						<button @click.stop="editWallpaper(wallpaper)">Edit</button>
+						<button @click.stop="editWallpaper(wallpaper)">Edit Settings</button>
 						<button @click.stop="setActiveWallpaper(wallpaper)">
 							{{ wallpaper.id === store.activeWallpaper ? 'Deactivate' : 'Activate' }}
 						</button>
@@ -128,8 +128,8 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	justify-content: space-between;
 	align-items: center;
 	padding: 12px;
-	background-color: var(--neutral-color-normal);
-	border: 2px solid var(--neutral-color-normal);
+	background-color: var(--content-bg);
+	border: 2px solid var(--content-bg);
 	transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 	position: relative;
 }
@@ -163,7 +163,6 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	height: 100%;
 	background: none;
 	border: none;
-	color: var(--text-color);
 	cursor: pointer;
 	font-size: 18px;
 	padding: 0 12px 0 6px;
@@ -171,7 +170,7 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 }
 
 .menu-btn:hover {
-	color: #ffcc00;
+	color: var(--secondary-color);
 }
 
 .menu-btn.favorite {
@@ -183,9 +182,9 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	position: absolute;
 	bottom: 22px;
 	right: 12px;
-	background: var(--neutral-color);
 	border-radius: 6px;
-	box-shadow: 0 4px 8px var(--window-bg);
+	background: var(--neutral-color);
+	box-shadow: 0 4px 8px var(--body-bg);
 	display: flex;
 	flex-direction: column;
 	padding: 6px 0;
@@ -199,7 +198,6 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	width: 100%;
 	padding: 4px 12px;
 	text-align: left;
-	color: var(--text-color);
 	cursor: pointer;
 	font-size: 12px;
 	transition: background-color 0.2s;
@@ -210,7 +208,7 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 }
 
 .context-menu button.danger {
-	border-bottom: 1px solid var(--neutral-color-active);
+	border-bottom: 1px solid var(--neutral-hover);
 }
 
 .context-menu button.danger:hover {

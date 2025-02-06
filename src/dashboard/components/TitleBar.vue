@@ -27,8 +27,7 @@ import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background-color: var(--titlebar-bg);
-	color: var(--text-color);
+	background-color: var(--content-bg);
 	height: 32px;
 	padding: 0 0 0 10px;
 	-webkit-app-region: drag;
@@ -55,7 +54,6 @@ import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 .titlebar-btn {
 	background: transparent;
 	border: none;
-	color: var(--text-color);
 	width: 42px;
 	height: 32px;
 	cursor: pointer;
@@ -67,7 +65,7 @@ import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
 }
 
 .titlebar-btn:hover {
-	background-color: var(--titlebar-btn-hover);
+	background-color: var(--neutral-hover);
 }
 
 .titlebar-btn.close:hover {

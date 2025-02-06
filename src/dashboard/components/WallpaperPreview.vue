@@ -129,7 +129,7 @@ watch(volume, setVolume);
 .preview {
 	width: fit-content;
 	margin-inline: auto;
-	border: 1px solid var(--window-border);
+	border: 1px solid var(--border-color);
 }
 
 .render {

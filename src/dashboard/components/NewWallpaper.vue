@@ -78,7 +78,6 @@ const createWallpaper = async ({ type }: Option) => {
 	gap: 10px;
 	padding: 0 25px 0 0px;
 	margin-bottom: 40px;
-	background-color: var(--window-bg);
 	height: 314px;
 	overflow: hidden;
 	opacity: 1;
@@ -86,7 +85,7 @@ const createWallpaper = async ({ type }: Option) => {
 }
 
 .option {
-	border: 2px solid var(--window-border);
+	border: 2px solid var(--border-color);
 	border-radius: 7px;
 	cursor: pointer;
 	padding: 15px 10px 15px;

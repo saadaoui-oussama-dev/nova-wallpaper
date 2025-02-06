@@ -94,7 +94,6 @@ const onChange = () => emit('change', [...queryParams.value]);
 	background: transparent;
 	border: none;
 	background-color: var(--neutral-color);
-	color: var(--text-color);
 	height: 32px;
 	cursor: pointer;
 	display: flex;
@@ -113,7 +112,7 @@ const onChange = () => emit('change', [...queryParams.value]);
 }
 
 .icon-btn:not(.disabled):hover {
-	background-color: var(--neutral-color-active);
+	background-color: var(--neutral-hover);
 }
 
 .icon-btn.remove.disabled {

@@ -34,7 +34,7 @@ const store = useWallpaperStore();
 	align-items: center;
 	margin: 15px 20px;
 	padding-bottom: 20px;
-	border-bottom: 1px solid var(--window-border);
+	border-bottom: 1px solid var(--border-color);
 }
 
 .right-side {
@@ -42,24 +42,7 @@ const store = useWallpaperStore();
 	gap: 10px;
 }
 
-.right-side > :not(.text-btn) {
-	background: transparent;
-	border: none;
-	color: var(--text-color);
-	width: 32px;
-	height: 32px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.settings-icon {
-	width: 24px;
-}
-
 .text-btn {
-	color: var(--text-color);
 	background-color: var(--neutral-color);
 	border: none;
 	border-radius: 7px;
@@ -70,7 +53,7 @@ const store = useWallpaperStore();
 }
 
 .text-btn:hover {
-	background-color: var(--neutral-color-active);
+	background-color: var(--neutral-hover);
 }
 
 .fixed {

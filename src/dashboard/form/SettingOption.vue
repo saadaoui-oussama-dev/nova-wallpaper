@@ -167,19 +167,17 @@ const change = (value: Event | string | number | boolean) => {
 	border: 1px solid var(--neutral-color);
 	border-radius: 4px;
 	transition: all 0.3s ease;
-	background-color: var(--window-bg);
-	color: var(--text-color);
+	background-color: none;
 }
 
 .radio-container input[type='radio']:checked + .radio-label {
 	background-color: var(--primary-color);
-	color: var(--text-color);
 	border-color: var(--primary-color-active);
 }
 
 .radio-container .radio-label:hover {
-	background-color: var(--neutral-color-active);
-	border-color: var(--neutral-color-active);
+	background-color: var(--neutral-hover);
+	border-color: var(--neutral-hover);
 }
 
 /* Slider */
@@ -229,6 +227,5 @@ const change = (value: Event | string | number | boolean) => {
 	text-align: right;
 	min-width: 23px;
 	font-size: 13px;
-	color: var(--text-color);
 }
 </style>

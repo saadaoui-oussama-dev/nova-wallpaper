@@ -94,7 +94,6 @@ input.executable {
 }
 
 .browse {
-	color: var(--text-color);
 	background-color: var(--neutral-color);
 	border: none;
 	border-radius: 4px;
@@ -104,12 +103,12 @@ input.executable {
 	margin: 4px 4px 4px 0;
 	padding: 4px 10px;
 	transition: background-color 0.15s ease-in-out;
-	border: 1px solid var(--window-border);
+	border: 1px solid var(--border-color);
 	font-size: 11px;
 	right: 0;
 }
 
 .browse:hover {
-	background-color: var(--neutral-color-active);
+	background-color: var(--neutral-hover);
 }
 </style>
