@@ -13,17 +13,21 @@
 				<span class="label">{{ getFileName(`${wallpaper.label || ''}`, 'name', 25) }}</span>
 
 				<div class="menu-container">
+					<button class="menu-btn favorite" @click.stop="toggleFavorite(wallpaper)">
+						{{ wallpaper.favorite ? '★' : '☆' }}
+					</button>
 					<button class="menu-btn" @click.stop="wallpaper.id === activeMenu ? closeMenu() : openMenu(wallpaper)">
-						<span v-if="wallpaper.favorite" class="favorite">★</span>
 						⋮
 					</button>
+
 					<div v-if="activeMenu === wallpaper.id" class="context-menu">
+						<button class="danger" @click.stop="deleteWallpaper(wallpaper)">Delete</button>
 						<button @click.stop="toggleFavorite(wallpaper)">
 							{{ wallpaper.favorite ? 'Remove from favorites' : 'Add to favorites' }}
 						</button>
-						<button @click.stop="editWallpaper(wallpaper)">Edit Settings</button>
+						<button @click.stop="editWallpaper(wallpaper)">Edit</button>
 						<button @click.stop="setActiveWallpaper(wallpaper)">
-							{{ wallpaper.id === store.activeWallpaper ? 'Deactivate wallpaper' : 'Activate wallpaper' }}
+							{{ wallpaper.id === store.activeWallpaper ? 'Deactivate' : 'Activate' }}
 						</button>
 					</div>
 				</div>
@@ -81,6 +85,11 @@ const closeMenu = () => {
 const toggleFavorite = (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
 	store.toggleFavorite(wallpaper);
+};
+
+const deleteWallpaper = (wallpaper: Wallpaper) => {
+	onAnyClick(wallpaper.id);
+	console.log('Delete wallpaper:', wallpaper);
 };
 
 const editWallpaper = (wallpaper: Wallpaper) => {
@@ -154,29 +163,29 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	height: 100%;
 	background: none;
 	border: none;
-	color: white;
+	color: var(--text-color);
 	cursor: pointer;
 	font-size: 18px;
-	padding-inline: 12px;
+	padding: 0 12px 0 6px;
 	border-radius: 7px;
-}
-
-.menu-btn .favorite {
-	font-size: 15px;
-	padding-right: 2px;
 }
 
 .menu-btn:hover {
 	color: #ffcc00;
 }
 
+.menu-btn.favorite {
+	font-size: 15px;
+	padding: 0 6px 0 12px;
+}
+
 .context-menu {
 	position: absolute;
-	bottom: 0;
-	right: 20px;
+	bottom: 22px;
+	right: 12px;
 	background: var(--neutral-color);
 	border-radius: 6px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 4px 8px var(--window-bg);
 	display: flex;
 	flex-direction: column;
 	padding: 6px 0;
@@ -188,15 +197,23 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	background: none;
 	border: none;
 	width: 100%;
-	padding: 8px 12px;
+	padding: 4px 12px;
 	text-align: left;
-	color: white;
+	color: var(--text-color);
 	cursor: pointer;
-	font-size: 14px;
+	font-size: 12px;
 	transition: background-color 0.2s;
 }
 
 .context-menu button:hover {
 	background-color: var(--primary-color);
+}
+
+.context-menu button.danger {
+	border-bottom: 1px solid var(--neutral-color-active);
+}
+
+.context-menu button.danger:hover {
+	background-color: var(--danger-color);
 }
 </style>
