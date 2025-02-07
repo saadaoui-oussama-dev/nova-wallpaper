@@ -3,15 +3,11 @@
 		<h1>{{ store.formWallpaper ? 'Parameters' : 'Wallpapers' }}</h1>
 
 		<div class="right-side">
-			<template v-if="store.formWallpaper">
-				<button class="text-btn" @click="store.discardAdding">Discard</button>
-				<button class="text-btn primary" @click="emit('save')">Save</button>
-			</template>
+			<button v-if="store.formWallpaper" class="text-btn" @click="emit('action', 'restore')">Restore</button>
+			<button v-if="store.formWallpaper" class="text-btn primary" @click="emit('action', 'close')">Close</button>
 
-			<template v-else>
-				<button v-if="visible" class="fixed text-btn" @click="emit('open', false)">Cancel</button>
-				<button v-else class="fixed text-btn primary" @click="emit('open', true)">Add</button>
-			</template>
+			<button v-else-if="visible" class="text-btn fixed" @click="emit('action', 'collapse')">Cancel</button>
+			<button v-else class="text-btn primary fixed" @click="emit('action', 'expand')">Add</button>
 		</div>
 	</div>
 </template>
@@ -20,7 +16,7 @@
 import { defineProps, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 
-const emit = defineEmits(['save', 'open']);
+const emit = defineEmits(['action']);
 
 const props = defineProps<{ visible: boolean }>();
 

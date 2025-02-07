@@ -4,11 +4,11 @@
 	</div>
 	<div class="app">
 		<title-bar v-show="!splashscreen" />
-		<page-header v-show="!splashscreen" :visible="visible" @open="open" @save="save" />
+		<page-header v-show="!splashscreen" :visible="visible" @action="pageHeaderAction" />
 		<div class="dashboard" v-show="!splashscreen">
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
 				<div class="main" ref="main">
-					<new-wallpaper :visible="visible" @close="open(false)" />
+					<new-wallpaper :visible="visible" @close="pageHeaderAction('collapse')" />
 					<wallpapers-list />
 				</div>
 				<wallpaper-form ref="form" />
@@ -37,13 +37,15 @@ const main = useTemplateRef('main');
 
 const form = useTemplateRef('form');
 
-const open = (value: boolean) => {
-	visible.value = value;
-	if (main.value && value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-const save = () => {
-	if (form.value) form.value.save();
+const pageHeaderAction = (action: string) => {
+	if (action === 'collapse') {
+		visible.value = false;
+	} else if (action === 'expand') {
+		visible.value = true;
+		if (main.value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
+	} else if (action === 'close') {
+		if (form.value) form.value.save();
+	}
 };
 
 onMounted(async () => {

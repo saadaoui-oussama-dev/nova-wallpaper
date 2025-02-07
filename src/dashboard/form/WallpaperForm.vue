@@ -35,6 +35,20 @@ const wallpaper = ref<Wallpaper | null>(null);
 
 const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 25) : '');
 
+const settings = ref<{ taskbar: boolean; settings: Settings }>({ taskbar: false, settings: {} });
+
+const permissions = ref<Permission[]>([]);
+
+const queryParams = ref<Query[]>([]);
+
+const setSettings = (data: { taskbar: boolean; settings: Settings }) => (settings.value = data);
+
+const setPermissions = (data: Permission[]) => (permissions.value = data);
+
+const setQueryParams = (data: Query[]) => (queryParams.value = data);
+
+const saving = ref<boolean>(false);
+
 watch(label, () => (label.value = getFileName(label.value, 'name', 25, false)));
 
 watch(
@@ -58,20 +72,6 @@ watch(
 		}
 	}
 );
-
-const settings = ref<{ taskbar: boolean; settings: Settings }>({ taskbar: false, settings: {} });
-
-const permissions = ref<Permission[]>([]);
-
-const queryParams = ref<Query[]>([]);
-
-const setSettings = (data: { taskbar: boolean; settings: Settings }) => (settings.value = data);
-
-const setPermissions = (data: Permission[]) => (permissions.value = data);
-
-const setQueryParams = (data: Query[]) => (queryParams.value = data);
-
-const saving = ref<boolean>(false);
 
 const save = async () => {
 	if (saving.value || !wallpaper.value) return;

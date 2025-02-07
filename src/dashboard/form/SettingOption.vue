@@ -21,7 +21,7 @@
 				<label class="radio-container" v-for="opt in modelValue.options" :key="opt.value">
 					<input
 						type="radio"
-						:name="modelValue.name"
+						:name="modelValue.id"
 						:value="opt.value"
 						:checked="opt.value === modelValue.value"
 						@input="change(opt.value)"
@@ -35,7 +35,7 @@
 		<div v-if="modelValue.type === 'slider'" class="slider-container">
 			<input
 				type="range"
-				:name="modelValue.name"
+				:name="modelValue.id"
 				:min="modelValue.min"
 				:max="modelValue.max"
 				:step="modelValue.step || 1"
