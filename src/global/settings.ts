@@ -1,30 +1,26 @@
 export type SliderOption = {
+	id: string;
 	type: 'slider' | 'range';
-	label?: string;
-	text?: string;
-	name: string;
+	label: string;
 	value: number;
 	min: number;
 	max: number;
 	step: number;
-	tick?: number | number[];
 };
 
 export type ToggleOption = {
+	id: string;
 	type: 'toggle' | 'checkbox';
-	label?: string;
-	text?: string;
-	name: string;
+	label: string;
 	value: boolean;
 };
 
 export type RadioGroupOption = {
+	id: string;
 	type: 'radio' | 'radio-group' | 'radioGroup';
-	label?: string;
-	text?: string;
-	name: string;
+	label: string;
 	value: string | number;
-	options: { label?: string; text?: string; value: string | number }[];
+	options: { label: string; value: string | number }[];
 };
 
 export type OptionType = SliderOption | ToggleOption | RadioGroupOption;
@@ -34,19 +30,27 @@ export type Settings = {
 	settings: OptionType[];
 };
 
+export const getID = ({ id, key, name }: { id?: string; key?: string; name?: string }) => {
+	id = typeof id === 'string' ? id : typeof key === 'string' ? key : typeof name === 'string' ? name : '';
+	return id || undefined;
+};
+
+export const getLabel = ({ label, text }: { label?: string; text?: string }) =>
+	typeof label === 'string' ? label : typeof text === 'string' ? text : undefined;
+
 export const imageSettings: Settings = {
 	direction: 'row',
 	settings: [
 		{
+			id: 'flip',
 			label: 'Flip Horizontally',
 			type: 'checkbox',
-			name: 'flip',
 			value: false,
 		},
 		{
+			id: 'rotate',
 			label: 'Rotation',
 			type: 'radio',
-			name: 'rotate',
 			value: 0,
 			options: [
 				{ label: '-90°', value: -90 },
@@ -56,36 +60,36 @@ export const imageSettings: Settings = {
 			],
 		},
 		{
+			id: 'saturate',
 			label: 'Saturation',
 			type: 'slider',
-			name: 'saturate',
 			value: 100,
 			min: 0,
 			max: 300,
 			step: 5,
 		},
 		{
+			id: 'contrast',
 			label: 'Contrast',
 			type: 'slider',
-			name: 'contrast',
 			value: 100,
 			min: 70,
 			max: 160,
 			step: 5,
 		},
 		{
+			id: 'brightness',
 			label: 'Brightness',
 			type: 'slider',
-			name: 'brightness',
 			value: 100,
 			min: 50,
 			max: 200,
 			step: 5,
 		},
 		{
+			id: 'hue-rotate',
 			label: 'Shift (Hue) Colors',
 			type: 'slider',
-			name: 'hue-rotate',
 			value: 0,
 			min: 0,
 			max: 360,
@@ -99,9 +103,9 @@ export const videoSettings: Settings = {
 	settings: [
 		...imageSettings.settings.slice(0, 2),
 		{
+			id: 'volume',
 			label: 'Volume',
 			type: 'slider',
-			name: 'volume',
 			value: 0,
 			min: 0,
 			max: 100,

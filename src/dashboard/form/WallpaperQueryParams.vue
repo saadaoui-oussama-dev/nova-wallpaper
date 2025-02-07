@@ -6,7 +6,7 @@
 		</div>
 		<div class="column" ref="list">
 			<div v-for="(param, index) in queryParams" :key="index" class="query-param-row">
-				<input v-model="param.key" disabled placeholder="Key" style="width: 40%" />
+				<input :value="param.id" disabled placeholder="Key" style="width: 40%" />
 				<input v-model="param.value" @change="onChange" placeholder="Value" style="flex: 1" />
 				<button
 					v-if="false"
@@ -26,6 +26,7 @@ import IconAdd from '@/dashboard/icons/IconAdd.vue';
 import IconDelete from '@/dashboard/icons/IconDelete.vue';
 import { JSONResponse } from '@/dashboard/channels';
 import { Wallpaper, Query } from '@/dashboard/store';
+import { getID } from '@/global/settings';
 
 const queryParams = ref<Query[]>([]);
 
@@ -39,13 +40,21 @@ const props = defineProps<{
 watch(
 	() => props.json,
 	() => {
-		if (!props.json || !props.json.data || props.wallpaper.type !== 'webpage') return clearQueryParams();
-		if (!Array.isArray(props.json.data['query-params']) || !props.json.data['query-params'].length)
-			return clearQueryParams();
-		queryParams.value = props.json.data['query-params'].map((param) => ({
-			key: `${param.key ? param.key || '' : ''}`,
-			value: `${param.value ? param.value || '' : ''}`,
-		}));
+		if (!props.json || !props.json.data || !Array.isArray(props.json.data['query-params'])) return clearQueryParams();
+		if (props.wallpaper.type !== 'webpage') return clearQueryParams();
+
+		const uniqueIds: string[] = [];
+		const list = (props.json.data['query-params'] as Query[]).map((option) => {
+			if (!option || typeof getID(option) !== 'string') return null;
+			option.id = getID(option) as string;
+			option.value = `${option.value ? option.value || '' : ''}`;
+			if (uniqueIds.includes(option.id)) return null;
+			uniqueIds.push(option.id);
+			return option;
+		});
+		const $list = list.filter((opt) => opt !== null);
+		if (!$list.length) return clearQueryParams();
+		queryParams.value = $list;
 		onChange();
 	}
 );
@@ -55,7 +64,7 @@ const addQueryParameter = () => {
 		const firstInput = list.value.querySelector('input');
 		if (firstInput) return firstInput.focus();
 	}
-	queryParams.value.push({ key: '', value: '' });
+	queryParams.value.push({ id: '', value: '' });
 	onChange();
 };
 
@@ -67,14 +76,14 @@ const removeQueryParameter = (index: number) => {
 
 const clearQueryParams = () => {
 	queryParams.value = [];
-	// setQueryParams([{ key: '', value: '' }]);
+	// setQueryParams([{ id: '', value: '' }]);
 	onChange();
 };
 
 const isQueryParamsEmpty = () => {
 	if (queryParams.value.length > 1) return false;
 	if (!queryParams.value.length) return true;
-	return !queryParams.value[0].key && !queryParams.value[0].value;
+	return !queryParams.value[0].id && !queryParams.value[0].value;
 };
 
 const emit = defineEmits(['change']);

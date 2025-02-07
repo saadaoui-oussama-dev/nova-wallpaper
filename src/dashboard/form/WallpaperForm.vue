@@ -82,7 +82,7 @@ const save = async () => {
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
-		queryParams: queryParams.value.map((opt) => ({ key: opt.key, value: opt.value })),
+		queryParams: queryParams.value.map((opt) => ({ id: opt.id, value: opt.value })),
 		permissions: permissions.value.map((opt) => {
 			opt.value = opt.value.trim();
 			if (opt.value.startsWith('"')) opt.value = opt.value.slice(1).trim();

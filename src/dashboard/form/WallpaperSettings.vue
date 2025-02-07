@@ -20,7 +20,7 @@
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
 import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
-import { Settings, OptionType, ToggleOption, imageSettings, videoSettings } from '@/global/settings';
+import { Settings, OptionType, ToggleOption, imageSettings, videoSettings, getID, getLabel } from '@/global/settings';
 import { JSONResponse } from '@/dashboard/channels';
 import { Wallpaper } from '@/dashboard/store';
 
@@ -32,55 +32,59 @@ const props = defineProps<{
 const settings = ref<Settings | null>(null);
 
 const taskbarSetting = ref<ToggleOption>({
-	label: 'Show behind taskbar',
+	id: 'taskbar',
 	type: 'checkbox',
-	name: 'taskbar',
+	label: 'Show behind taskbar',
 	value: false,
 });
-
-const label = ({ label, text }: { label?: string; text?: string }) =>
-	typeof label === 'string' ? label : typeof text === 'string' ? text : undefined;
 
 watch(
 	() => props.json,
 	() => {
-		if (!props.json || !props.json.data || !Array.isArray(props.json.data.settings) || !props.json.data.settings.length)
-			return setSettings(null);
+		if (!props.json || !props.json.data || !Array.isArray(props.json.data.settings)) return setSettings(null);
+
 		if (props.wallpaper.type === 'image') return setSettings(imageSettings);
 		else if (props.wallpaper.type === 'video') return setSettings(videoSettings);
 
-		const properties = props.json.data.settings.map((opt: OptionType) => {
-			if (typeof opt.type !== 'string' || typeof opt.name !== 'string' || typeof label(opt) !== 'string') return;
-			if (['checkbox', 'toggle'].includes(opt.type.toLocaleLowerCase().trim())) {
-				opt.type = 'checkbox';
-				opt.value = Boolean(opt.value);
-			} else if (['slider', 'range'].includes(opt.type.toLocaleLowerCase().trim())) {
-				opt.type = 'slider';
-				if (opt.type !== 'slider') return;
-				opt.min = Number(opt.min) || 0;
-				opt.max = Number(opt.max) || 100;
-				opt.step = Number(opt.step) || 1;
-				opt.max = opt.max < opt.min + opt.step ? opt.min + opt.step : opt.max;
-				opt.value = Number(opt.value) || 0;
-				if (opt.value > opt.max) opt.value = opt.max;
-				if (opt.value < opt.min) opt.value = opt.min;
-			} else if (['radio', 'radio-group', 'radiogroup'].includes(opt.type.toLocaleLowerCase().trim())) {
-				opt.type = 'radio';
-				if (opt.type !== 'radio') return;
+		const uniqueIds: string[] = [];
+		const list = (props.json.data.settings as OptionType[]).map((option) => {
+			if (!option || typeof getID(option) !== 'string' || typeof getLabel(option) !== 'string') return null;
+			option.id = getID(option) as string;
+			option.label = getLabel(option) as string;
+			if (['checkbox', 'toggle'].includes(option.type.toLocaleLowerCase().trim())) {
+				option.type = 'checkbox';
+				option.value = Boolean(option.value);
+			} else if (['slider', 'range'].includes(option.type.toLocaleLowerCase().trim())) {
+				option.type = 'slider';
+				if (option.type !== 'slider') return null;
+				option.min = Number(option.min) || 0;
+				option.max = Number(option.max) || 100;
+				option.step = Number(option.step) || 1;
+				option.max = option.max < option.min + option.step ? option.min + option.step : option.max;
+				option.value = Number(option.value) || 0;
+				if (option.value > option.max) option.value = option.max;
+				if (option.value < option.min) option.value = option.min;
+			} else if (['radio', 'radio-group', 'radiogroup'].includes(option.type.toLocaleLowerCase().trim())) {
+				option.type = 'radio';
+				if (option.type !== 'radio') return null;
 				let valueExist = false;
-				if (!Array.isArray(opt.options) || !opt.options.length) return;
-				const options = opt.options.map((option) => {
-					if (typeof label(option) !== 'string') return;
-					if (typeof option.value !== 'string' && typeof option.value !== 'number') return;
-					if (option.value === opt.value) valueExist = true;
-					return { value: option.value, label: label(option) };
+				if (!Array.isArray(option.options) || !option.options.length) return null;
+				const options = option.options.map((opt) => {
+					if (typeof getLabel(opt) !== 'string') return;
+					if (typeof opt.value !== 'string' && typeof opt.value !== 'number') return;
+					if (opt.value === option.value) valueExist = true;
+					return { label: getLabel(opt), value: opt.value };
 				});
-				opt.options = options.filter(Boolean) as { value: string; label: string }[];
-				if (!valueExist) opt.value = opt.options[0].value;
-			} else return;
-			return opt;
+				option.options = options.filter(Boolean) as { value: string; label: string }[];
+				if (!valueExist) option.value = option.options[0].value;
+			} else return null;
+			if (uniqueIds.includes(option.id)) return null;
+			uniqueIds.push(option.id);
+			return option;
 		});
-		setSettings({ direction: props.json.data.direction, settings: properties.filter(Boolean) });
+		const $list = list.filter((opt) => opt !== null);
+		if (!$list.length) return setSettings(null);
+		setSettings({ direction: props.json.data.direction, settings: $list });
 	}
 );
 
@@ -98,7 +102,7 @@ const getSettings = () => {
 	if (!settings.value) return { taskbar: taskbarSetting.value.value, settings: {} };
 	return {
 		taskbar: taskbarSetting.value.value,
-		settings: Object.fromEntries(settings.value.settings.map((opt) => [opt.name, opt.value])),
+		settings: Object.fromEntries(settings.value.settings.map((opt) => [opt.id, opt.value])),
 	};
 };
 

@@ -24,6 +24,7 @@ import { defineProps, defineEmits, ref, watch } from 'vue';
 import { JSONResponse } from '@/dashboard/channels';
 import { Wallpaper, Permission } from '@/dashboard/store';
 import { NovaWallpaper } from '../preload';
+import { getID, getLabel } from '@/global/settings';
 
 const permissions = ref<Permission[]>([]);
 
@@ -35,16 +36,18 @@ const props = defineProps<{
 watch(
 	() => props.json,
 	() => {
-		if (!props.json || !props.json.data || props.wallpaper.type !== 'webpage') return setPermissions([]);
-		if (!Array.isArray(props.json.data['permissions']) || !props.json.data['permissions'].length)
-			return setPermissions([]);
-		const names: string[] = [];
-		const list = props.json.data['permissions'].map((option) => {
-			if (!option || typeof option.name !== 'string' || !option.name) return null;
+		if (!props.json || !props.json.data || !Array.isArray(props.json.data.permissions)) return setPermissions([]);
+		if (props.wallpaper.type !== 'webpage') return setPermissions([]);
+
+		const uniqueIds: string[] = [];
+		const list = (props.json.data.permissions as Permission[]).map((option) => {
+			if (!option || typeof getID(option) !== 'string' || typeof getLabel(option) !== 'string') return null;
+			option.id = getID(option) as string;
+			option.label = getLabel(option) as string;
 			if (option.type !== 'executable' && option.type !== 'url' && option.type !== 'folder') return null;
-			if (names.includes(option.name)) return null;
-			names.push(option.name);
-			return { type: option.type, name: option.name, label: `${option.label ? option.label : option.name}`, value: '' };
+			if (uniqueIds.includes(option.id)) return null;
+			uniqueIds.push(option.id);
+			return { id: option.id, type: option.type, label: option.label, value: '' };
 		});
 		setPermissions(list.filter((opt) => opt !== null));
 	}

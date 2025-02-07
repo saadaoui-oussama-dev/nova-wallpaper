@@ -7,9 +7,9 @@ export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers
 
 export type Settings = { [key: string]: string | number | boolean };
 
-export type Permission = { type: 'executable' | 'url' | 'folder'; name: string; label: string; value: string };
+export type Permission = { id: string; type: 'executable' | 'url' | 'folder'; label: string; value: string };
 
-export type Query = { key: string; value: string };
+export type Query = { id: string; value: string };
 
 export type Wallpaper = {
 	id: string;
