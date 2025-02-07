@@ -45,6 +45,8 @@ const pageHeaderAction = (action: string) => {
 		if (main.value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
 	} else if (action === 'close') {
 		if (form.value) form.value.save();
+	} else if (action === 'restore') {
+		NovaWallpaper.log('restore');
 	}
 };
 
