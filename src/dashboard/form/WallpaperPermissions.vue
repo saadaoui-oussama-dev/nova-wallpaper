@@ -6,7 +6,7 @@
 				<p style="width: 40%">{{ option.label }}</p>
 				<input
 					v-model="option.value"
-					@change="emit('change', [...permissions])"
+					@change="onChange()"
 					:placeholder="getPlaceholder(option)"
 					style="flex: 1"
 					:class="option.type"
@@ -32,6 +32,8 @@ const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: JSONResponse | null;
 }>();
+
+const emit = defineEmits(['change']);
 
 watch(
 	() => props.json,
@@ -71,11 +73,19 @@ const bindFilePath = async (option: Permission) => {
 	}
 };
 
-const emit = defineEmits(['change']);
-
 const setPermissions = (data: Permission[]) => {
 	permissions.value = [...data];
-	emit('change', [...data]);
+	onChange();
+};
+
+const onChange = () => {
+	const trim = (option: Permission) => {
+		option.value = option.value.trim();
+		if (option.value.startsWith('"')) option.value = option.value.slice(1).trim();
+		if (option.value.endsWith('"')) option.value = option.value.slice(0, -1).trim();
+		return option.value;
+	};
+	emit('change', Object.fromEntries(permissions.value.map((option) => [option.id, trim(option)])));
 };
 </script>
 

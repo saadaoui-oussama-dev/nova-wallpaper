@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, defineExpose } from 'vue';
-import { useWallpaperStore, Wallpaper, Settings, Permission, Query } from '@/dashboard/store';
+import { useWallpaperStore, Wallpaper, SimpleMap } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
 import { JSONResponse } from '@/dashboard/channels';
 
@@ -35,17 +35,17 @@ const wallpaper = ref<Wallpaper | null>(null);
 
 const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 25) : '');
 
-const settings = ref<{ taskbar: boolean; settings: Settings }>({ taskbar: false, settings: {} });
+const settings = ref<{ taskbar: boolean; settings: SimpleMap }>({ taskbar: false, settings: {} });
 
-const permissions = ref<Permission[]>([]);
+const permissions = ref<SimpleMap>({});
 
-const queryParams = ref<Query[]>([]);
+const queryParams = ref<SimpleMap>({});
 
-const setSettings = (data: { taskbar: boolean; settings: Settings }) => (settings.value = data);
+const setSettings = (data: { taskbar: boolean; settings: SimpleMap }) => (settings.value = data);
 
-const setPermissions = (data: Permission[]) => (permissions.value = data);
+const setPermissions = (data: SimpleMap) => (permissions.value = data);
 
-const setQueryParams = (data: Query[]) => (queryParams.value = data);
+const setQueryParams = (data: SimpleMap) => (queryParams.value = data);
 
 const saving = ref<boolean>(false);
 
@@ -56,8 +56,8 @@ watch(
 	async () => {
 		wallpaper.value = store.formWallpaper;
 		setSettings({ taskbar: false, settings: {} });
-		setPermissions([]);
-		setQueryParams([]);
+		setPermissions({});
+		setQueryParams({});
 
 		if (!wallpaper.value) {
 			wallpaperJSON.value = null;
@@ -82,13 +82,8 @@ const save = async () => {
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
-		queryParams: queryParams.value.map((opt) => ({ id: opt.id, value: opt.value })),
-		permissions: permissions.value.map((opt) => {
-			opt.value = opt.value.trim();
-			if (opt.value.startsWith('"')) opt.value = opt.value.slice(1).trim();
-			if (opt.value.endsWith('"')) opt.value = opt.value.slice(0, -1).trim();
-			return { ...opt };
-		}),
+		queryParams: { ...queryParams.value },
+		permissions: { ...permissions.value },
 		content: [],
 	});
 	saving.value = false;

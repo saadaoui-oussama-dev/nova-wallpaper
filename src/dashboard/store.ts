@@ -5,7 +5,7 @@ import { FilesContentResponse, FilesResponse, JSONResponse } from '@/dashboard/c
 
 export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
 
-export type Settings = { [key: string]: string | number | boolean };
+export type SimpleMap = Record<string, string | number | boolean>;
 
 export type Permission = { id: string; type: 'executable' | 'url' | 'folder'; label: string; value: string };
 
@@ -19,9 +19,9 @@ export type Wallpaper = {
 	content: FilesContentResponse[];
 	favorite: boolean;
 	taskbar: boolean;
-	settings: Settings;
-	permissions: Permission[];
-	queryParams: Query[];
+	settings: SimpleMap;
+	permissions: SimpleMap;
+	queryParams: SimpleMap;
 };
 
 export interface State {
@@ -61,8 +61,8 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				taskbar: false,
 				favorite: false,
 				settings: {},
-				permissions: [],
-				queryParams: [],
+				permissions: {},
+				queryParams: {},
 			};
 		},
 

@@ -30,6 +30,8 @@ import { getID } from '@/global/settings';
 
 const queryParams = ref<Query[]>([]);
 
+const emit = defineEmits(['change']);
+
 const list = useTemplateRef('list');
 
 const props = defineProps<{
@@ -86,9 +88,7 @@ const isQueryParamsEmpty = () => {
 	return !queryParams.value[0].id && !queryParams.value[0].value;
 };
 
-const emit = defineEmits(['change']);
-
-const onChange = () => emit('change', [...queryParams.value]);
+const onChange = () => emit('change', Object.fromEntries(queryParams.value.map((option) => [option.id, option.value])));
 </script>
 
 <style scoped>

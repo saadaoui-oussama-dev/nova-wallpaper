@@ -22,12 +22,14 @@ import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
 import { Settings, OptionType, ToggleOption, imageSettings, videoSettings, getID, getLabel } from '@/global/settings';
 import { JSONResponse } from '@/dashboard/channels';
-import { Wallpaper } from '@/dashboard/store';
+import { Wallpaper, SimpleMap } from '@/dashboard/store';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: JSONResponse | null;
 }>();
+
+const emit = defineEmits(['change']);
 
 const settings = ref<Settings | null>(null);
 
@@ -98,15 +100,13 @@ const directionText = computed(() => {
 	else return 'row';
 });
 
-const getSettings = () => {
+const getSettings = (): { taskbar: boolean; settings: SimpleMap } => {
 	if (!settings.value) return { taskbar: taskbarSetting.value.value, settings: {} };
 	return {
 		taskbar: taskbarSetting.value.value,
-		settings: Object.fromEntries(settings.value.settings.map((opt) => [opt.id, opt.value])),
+		settings: Object.fromEntries(settings.value.settings.map((option) => [option.id, option.value])),
 	};
 };
-
-const emit = defineEmits(['change']);
 
 const setSettings = (data: Settings | null) => {
 	settings.value = data ? { direction: data.direction, settings: [...data.settings] } : null;
