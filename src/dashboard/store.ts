@@ -51,8 +51,8 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
-		prepareToAddWallpaper(type: WallpaperType, path: string, content: FilesContentResponse[]) {
-			this.formWallpaper = {
+		async addWallpaper(type: WallpaperType, path: string, content: FilesContentResponse[]) {
+			const wallpaper = {
 				id: '',
 				label: '',
 				type,
@@ -64,25 +64,18 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				permissions: {},
 				queryParams: {},
 			};
+			const { doc, error } = await NovaWallpaper.database.invoke('insert', 'wallpaper', {
+				...wallpaper,
+				label: 'Draft',
+			});
+			if (error) return;
+			wallpaper.id = doc.id;
+			this.formWallpaper = wallpaper;
+			await this.setActiveWallpaper(this.formWallpaper);
 		},
 
-		discardAdding() {
-			if (this.formWallpaper) {
-				if (this.wallpapers.every((wallpaper) => this.formWallpaper && wallpaper.path !== this.formWallpaper.path)) {
-					if (this.formWallpaper) delete this.data[this.formWallpaper.path];
-				}
-			}
-			this.formWallpaper = null;
-		},
-
-		async addWallpaper(wallpaper: Wallpaper) {
-			try {
-				const { doc } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
-				this.formWallpaper = null;
-				await this.setActiveWallpaper(doc as Wallpaper);
-			} catch {
-				console.log();
-			}
+		async updateWallpaper(wallpaper: Wallpaper) {
+			NovaWallpaper.log('save', { ...wallpaper.settings });
 		},
 
 		async setActiveWallpaper(wallpaper: Wallpaper | null) {

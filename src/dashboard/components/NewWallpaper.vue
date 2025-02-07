@@ -65,7 +65,7 @@ const createWallpaper = async ({ type }: Option) => {
 		let selectedType: WallpaperType = 'image';
 		if (path.toLocaleLowerCase().endsWith('.mp4')) selectedType = 'video';
 		else if (path.toLocaleLowerCase().endsWith('.html')) selectedType = 'webpage';
-		store.prepareToAddWallpaper(selectedType, path, content);
+		store.addWallpaper(selectedType, path, content);
 	}
 };
 </script>

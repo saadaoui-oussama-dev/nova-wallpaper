@@ -9,7 +9,7 @@
 		</div>
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
 		<template v-if="wallpaper.type === 'webpage'">
-			<wallpaper-permissions :wallpaper="wallpaper" :json="wallpaperJSON" @change="setPermissions" />
+			<wallpaper-permissions ref="permissions" :wallpaper="wallpaper" :json="wallpaperJSON" @change="setPermissions" />
 			<wallpaper-query-params :wallpaper="wallpaper" :json="wallpaperJSON" @change="setQueryParams" />
 		</template>
 	</div>
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, defineExpose } from 'vue';
+import { ref, useTemplateRef, watch, defineExpose } from 'vue';
 import { useWallpaperStore, Wallpaper, SimpleMap } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
 import { JSONResponse } from '@/dashboard/channels';
@@ -30,6 +30,8 @@ import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
 const store = useWallpaperStore();
 
 const wallpaperJSON = ref<JSONResponse | null>(null);
+
+const permissionsRef = useTemplateRef('permissions');
 
 const wallpaper = ref<Wallpaper | null>(null);
 
@@ -77,13 +79,13 @@ const save = async () => {
 	if (saving.value || !wallpaper.value) return;
 	saving.value = true;
 	label.value = getFileName(label.value, 'name', 25);
-	await store.addWallpaper({
+	await store.updateWallpaper({
 		...wallpaper.value,
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
 		queryParams: { ...queryParams.value },
-		permissions: { ...permissions.value },
+		permissions: permissionsRef.value ? permissionsRef.value.onChange(true) : { ...permissions.value },
 		content: [],
 	});
 	saving.value = false;

@@ -43,7 +43,7 @@ const pageHeaderAction = (action: string) => {
 	} else if (action === 'expand') {
 		visible.value = true;
 		if (main.value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
-	} else if (action === 'close') {
+	} else if (action === 'finish') {
 		if (form.value) form.value.save();
 	} else if (action === 'restore') {
 		NovaWallpaper.log('restore');

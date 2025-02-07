@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { defineProps, defineEmits, ref, watch, defineExpose } from 'vue';
 import { JSONResponse } from '@/dashboard/channels';
 import { Wallpaper, Permission } from '@/dashboard/store';
 import { NovaWallpaper } from '../preload';
@@ -75,18 +75,24 @@ const bindFilePath = async (option: Permission) => {
 
 const setPermissions = (data: Permission[]) => {
 	permissions.value = [...data];
-	onChange();
+	onChange(true);
 };
 
-const onChange = () => {
+const onChange = (trimWhitespaces = false) => {
 	const trim = (option: Permission) => {
-		option.value = option.value.trim();
-		if (option.value.startsWith('"')) option.value = option.value.slice(1).trim();
-		if (option.value.endsWith('"')) option.value = option.value.slice(0, -1).trim();
+		if (trimWhitespaces) {
+			option.value = option.value.trim();
+			if (option.value.startsWith('"')) option.value = option.value.slice(1).trim();
+			if (option.value.endsWith('"')) option.value = option.value.slice(0, -1).trim();
+		}
 		return option.value;
 	};
-	emit('change', Object.fromEntries(permissions.value.map((option) => [option.id, trim(option)])));
+	const data = Object.fromEntries(permissions.value.map((option) => [option.id, trim(option)]));
+	if (!trimWhitespaces) emit('change', data);
+	return data;
 };
+
+defineExpose({ onChange });
 </script>
 
 <style scoped>
