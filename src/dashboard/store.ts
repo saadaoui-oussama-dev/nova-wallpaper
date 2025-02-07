@@ -74,10 +74,6 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			await this.setActiveWallpaper(this.formWallpaper);
 		},
 
-		async updateWallpaper(wallpaper: Wallpaper) {
-			NovaWallpaper.log('save', { ...wallpaper.settings });
-		},
-
 		async setActiveWallpaper(wallpaper: Wallpaper | null) {
 			try {
 				if (!wallpaper) {
@@ -92,9 +88,8 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
-		async toggleFavorite(wallpaper: Wallpaper) {
-			await NovaWallpaper.database.invoke('update', 'wallpaper', { id: wallpaper.id, favorite: !wallpaper.favorite });
-			await this.readData();
+		async updateWallpaper(wallpaper: Partial<Wallpaper>) {
+			await NovaWallpaper.database.invoke('update', 'wallpaper', wallpaper);
 		},
 
 		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<JSONResponse> {

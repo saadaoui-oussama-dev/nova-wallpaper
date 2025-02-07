@@ -10,7 +10,7 @@
 			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
 
 			<div class="info">
-				<span class="label">{{ getFileName(wallpaper.label, 'name', 25) }}</span>
+				<span class="label">{{ getFileName(wallpaper.label, 'name', 25) || 'Untitled Wallpaper' }}</span>
 
 				<div class="menu-container">
 					<button class="menu-btn favorite" @click.stop="toggleFavorite(wallpaper)">
@@ -82,9 +82,10 @@ const closeMenu = () => {
 	activeMenu.value = null;
 };
 
-const toggleFavorite = (wallpaper: Wallpaper) => {
+const toggleFavorite = async (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
-	store.toggleFavorite(wallpaper);
+	await store.updateWallpaper({ id: wallpaper.id, favorite: !wallpaper.favorite });
+	await store.readData();
 };
 
 const deleteWallpaper = (wallpaper: Wallpaper) => {

@@ -29,9 +29,9 @@ import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
 
 const store = useWallpaperStore();
 
-const wallpaperJSON = ref<JSONResponse | null>(null);
-
 const permissionsRef = useTemplateRef('permissions');
+
+const wallpaperJSON = ref<JSONResponse | null>(null);
 
 const wallpaper = ref<Wallpaper | null>(null);
 
@@ -43,27 +43,17 @@ const permissions = ref<SimpleMap>({});
 
 const queryParams = ref<SimpleMap>({});
 
-const setSettings = (data: { taskbar: boolean; settings: SimpleMap }) => (settings.value = data);
-
-const setPermissions = (data: SimpleMap) => (permissions.value = data);
-
-const setQueryParams = (data: SimpleMap) => (queryParams.value = data);
-
-const saving = ref<boolean>(false);
-
-watch(label, () => (label.value = getFileName(label.value, 'name', 25, false)));
-
 watch(
 	() => store.formWallpaper,
 	async () => {
 		wallpaper.value = store.formWallpaper;
-		setSettings({ taskbar: false, settings: {} });
-		setPermissions({});
-		setQueryParams({});
 
 		if (!wallpaper.value) {
 			wallpaperJSON.value = null;
 			label.value = '';
+			setSettings({ taskbar: false, settings: {} });
+			setPermissions({});
+			setQueryParams({});
 		} else {
 			label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 25) || '';
 			wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
@@ -75,20 +65,54 @@ watch(
 	}
 );
 
+watch(label, () => {
+	if (!wallpaper.value) return;
+	label.value = getFileName(label.value, 'name', 25, false);
+	store.updateWallpaper({
+		id: wallpaper.value.id,
+		label: getFileName(label.value, 'name', 25),
+	});
+});
+
+const setSettings = (data: { taskbar: boolean; settings: SimpleMap }) => {
+	settings.value = data;
+	if (!wallpaper.value) return;
+	store.updateWallpaper({
+		id: wallpaper.value.id,
+		taskbar: settings.value.taskbar,
+		settings: { ...settings.value.settings },
+	});
+};
+
+const setPermissions = (data: SimpleMap) => {
+	permissions.value = data;
+	if (!wallpaper.value) return;
+	store.updateWallpaper({
+		id: wallpaper.value.id,
+		permissions: permissionsRef.value ? permissionsRef.value.onChange(true, false) : { ...permissions.value },
+	});
+};
+
+const setQueryParams = (data: SimpleMap) => {
+	queryParams.value = data;
+	if (!wallpaper.value) return;
+	store.updateWallpaper({
+		id: wallpaper.value.id,
+		queryParams: { ...queryParams.value },
+	});
+};
+
 const save = async () => {
-	if (saving.value || !wallpaper.value) return;
-	saving.value = true;
+	if (!wallpaper.value) return;
 	label.value = getFileName(label.value, 'name', 25);
 	await store.updateWallpaper({
-		...wallpaper.value,
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
+		permissions: permissionsRef.value ? permissionsRef.value.onChange(true, true) : { ...permissions.value },
 		queryParams: { ...queryParams.value },
-		permissions: permissionsRef.value ? permissionsRef.value.onChange(true) : { ...permissions.value },
-		content: [],
 	});
-	saving.value = false;
+	await store.readData();
 };
 
 defineExpose({ save });

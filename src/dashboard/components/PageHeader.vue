@@ -4,7 +4,7 @@
 
 		<div class="right-side">
 			<button v-if="store.formWallpaper" class="text-btn" @click="emit('action', 'restore')">Restore</button>
-			<button v-if="store.formWallpaper" class="text-btn primary" @click="emit('action', 'close')">Close</button>
+			<button v-if="store.formWallpaper" class="text-btn primary" @click="emit('action', 'finish')">Finish</button>
 
 			<button v-else-if="visible" class="text-btn fixed" @click="emit('action', 'collapse')">Cancel</button>
 			<button v-else class="text-btn primary fixed" @click="emit('action', 'expand')">Add</button>

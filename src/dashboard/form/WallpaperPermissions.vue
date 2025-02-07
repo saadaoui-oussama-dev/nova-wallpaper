@@ -6,7 +6,7 @@
 				<p style="width: 40%">{{ option.label }}</p>
 				<input
 					v-model="option.value"
-					@change="onChange()"
+					@change="onChange(false, false)"
 					:placeholder="getPlaceholder(option)"
 					style="flex: 1"
 					:class="option.type"
@@ -75,20 +75,22 @@ const bindFilePath = async (option: Permission) => {
 
 const setPermissions = (data: Permission[]) => {
 	permissions.value = [...data];
-	onChange(true);
+	onChange(false, true);
 };
 
-const onChange = (trimWhitespaces = false) => {
-	const trim = (option: Permission) => {
-		if (trimWhitespaces) {
-			option.value = option.value.trim();
-			if (option.value.startsWith('"')) option.value = option.value.slice(1).trim();
-			if (option.value.endsWith('"')) option.value = option.value.slice(0, -1).trim();
+const onChange = (trim: boolean, set: boolean) => {
+	const trimAll = (option: Permission) => {
+		let value = option.value;
+		if (trim) {
+			value = value.trim();
+			if (value.startsWith('"')) value = value.slice(1).trim();
+			if (value.endsWith('"')) value = value.slice(0, -1).trim();
+			if (set) option.value = value;
 		}
-		return option.value;
+		return value;
 	};
-	const data = Object.fromEntries(permissions.value.map((option) => [option.id, trim(option)]));
-	if (!trimWhitespaces) emit('change', data);
+	const data = Object.fromEntries(permissions.value.map((option) => [option.id, trimAll(option)]));
+	if (!trim) emit('change', data);
 	return data;
 };
 
