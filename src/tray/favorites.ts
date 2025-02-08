@@ -12,9 +12,9 @@ export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 			label: padding(getFileName(wallpaper.label, 'name', 25) || `Untitled Wallpaper ${index + 1}`),
 			type: 'checkbox',
 			checked: active === wallpaper.id,
-			click: () => {
+			click: async () => {
 				try {
-					openDatabase().update('active', { value: wallpaper.id });
+					await openDatabase().update('active', { value: wallpaper.id });
 					events.$emit('active-changed');
 					events.$emit('reloadMenu');
 				} catch {}

@@ -81,13 +81,17 @@ ipcMain.handle('json', (_, action: Channels.JSONInvokeAction, filename: string, 
 ipcMain.handle(
 	'database',
 	(_, action: Channels.DatabaseInvokeAction, table: string, dataOrQuery: { [key: string]: any }) => {
-		return new Promise<Channels.DatabaseResponse>((resolve) => {
+		return new Promise<Channels.DatabaseResponse>(async (resolve) => {
 			if (action === 'read') return resolve(openDatabase().read(table, dataOrQuery));
-			else if (action !== 'insert' && action !== 'update')
-				return resolve({ doc: null, error: `${action}: This action is not supported` });
-			if (action === 'insert') resolve(openDatabase().insert(table, dataOrQuery));
-			else if (action === 'update') resolve(openDatabase().update(table, dataOrQuery));
-			events.$emit('reloadMenu');
+			if (action === 'insert') return resolve(openDatabase().insert(table, dataOrQuery));
+			if (action === 'update') {
+				const response = await openDatabase().update(table, dataOrQuery);
+				if (!response.error && (table === 'active' || (table === 'wallpaper' && 'favorite' in dataOrQuery)))
+					events.$emit('reloadMenu');
+				resolve(response);
+				return;
+			}
+			return resolve({ doc: null, error: `${action}: This action is not supported` });
 		});
 	}
 );
