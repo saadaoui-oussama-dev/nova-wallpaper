@@ -52,6 +52,7 @@ const pageHeaderAction = (action: string) => {
 
 onMounted(async () => {
 	NovaWallpaper.database.on('refresh', () => store.readData());
+	window.onfocus = () => document.querySelectorAll('video').forEach((video) => video.play());
 	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) visible.value = true;
 	document.body.classList.add('ready');
