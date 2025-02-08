@@ -106,6 +106,7 @@ const save = async () => {
 	if (!wallpaper.value) return;
 	label.value = getFileName(label.value, 'name', 25);
 	const valid = await store.updateWallpaper({
+		id: wallpaper.value.id,
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
