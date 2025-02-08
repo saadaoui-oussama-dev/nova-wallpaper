@@ -16,36 +16,49 @@ export const openDatabase = () => {
 	const db = new NeDB({ filename: dbPath, autoload: true });
 	database = {
 		read(table: string, query: { [key: string]: any } = {}): Promise<DatabaseResponse> {
-			query = Object.fromEntries(Object.entries(query).map(([k, v]) => [`data.${k}`, v]));
 			return new Promise<DatabaseResponse>((resolve) => {
 				db.find({ ...query, table })
 					.sort({ createdAt: -1 })
-					.exec((error: Error | string | null, rows: { data: { [key: string]: any }; _id: string }[]) => {
+					.exec((error: Error | string | null, rows: { [key: string]: any }[]) => {
 						if (error) {
 							resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
 						} else {
-							resolve({ doc: rows.map(({ data, _id }) => ({ ...data, id: _id })), error: '' });
+							const ids: string[] = [];
+							resolve({
+								doc: rows
+									.map((data) => {
+										data = { ...data };
+										data.id = data._id;
+										delete data._id;
+										if (ids.includes(data.id)) return;
+										ids.push(data.id);
+										return data;
+									})
+									.filter((data) => data),
+								error: '',
+							});
 						}
 					});
 			});
 		},
 
 		insert(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
+			delete data.id;
 			return new Promise<DatabaseResponse>((resolve) => {
-				db.insert({ table, data, createdAt: Date.now() }, (error: Error | string | null, newDoc: any) => {
+				db.insert({ ...data, table, createdAt: Date.now() }, (error: Error | string | null, newDoc: any) => {
 					if (error) {
 						resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
 					} else {
-						resolve({ doc: { ...data, createdAt: newDoc.createdAt, id: newDoc._id }, error: '' });
+						resolve({ doc: { createdAt: newDoc.createdAt, id: newDoc._id }, error: '' });
 					}
 				});
 			});
 		},
 
 		update(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
+			data = { ...data };
 			const query = data.id ? { _id: data.id } : {};
 			delete data.id;
-			data = Object.fromEntries(Object.entries(data).map(([k, v]) => [`data.${k}`, v]));
 			return new Promise<DatabaseResponse>((resolve) => {
 				db.update(
 					{ ...query, table },
