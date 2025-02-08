@@ -105,14 +105,17 @@ const setQueryParams = (data: SimpleMap) => {
 const save = async () => {
 	if (!wallpaper.value) return;
 	label.value = getFileName(label.value, 'name', 25);
-	await store.updateWallpaper({
+	const valid = await store.updateWallpaper({
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
 		permissions: permissionsRef.value ? permissionsRef.value.onChange(true, true) : { ...permissions.value },
 		queryParams: { ...queryParams.value },
 	});
-	await store.readData();
+	if (valid) {
+		store.formWallpaper = null;
+		await store.readData();
+	}
 };
 
 defineExpose({ save });

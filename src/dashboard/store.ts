@@ -89,7 +89,8 @@ export const useWallpaperStore = defineStore('wallpaper', {
 		},
 
 		async updateWallpaper(wallpaper: Partial<Wallpaper>) {
-			await NovaWallpaper.database.invoke('update', 'wallpaper', wallpaper);
+			const { error } = await NovaWallpaper.database.invoke('update', 'wallpaper', wallpaper);
+			return !error;
 		},
 
 		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<JSONResponse> {
