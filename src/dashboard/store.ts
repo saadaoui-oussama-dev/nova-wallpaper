@@ -172,11 +172,11 @@ export const useWallpaperStore = defineStore('wallpaper', {
 					let cursor = 0;
 					while (!data.error && !data.path && cursor < attempts.length) {
 						const path = replaceFileName(wallpaper.path, { name: attempts[cursor][0], extension: attempts[cursor][1] });
-						const response = await NovaWallpaper.files.invoke('get-url', path);
+						const type = attempts[cursor][1] === 'mp4' ? 'video' : 'image';
+						const response = await this.fetchPreview({ ...wallpaper, path, type });
 						if (response.path) data.path = response.path;
-						else if (response.error?.includes('limit'))
-							data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
-						else cursor++;
+						else if (!response.error?.includes('limit')) cursor++;
+						else data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
 					}
 					if (cursor === attempts.length)
 						data.error =
