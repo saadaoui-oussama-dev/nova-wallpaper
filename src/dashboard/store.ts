@@ -95,7 +95,6 @@ export const useWallpaperStore = defineStore('wallpaper', {
 
 		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<JSONResponse> {
 			const src = this.data[wallpaper.path];
-			forceFetch = forceFetch || !src || !src.json;
 			if (!(forceFetch || !src || !src.json)) return src.json;
 
 			let resolver: (value: JSONResponse) => void = () => console.log();

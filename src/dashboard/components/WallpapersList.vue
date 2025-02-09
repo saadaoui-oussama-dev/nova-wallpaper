@@ -155,6 +155,7 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 }
 
 .menu-container {
+	display: flex;
 	position: relative;
 	height: 100%;
 	right: -12px;
