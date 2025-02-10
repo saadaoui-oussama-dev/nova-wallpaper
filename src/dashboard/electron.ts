@@ -4,7 +4,7 @@ import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
 import { readJson, writeJSON } from '@/global/json';
-import { openDatabase } from '@/global/database';
+import { database } from '@/global/database';
 import * as Channels from '@/dashboard/channels';
 
 let dashboard: BrowserWindow | undefined;
@@ -82,10 +82,10 @@ ipcMain.handle(
 	'database',
 	(_, action: Channels.DatabaseInvokeAction, table: string, dataOrQuery: { [key: string]: any }) => {
 		return new Promise<Channels.DatabaseResponse>(async (resolve) => {
-			if (action === 'read') return resolve(openDatabase().read(table, dataOrQuery));
-			if (action === 'insert') return resolve(openDatabase().insert(table, dataOrQuery));
+			if (action === 'read') return resolve(database.read(table, dataOrQuery));
+			if (action === 'insert') return resolve(database.insert(table, dataOrQuery));
 			if (action === 'update') {
-				const response = await openDatabase().update(table, dataOrQuery);
+				const response = await database.update(table, dataOrQuery);
 				if (!response.error && (table === 'active' || (table === 'wallpaper' && 'favorite' in dataOrQuery)))
 					events.$emit('reloadMenu');
 				resolve(response);

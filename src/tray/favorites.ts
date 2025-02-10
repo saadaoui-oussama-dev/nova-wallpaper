@@ -1,11 +1,11 @@
 import { Wallpaper } from '@/dashboard/store';
-import { openDatabase } from '@/global/database';
+import { database } from '@/global/database';
 import { events, padding, MenuOption, getFileName } from '@/global/electron-utils';
 
 export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 	try {
-		const { doc: list } = await openDatabase().read('wallpaper', { favorite: true });
-		const { doc: _active } = await openDatabase().read('active');
+		const { doc: list } = await database.read('wallpaper', { favorite: true });
+		const { doc: _active } = await database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
 
 		const wallpapers: MenuOption[] = list.map((wallpaper: Wallpaper, index: number) => ({
@@ -14,7 +14,7 @@ export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 			checked: active === wallpaper.id,
 			click: async () => {
 				try {
-					await openDatabase().update('active', { value: wallpaper.id });
+					await database.update('active', { value: wallpaper.id });
 					events.$emit('active-changed');
 					events.$emit('reloadMenu');
 				} catch {}
