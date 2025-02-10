@@ -52,8 +52,22 @@ const pageHeaderAction = (action: string) => {
 
 onMounted(async () => {
 	NovaWallpaper.database.on('refresh', () => store.readData());
-	window.onblur = () => document.querySelectorAll('video').forEach((video) => video.pause());
-	window.onfocus = () => document.querySelectorAll('video').forEach((video) => video.play());
+	window.onblur = () =>
+		document.querySelectorAll('video').forEach((video) => {
+			try {
+				video.pause();
+			} catch {
+				console.log();
+			}
+		});
+	window.onfocus = () =>
+		document.querySelectorAll('video').forEach((video) => {
+			try {
+				video.play();
+			} catch {
+				console.log();
+			}
+		});
 	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) visible.value = true;
 	document.body.classList.add('ready');
