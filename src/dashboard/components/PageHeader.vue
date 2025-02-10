@@ -3,7 +3,7 @@
 		<h1>{{ store.formWallpaper ? 'Parameters' : 'Wallpapers' }}</h1>
 
 		<div class="right-side">
-			<button v-if="store.formWallpaper" class="text-btn" @click="emit('action', 'restore')">Restore</button>
+			<button v-if="store.formWallpaper" class="text-btn" @click="emit('action', 'restore')">Reset All</button>
 			<button v-if="store.formWallpaper" class="text-btn primary" @click="emit('action', 'finish')">Finish</button>
 
 			<button v-else-if="visible" class="text-btn fixed" @click="emit('action', 'collapse')">Cancel</button>

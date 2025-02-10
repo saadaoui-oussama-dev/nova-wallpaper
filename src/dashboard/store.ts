@@ -45,7 +45,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				const { doc } = await NovaWallpaper.database.invoke('read', 'wallpaper');
 				if (Array.isArray(doc)) this.wallpapers = doc;
 				const { doc: active } = await NovaWallpaper.database.invoke('read', 'active');
-				this.activeWallpaper = active[0].value;
+				this.activeWallpaper = active[0] ? active[0].value : '';
 			} catch {
 				console.log();
 			}
@@ -68,24 +68,27 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				...wallpaper,
 				label: 'Draft',
 			});
-			if (error) return;
+			if (error) return false;
 			wallpaper.id = doc.id;
 			this.formWallpaper = wallpaper;
-			await this.setActiveWallpaper(this.formWallpaper);
+			return await this.setActiveWallpaper(this.formWallpaper, false);
 		},
 
-		async setActiveWallpaper(wallpaper: Wallpaper | null) {
+		async setActiveWallpaper(wallpaper: Wallpaper | null, readData = true) {
+			let valid = false;
 			try {
 				if (!wallpaper) {
-					await NovaWallpaper.database.invoke('update', 'active', { value: '' });
+					valid = !(await NovaWallpaper.database.invoke('update', 'active', { value: '' })).error;
 				} else {
-					const { doc } = await NovaWallpaper.database.invoke('update', 'active', { value: wallpaper.id });
-					if (doc === 0) await NovaWallpaper.database.invoke('insert', 'active', { value: wallpaper.id });
+					const { doc, error: err } = await NovaWallpaper.database.invoke('update', 'active', { value: wallpaper.id });
+					if (!err && doc !== 0) valid = true;
+					else valid = !(await NovaWallpaper.database.invoke('insert', 'active', { value: wallpaper.id })).error;
 				}
-				await this.readData();
+				if (readData) await this.readData();
 			} catch {
 				console.log();
 			}
+			return valid;
 		},
 
 		async updateWallpaper(wallpaper: Partial<Wallpaper>) {

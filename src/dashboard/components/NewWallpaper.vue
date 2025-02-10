@@ -61,11 +61,10 @@ const createWallpaper = async ({ type }: Option) => {
 	if (error || !path || !content) {
 		return console.log({ error });
 	} else if (type !== 'create') {
-		emit('close');
 		let selectedType: WallpaperType = 'image';
 		if (path.toLocaleLowerCase().endsWith('.mp4')) selectedType = 'video';
 		else if (path.toLocaleLowerCase().endsWith('.html')) selectedType = 'webpage';
-		store.addWallpaper(selectedType, path, content);
+		if (await store.addWallpaper(selectedType, path, content)) emit('close');
 	}
 };
 </script>

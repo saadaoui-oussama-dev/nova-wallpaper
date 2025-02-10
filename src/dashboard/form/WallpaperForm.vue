@@ -116,6 +116,8 @@ const save = async () => {
 	if (valid) {
 		store.formWallpaper = null;
 		await store.readData();
+	} else {
+		console.log('error');
 	}
 };
 
