@@ -3,6 +3,7 @@
 import { app, dialog, protocol } from 'electron';
 import { createTray } from '@/tray';
 
+require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 app.on('window-all-closed', ((event: Electron.Event) => event && event.preventDefault()) as () => void);

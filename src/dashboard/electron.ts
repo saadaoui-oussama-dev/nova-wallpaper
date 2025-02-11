@@ -58,10 +58,6 @@ events.$on('active-changed', () => {
 	if (dashboard) dashboard.webContents.send('refresh', 'database');
 });
 
-ipcMain.on('log', (_, ...data: string[]) => {
-	console.log(...data.map((d) => JSON.parse(d)));
-});
-
 ipcMain.on('window', (_, action: Channels.WindowSendAction) => {
 	if (['close', 'minimize'].includes(action)) return events.$emit('dashboard', action);
 });

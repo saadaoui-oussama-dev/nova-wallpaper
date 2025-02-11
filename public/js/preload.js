@@ -22,5 +22,4 @@ contextBridge.exposeInMainWorld('NovaWallpaper', {
 	files: ChannelConnector('files'),
 	json: ChannelConnector('json'),
 	database: ChannelConnector('database'),
-	log: (...data) => ipcRenderer.send('log', ...data.map((d) => JSON.stringify(d === undefined ? null : d))),
 });
