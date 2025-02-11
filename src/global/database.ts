@@ -18,9 +18,9 @@ export const database: Database = new Proxy<Database>({} as Database, {
 			const dbPath = path.join(app.getPath('userData'), 'data.db');
 			const db = new NeDB({ filename: dbPath, autoload: true });
 			const instance = {
-				read(table: string, query: { [key: string]: any } = {}): Promise<DatabaseResponse> {
+				read(table: string, filters: { [key: string]: any } = {}): Promise<DatabaseResponse> {
 					return new Promise<DatabaseResponse>((resolve) => {
-						db.find({ ...query, table })
+						db.find({ ...filters, table })
 							.sort({ createdAt: -1 })
 							.exec((error: Error | string | null, rows: { [key: string]: any }[]) => {
 								if (error) {
@@ -43,9 +43,11 @@ export const database: Database = new Proxy<Database>({} as Database, {
 				},
 
 				insert(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
-					delete data.id;
 					return new Promise<DatabaseResponse>((resolve) => {
-						db.insert({ ...data, table, createdAt: Date.now() }, (error: Error | string | null, newDoc: any) => {
+						const now = Date.now();
+						data = { ...data, table, createdAt: now, updatedAt: now };
+						delete data.id;
+						db.insert(data, (error: Error | string | null, newDoc: any) => {
 							if (error) {
 								resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
 							} else {
@@ -56,22 +58,17 @@ export const database: Database = new Proxy<Database>({} as Database, {
 				},
 
 				update(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
-					data = { ...data };
-					const query = data.id ? { _id: data.id } : {};
-					delete data.id;
 					return new Promise<DatabaseResponse>((resolve) => {
-						db.update(
-							{ ...query, table },
-							{ $set: data },
-							{ multi: true },
-							(error: Error | string | null, numReplaced: number) => {
-								if (error) {
-									resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
-								} else {
-									resolve({ doc: numReplaced, error: '' });
-								}
+						const filters = data.id ? { _id: data.id, table } : { table };
+						data = { ...data, updatedAt: Date.now() };
+						delete data.id;
+						db.update(filters, { $set: data }, { multi: true }, (error: Error | string | null, numReplaced: number) => {
+							if (error) {
+								resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
+							} else {
+								resolve({ doc: numReplaced, error: '' });
 							}
-						);
+						});
 					});
 				},
 			};
