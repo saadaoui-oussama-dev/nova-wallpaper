@@ -6,10 +6,10 @@ import { createTray } from '@/tray';
 require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
-app.on('window-all-closed', ((event: Electron.Event) => event && event.preventDefault()) as () => void);
+const alreadyRunning = !app.requestSingleInstanceLock();
 
-if (!app.requestSingleInstanceLock()) {
-	app.on('ready', () => {
+app.on('ready', async () => {
+	if (alreadyRunning) {
 		dialog.showMessageBoxSync({
 			type: 'error',
 			title: 'Nova Wallpaper',
@@ -17,10 +17,12 @@ if (!app.requestSingleInstanceLock()) {
 			buttons: ['OK'],
 		});
 		app.quit();
-	});
-} else {
-	app.on('ready', async () => createTray());
-}
+	} else {
+		createTray();
+	}
+});
+
+app.on('window-all-closed', ((event: Electron.Event) => event && event.preventDefault()) as () => void);
 
 if (process.env.NODE_ENV !== 'production') {
 	if (process.platform !== 'win32') process.on('SIGTERM', () => app.quit());
