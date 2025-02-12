@@ -1,11 +1,14 @@
 import { ChannelConnector, SendActionNotSupported } from '@/types/channels';
-import * as Channels from '@/types/channels';
+import { DatabaseInvokeAction, DatabaseResponse } from '@/types/channels';
+import { FilesInvokeAction, FilesResponse } from '@/types/channels';
+import { JSONInvokeAction, JSONResponse } from '@/types/channels';
+import { WindowSendAction, WindowInvokeAction, WindowResponse } from '@/types/channels';
 
 type NovaWallpaperPreload = {
-	window: ChannelConnector<Channels.WindowSendAction, Channels.WindowInvokeAction, Channels.WindowResponse>;
-	files: ChannelConnector<SendActionNotSupported, Channels.FilesInvokeAction, Channels.FilesResponse>;
-	json: ChannelConnector<SendActionNotSupported, Channels.JSONInvokeAction, Channels.JSONResponse>;
-	database: ChannelConnector<SendActionNotSupported, Channels.DatabaseInvokeAction, Channels.DatabaseResponse>;
+	database: ChannelConnector<SendActionNotSupported, DatabaseInvokeAction, DatabaseResponse>;
+	files: ChannelConnector<SendActionNotSupported, FilesInvokeAction, FilesResponse>;
+	json: ChannelConnector<SendActionNotSupported, JSONInvokeAction, JSONResponse>;
+	window: ChannelConnector<WindowSendAction, WindowInvokeAction, WindowResponse>;
 };
 
 export const NovaWallpaper: NovaWallpaperPreload = new Proxy<NovaWallpaperPreload>({} as NovaWallpaperPreload, {

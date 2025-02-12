@@ -1,6 +1,6 @@
 const { app } = require('electron');
-import { events, noPadding, padding } from '@/global/electron-utils';
 import { openDashboard } from '@/dashboard/electron';
+import { events, noPadding, padding } from '@/global/electron-utils';
 
 let soundsStateLabel = 'Mute Wallpaper';
 

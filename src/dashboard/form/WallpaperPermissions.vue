@@ -21,13 +21,11 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, watch, defineExpose } from 'vue';
-import { JSONResponse } from '@/types/channels';
-import { Wallpaper } from '@/types/wallpaper';
-import { NovaWallpaper } from '../preload';
+import { NovaWallpaper } from '@/dashboard/preload';
 import { getID, getLabel } from '@/global/settings';
+import { Wallpaper } from '@/types/wallpaper';
+import { JSONResponse } from '@/types/channels';
 import { Permission } from '@/types/json';
-
-const permissions = ref<Permission[]>([]);
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
@@ -35,6 +33,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['change']);
+
+const permissions = ref<Permission[]>([]);
 
 watch(
 	() => props.json,

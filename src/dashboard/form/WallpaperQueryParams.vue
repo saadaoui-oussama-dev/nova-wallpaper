@@ -22,23 +22,23 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, useTemplateRef, ref, watch } from 'vue';
+import { getID } from '@/global/settings';
+import { Wallpaper } from '@/types/wallpaper';
+import { JSONResponse } from '@/types/channels';
+import { Query } from '@/types/json';
 import IconAdd from '@/dashboard/icons/IconAdd.vue';
 import IconDelete from '@/dashboard/icons/IconDelete.vue';
-import { getID } from '@/global/settings';
-import { JSONResponse } from '@/types/channels';
-import { Wallpaper } from '@/types/wallpaper';
-import { Query } from '@/types/json';
-
-const queryParams = ref<Query[]>([]);
-
-const emit = defineEmits(['change']);
-
-const list = useTemplateRef('list');
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: JSONResponse | null;
 }>();
+
+const emit = defineEmits(['change']);
+
+const queryParams = ref<Query[]>([]);
+
+const list = useTemplateRef('list');
 
 watch(
 	() => props.json,

@@ -2,12 +2,12 @@ const { readdirSync, readFileSync } = require('fs');
 import { join } from 'path';
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
-import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
-import { readJson, writeJSON } from '@/global/json';
 import { database } from '@/global/database';
+import { readJson, writeJSON } from '@/global/json';
+import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
 import * as Channels from '@/types/channels';
 
-let dashboard: BrowserWindow | undefined;
+let dashboard: BrowserWindow | null;
 
 export const openDashboard = async () => {
 	if (dashboard) return dashboard.focus();
@@ -30,7 +30,7 @@ export const openDashboard = async () => {
 	});
 
 	dashboard.focus();
-	dashboard.on('close', () => (dashboard = undefined));
+	dashboard.on('close', () => (dashboard = null));
 
 	events.$on('dashboard-window', (action: string) => {
 		if (!dashboard) return;
@@ -38,7 +38,7 @@ export const openDashboard = async () => {
 		if (action === 'minimize') return dashboard.minimize();
 		if (action === 'close') {
 			dashboard.destroy();
-			dashboard = undefined;
+			dashboard = null;
 		}
 	});
 

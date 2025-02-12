@@ -19,15 +19,15 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, onMounted } from 'vue';
-import { NovaWallpaper } from '@/dashboard/preload';
 import { useWallpaperStore } from '@/dashboard/store';
-const store = useWallpaperStore();
-
+import { NovaWallpaper } from '@/dashboard/preload';
 import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
 import WallpapersList from '@/dashboard/components/WallpapersList.vue';
 import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
 import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
+
+const store = useWallpaperStore();
 
 const splashscreen = ref(true);
 

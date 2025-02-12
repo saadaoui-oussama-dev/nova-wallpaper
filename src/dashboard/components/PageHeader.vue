@@ -16,9 +16,9 @@
 import { defineProps, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 
-const emit = defineEmits(['action']);
-
 const props = defineProps<{ visible: boolean }>();
+
+const emit = defineEmits(['action']);
 
 const store = useWallpaperStore();
 </script>

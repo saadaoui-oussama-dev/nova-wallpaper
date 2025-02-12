@@ -18,12 +18,11 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
-import SettingsOption from '@/dashboard/form/SettingOption.vue';
-
 import { getID, getLabel } from '@/global/settings';
-import { JSONResponse } from '@/types/channels';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
+import { JSONResponse } from '@/types/channels';
 import { SettingsJSON, SettingOption, ToggleOption } from '@/types/json';
+import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;

@@ -32,14 +32,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { defineProps, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { Wallpaper } from '@/types/wallpaper';
-
-const store = useWallpaperStore();
-
-const emit = defineEmits(['setBase64']);
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
@@ -47,6 +43,8 @@ const props = defineProps<{
 	muted: boolean;
 	onlyPreview?: boolean;
 }>();
+
+const store = useWallpaperStore();
 
 // Preview Div Dimensions
 

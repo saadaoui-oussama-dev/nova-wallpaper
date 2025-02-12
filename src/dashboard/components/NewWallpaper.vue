@@ -19,16 +19,15 @@ import { ref, defineProps, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { WallpaperType } from '@/types/wallpaper';
-
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
 import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
-const emit = defineEmits(['collapse']);
-
 const props = defineProps<{ visible: boolean }>();
+
+const emit = defineEmits(['collapse']);
 
 const store = useWallpaperStore();
 

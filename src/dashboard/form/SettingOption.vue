@@ -57,14 +57,14 @@ const props = defineProps<{
 	modelValue: SettingOption;
 }>();
 
+const emit = defineEmits(['change', 'update:modelValue']);
+
 const getTrackBackgroundSize = () => {
 	if (props.modelValue.type !== 'slider') return;
 	const percentage =
 		((props.modelValue.value - props.modelValue.min) / (props.modelValue.max - props.modelValue.min)) * 100;
 	return `${percentage}%`;
 };
-
-const emit = defineEmits(['change', 'update:modelValue']);
 
 const change = (value: Event | string | number | boolean) => {
 	if (value && typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {

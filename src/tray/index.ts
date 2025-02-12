@@ -1,7 +1,7 @@
 const { Tray, Menu } = require('electron');
-import { events, joinPublic } from '@/global/electron-utils';
 import { renderControls } from '@/tray/controls';
 import { renderFavorites } from '@/tray/favorites';
+import { events, joinPublic } from '@/global/electron-utils';
 
 let tray: Electron.Tray;
 

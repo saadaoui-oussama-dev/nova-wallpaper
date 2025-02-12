@@ -39,9 +39,9 @@
 <script lang="ts" setup>
 import { defineEmits, ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
-import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import { getFileName } from '@/global/utils';
 import { Wallpaper } from '@/types/wallpaper';
+import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 
 const emit = defineEmits(['collapse']);
 

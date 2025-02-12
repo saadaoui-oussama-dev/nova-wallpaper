@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { NovaWallpaper } from '@/dashboard/preload';
-import { isSupported, replaceFileName } from '@/global/utils';
-import { FilesContentResponse, FilesResponse, JSONResponse } from '@/types/channels';
 import { imageJSON, videoJSON } from '@/global/settings';
+import { isSupported, replaceFileName } from '@/global/utils';
 import { Wallpaper, WallpaperType } from '@/types/wallpaper';
+import { FilesContentResponse, FilesResponse, JSONResponse } from '@/types/channels';
 
 export interface State {
 	activeWallpaper: string;

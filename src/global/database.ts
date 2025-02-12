@@ -1,7 +1,6 @@
-import path from 'path';
-import { app } from 'electron';
 const NeDB = require('nedb');
-
+import { join } from 'path';
+import { app } from 'electron';
 import { DatabaseResponse } from '@/types/channels';
 
 type Database = {
@@ -15,7 +14,7 @@ export const database: Database = new Proxy<Database>({} as Database, {
 		if (prop !== 'read' && prop !== 'insert' && prop !== 'update') return;
 		if (prop in target) return target[prop];
 		else {
-			const dbPath = path.join(app.getPath('userData'), 'data.db');
+			const dbPath = join(app.getPath('userData'), 'data.db');
 			const db = new NeDB({ filename: dbPath, autoload: true });
 			const instance = {
 				read(table: string, filters: { [key: string]: any } = {}): Promise<DatabaseResponse> {
