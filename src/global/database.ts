@@ -2,7 +2,7 @@ import path from 'path';
 import { app } from 'electron';
 const NeDB = require('nedb');
 
-import { DatabaseResponse } from '@/dashboard/channels';
+import { DatabaseResponse } from '@/types/channels';
 
 type Database = {
 	read: (table: string, query?: { [key: string]: any }) => Promise<DatabaseResponse>;

@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref, watch, defineExpose } from 'vue';
-import { JSONResponse } from '@/dashboard/channels';
+import { JSONResponse } from '@/types/channels';
 import { Wallpaper, Permission } from '@/dashboard/store';
 import { NovaWallpaper } from '../preload';
 import { getID, getLabel } from '@/global/settings';

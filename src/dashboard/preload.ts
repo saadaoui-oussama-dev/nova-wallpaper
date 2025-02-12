@@ -1,13 +1,5 @@
-import * as Channels from '@/dashboard/channels';
-
-type SendActionNotSupported = 'throw-error' | 'send-is-not-supported';
-
-type ChannelConnector<SendAction, ReceiveAction, ReceiveResponse> = {
-	on: (event: string, callback: (...data: any[]) => void) => void;
-	off: (event: string) => void;
-	send: (key: SendAction, ...data: any[]) => void;
-	invoke: (key: ReceiveAction, ...data: any[]) => Promise<ReceiveResponse>;
-};
+import { ChannelConnector, SendActionNotSupported } from '@/types/channels';
+import * as Channels from '@/types/channels';
 
 type NovaWallpaperPreload = {
 	window: ChannelConnector<Channels.WindowSendAction, Channels.WindowInvokeAction, Channels.WindowResponse>;

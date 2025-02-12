@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { isSupported, replaceFileName } from '@/global/utils';
-import { FilesContentResponse, FilesResponse, JSONResponse } from '@/dashboard/channels';
+import { FilesContentResponse, FilesResponse, JSONResponse } from '@/types/channels';
 import { imageJSON, videoJSON } from '@/global/settings';
 
 export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';

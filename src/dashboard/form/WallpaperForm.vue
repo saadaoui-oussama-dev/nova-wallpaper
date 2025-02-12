@@ -20,7 +20,7 @@
 import { ref, useTemplateRef, watch, defineExpose } from 'vue';
 import { useWallpaperStore, Wallpaper, SimpleMap } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
-import { JSONResponse } from '@/dashboard/channels';
+import { JSONResponse } from '@/types/channels';
 
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';

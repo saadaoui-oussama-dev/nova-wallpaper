@@ -21,7 +21,7 @@ import { defineProps, defineEmits, computed, ref, watch } from 'vue';
 import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
 import { Settings, OptionType, ToggleOption, getID, getLabel } from '@/global/settings';
-import { JSONResponse } from '@/dashboard/channels';
+import { JSONResponse } from '@/types/channels';
 import { Wallpaper, SimpleMap } from '@/dashboard/store';
 
 const props = defineProps<{

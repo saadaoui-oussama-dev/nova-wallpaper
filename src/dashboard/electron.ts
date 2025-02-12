@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
 import { readJson, writeJSON } from '@/global/json';
 import { database } from '@/global/database';
-import * as Channels from '@/dashboard/channels';
+import * as Channels from '@/types/channels';
 
 let dashboard: BrowserWindow | undefined;
 

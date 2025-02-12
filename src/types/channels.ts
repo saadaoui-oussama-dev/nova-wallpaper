@@ -21,3 +21,14 @@ export type JSONResponse = { exist: boolean; valid: boolean; data: any };
 export type DatabaseInvokeAction = 'read' | 'insert' | 'update';
 
 export type DatabaseResponse = { doc: any; error: string };
+
+export type SendActionNotSupported = 'throw-error' | 'send-is-not-supported';
+
+export type InvokeActionNotSupported = 'throw-error' | 'invoke-is-not-supported';
+
+export type ChannelConnector<SendAction, ReceiveAction, ReceiveResponse> = {
+	on: (event: string, callback: (...data: any[]) => void) => void;
+	off: (event: string) => void;
+	send: (key: SendAction, ...data: any[]) => void;
+	invoke: (key: ReceiveAction, ...data: any[]) => Promise<ReceiveResponse>;
+};
