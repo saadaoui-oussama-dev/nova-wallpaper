@@ -3,27 +3,7 @@ import { NovaWallpaper } from '@/dashboard/preload';
 import { isSupported, replaceFileName } from '@/global/utils';
 import { FilesContentResponse, FilesResponse, JSONResponse } from '@/types/channels';
 import { imageJSON, videoJSON } from '@/global/settings';
-
-export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
-
-export type SimpleMap = Record<string, string | number | boolean>;
-
-export type Permission = { id: string; type: 'executable' | 'url' | 'folder'; label: string; value: string };
-
-export type Query = { id: string; value: string };
-
-export type Wallpaper = {
-	id: string;
-	label: string;
-	type: WallpaperType;
-	path: string;
-	content: FilesContentResponse[];
-	favorite: boolean;
-	taskbar: boolean;
-	settings: SimpleMap;
-	permissions: SimpleMap;
-	queryParams: SimpleMap;
-};
+import { Wallpaper, WallpaperType } from '@/types/wallpaper';
 
 export interface State {
 	activeWallpaper: string;

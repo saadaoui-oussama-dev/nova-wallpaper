@@ -1,6 +1,6 @@
-import { Wallpaper } from '@/dashboard/store';
 import { database } from '@/global/database';
 import { events, padding, getFileName } from '@/global/electron-utils';
+import { Wallpaper } from '@/types/wallpaper';
 
 export const renderFavorites = async (options: Electron.MenuItemConstructorOptions[]): Promise<void> => {
 	try {

@@ -22,7 +22,7 @@ import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
 import { Settings, OptionType, ToggleOption, getID, getLabel } from '@/global/settings';
 import { JSONResponse } from '@/types/channels';
-import { Wallpaper, SimpleMap } from '@/dashboard/store';
+import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;

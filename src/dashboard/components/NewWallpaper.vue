@@ -16,8 +16,9 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import { useWallpaperStore, WallpaperType } from '@/dashboard/store';
+import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
+import { WallpaperType } from '@/types/wallpaper';
 
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';

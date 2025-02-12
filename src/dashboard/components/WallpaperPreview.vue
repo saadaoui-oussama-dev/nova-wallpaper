@@ -33,8 +33,9 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
-import { useWallpaperStore, Wallpaper } from '@/dashboard/store';
+import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
+import { Wallpaper } from '@/types/wallpaper';
 
 const store = useWallpaperStore();
 
