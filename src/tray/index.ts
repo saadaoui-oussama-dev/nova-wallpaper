@@ -1,5 +1,5 @@
 const { Tray, Menu } = require('electron');
-import { events, joinPublic, MenuOption } from '@/global/electron-utils';
+import { events, joinPublic } from '@/global/electron-utils';
 import { renderControls } from '@/tray/controls';
 import { renderFavorites } from '@/tray/favorites';
 
@@ -12,10 +12,12 @@ export const createTray = () => {
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 
-	events.$on('tray-render-menu', (options: MenuOption[]) => tray.setContextMenu(Menu.buildFromTemplate(options)));
+	events.$on('tray-render-menu', (options: Electron.MenuItemConstructorOptions[]) => {
+		tray.setContextMenu(Menu.buildFromTemplate(options));
+	});
 
 	events.$on('tray-reload-menu', async () => {
-		const options: MenuOption[] = [];
+		const options: Electron.MenuItemConstructorOptions[] = [];
 		await renderFavorites(options);
 		renderControls(options);
 		events.$emit('tray-render-menu', options);

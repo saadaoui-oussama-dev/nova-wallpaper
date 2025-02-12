@@ -1,13 +1,13 @@
 const { app } = require('electron');
-import { events, noPadding, padding, MenuOption } from '@/global/electron-utils';
+import { events, noPadding, padding } from '@/global/electron-utils';
 import { openDashboard } from '@/dashboard/electron';
 
 let soundsStateLabel = 'Mute Wallpaper';
 
-export const renderControls = (options: MenuOption[]): void => {
+export const renderControls = (options: Electron.MenuItemConstructorOptions[]): void => {
 	const pad = options.length ? true : false;
 
-	const soundsController: MenuOption = {
+	const soundsController: Electron.MenuItemConstructorOptions = {
 		label: padding(soundsStateLabel, pad),
 		click: () => {
 			if (noPadding(visibilityController.label as string) === 'Show Wallpaper') return;
@@ -18,7 +18,7 @@ export const renderControls = (options: MenuOption[]): void => {
 		},
 	};
 
-	const visibilityController: MenuOption = {
+	const visibilityController: Electron.MenuItemConstructorOptions = {
 		label: padding('Hide Wallpaper', pad),
 		click: () => {
 			const oldLabel = noPadding(visibilityController.label as string);

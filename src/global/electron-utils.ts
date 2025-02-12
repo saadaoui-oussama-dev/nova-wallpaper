@@ -5,8 +5,6 @@ import { WindowResponse } from '@/types/channels';
 
 export * from '@/global/utils';
 
-export type MenuOption = Electron.MenuItemConstructorOptions | Electron.MenuItem;
-
 export const joinPublic = (path: string): string => {
 	return join(__dirname, path.replace('@/public', app.isPackaged ? '' : '../public'));
 };

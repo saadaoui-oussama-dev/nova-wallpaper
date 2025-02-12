@@ -1,15 +1,15 @@
 import { Wallpaper } from '@/dashboard/store';
 import { database } from '@/global/database';
-import { events, padding, MenuOption, getFileName } from '@/global/electron-utils';
+import { events, padding, getFileName } from '@/global/electron-utils';
 
-export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
+export const renderFavorites = async (options: Electron.MenuItemConstructorOptions[]): Promise<void> => {
 	try {
 		const { doc: list, error } = await database.read('wallpaper', { favorite: true });
 		if (error || !Array.isArray(list)) return;
 		const { doc: _active } = await database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
 
-		const wallpapers: MenuOption[] = list.map((wallpaper: Wallpaper, index: number) => ({
+		const wallpapers: Electron.MenuItemConstructorOptions[] = list.map((wallpaper: Wallpaper, index: number) => ({
 			label: padding(getFileName(wallpaper.label, 'name', 25) || `Untitled Wallpaper ${index + 1}`),
 			type: 'checkbox',
 			checked: active === wallpaper.id,
