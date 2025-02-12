@@ -25,7 +25,7 @@ import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['collapse']);
 
 const props = defineProps<{ visible: boolean }>();
 
@@ -64,7 +64,7 @@ const createWallpaper = async ({ type }: Option) => {
 		let selectedType: WallpaperType = 'image';
 		if (path.toLocaleLowerCase().endsWith('.mp4')) selectedType = 'video';
 		else if (path.toLocaleLowerCase().endsWith('.html')) selectedType = 'webpage';
-		if (await store.addWallpaper(selectedType, path, content)) emit('close');
+		if (await store.addWallpaper(selectedType, path, content)) emit('collapse');
 	}
 };
 </script>

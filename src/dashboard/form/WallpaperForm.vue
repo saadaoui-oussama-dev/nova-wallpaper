@@ -4,7 +4,7 @@
 		<div class="section">
 			<p class="title">Name:</p>
 			<div class="column">
-				<input v-model="label" placeholder="Wallpaper Label" maxlength="25" />
+				<input v-model="label" placeholder="Wallpaper Name" maxlength="25" />
 			</div>
 		</div>
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
@@ -35,7 +35,7 @@ const wallpaperJSON = ref<JSONResponse | null>(null);
 
 const wallpaper = ref<Wallpaper | null>(null);
 
-const label = ref(wallpaper.value ? getFileName(wallpaper.value.path, 'path', 25) : '');
+const label = ref('');
 
 const settings = ref<{ taskbar: boolean; settings: SimpleMap }>({ taskbar: false, settings: {} });
 

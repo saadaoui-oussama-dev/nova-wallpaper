@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { isSupported, replaceFileName } from '@/global/utils';
 import { FilesContentResponse, FilesResponse, JSONResponse } from '@/dashboard/channels';
+import { imageJSON, videoJSON } from '@/global/settings';
 
 export type WallpaperType = 'image' | 'video' | 'webpage' | 'folder' | 'stickers';
 
@@ -32,7 +33,7 @@ export interface State {
 }
 
 export const useWallpaperStore = defineStore('wallpaper', {
-	// To access the state in the console: window.__VUE_DEVTOOLS_PLUGINS__[1].pluginDescriptor.app.config.globalProperties.$pinia.state.value.wallpaper
+	// To access the state in the console: const pinia = () => { ...window.__VUE_DEVTOOLS_PLUGINS__[1].pluginDescriptor.app.config.globalProperties.$pinia.state.value.wallpaper }
 
 	state: (): State => ({
 		activeWallpaper: '',
@@ -72,8 +73,13 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			});
 			if (error) return false;
 			wallpaper.id = doc.id;
-			this.formWallpaper = wallpaper;
-			return await this.setActiveWallpaper(this.formWallpaper, false);
+			return this.viewWallpaper(wallpaper);
+		},
+
+		async viewWallpaper(wallpaper: Wallpaper) {
+			const response = await this.setActiveWallpaper(wallpaper, false);
+			if (response) this.formWallpaper = wallpaper;
+			return response;
 		},
 
 		async setActiveWallpaper(wallpaper: Wallpaper | null, readData = true) {
@@ -120,7 +126,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 						await new Promise((resolve) => setTimeout(resolve, 1));
 						data.valid = true;
 						data.exist = true;
-						data.data = { settings: ['default'] };
+						data.data = wallpaper.type === 'image' ? imageJSON : videoJSON;
 					} else if (wallpaper.type === 'webpage') {
 						const filename = replaceFileName(wallpaper.path, { name: 'settings', extension: 'json' });
 						const response = await NovaWallpaper.json.invoke('read', filename);

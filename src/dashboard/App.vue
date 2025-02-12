@@ -8,8 +8,8 @@
 		<div class="dashboard" v-show="!splashscreen">
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
 				<div class="main" ref="main">
-					<new-wallpaper :visible="visible" @close="pageHeaderAction('collapse')" />
-					<wallpapers-list />
+					<new-wallpaper :visible="visible" @collapse="pageHeaderAction('collapse')" />
+					<wallpapers-list @collapse="pageHeaderAction('collapse')" />
 				</div>
 				<wallpaper-form ref="form" />
 			</div>
@@ -46,7 +46,7 @@ const pageHeaderAction = (action: string) => {
 	} else if (action === 'finish') {
 		if (form.value) form.value.save();
 	} else if (action === 'restore') {
-		NovaWallpaper.log('restore');
+		console.log('restore');
 	}
 };
 

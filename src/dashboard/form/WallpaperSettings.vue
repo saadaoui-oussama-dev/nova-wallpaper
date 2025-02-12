@@ -20,7 +20,7 @@
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
 import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
-import { Settings, OptionType, ToggleOption, imageSettings, videoSettings, getID, getLabel } from '@/global/settings';
+import { Settings, OptionType, ToggleOption, getID, getLabel } from '@/global/settings';
 import { JSONResponse } from '@/dashboard/channels';
 import { Wallpaper, SimpleMap } from '@/dashboard/store';
 
@@ -37,7 +37,7 @@ const taskbarSetting = ref<ToggleOption>({
 	id: 'taskbar',
 	type: 'checkbox',
 	label: 'Show behind taskbar',
-	value: false,
+	value: props.wallpaper && typeof props.wallpaper.taskbar === 'boolean' ? props.wallpaper.taskbar : false,
 });
 
 watch(
@@ -45,14 +45,16 @@ watch(
 	() => {
 		if (!props.json || !props.json.data || !Array.isArray(props.json.data.settings)) return setSettings(null);
 
-		if (props.wallpaper.type === 'image') return setSettings(imageSettings);
-		else if (props.wallpaper.type === 'video') return setSettings(videoSettings);
-
 		const uniqueIds: string[] = [];
+		const currentSettings = props.wallpaper.settings;
 		const list = (props.json.data.settings as OptionType[]).map((option) => {
 			if (!option || typeof getID(option) !== 'string' || typeof getLabel(option) !== 'string') return null;
+			option = { ...option };
 			option.id = getID(option) as string;
+			if (uniqueIds.includes(option.id)) return null;
 			option.label = getLabel(option) as string;
+			option.value = option.id in currentSettings ? currentSettings[option.id] : option.value;
+
 			if (['checkbox', 'toggle'].includes(option.type.toLocaleLowerCase().trim())) {
 				option.type = 'checkbox';
 				option.value = Boolean(option.value);
@@ -75,18 +77,19 @@ watch(
 					if (typeof getLabel(opt) !== 'string') return;
 					if (typeof opt.value !== 'string' && typeof opt.value !== 'number') return;
 					if (opt.value === option.value) valueExist = true;
-					return { label: getLabel(opt), value: opt.value };
+					return { label: getLabel(opt) as string, value: opt.value };
 				});
-				option.options = options.filter(Boolean) as { value: string; label: string }[];
+				option.options = options.filter((opt) => opt !== undefined);
+				if (!option.options.length) return null;
 				if (!valueExist) option.value = option.options[0].value;
 			} else return null;
-			if (uniqueIds.includes(option.id)) return null;
 			uniqueIds.push(option.id);
 			return option;
 		});
+
 		const $list = list.filter((opt) => opt !== null);
 		if (!$list.length) return setSettings(null);
-		setSettings({ direction: props.json.data.direction, settings: $list });
+		setSettings({ direction: props.json.data.direction || 'row', settings: $list });
 	}
 );
 

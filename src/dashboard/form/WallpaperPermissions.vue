@@ -42,14 +42,17 @@ watch(
 		if (props.wallpaper.type !== 'webpage') return setPermissions([]);
 
 		const uniqueIds: string[] = [];
+		const currentPermissions = props.wallpaper.permissions;
 		const list = (props.json.data.permissions as Permission[]).map((option) => {
 			if (!option || typeof getID(option) !== 'string' || typeof getLabel(option) !== 'string') return null;
+			option = { ...option };
 			option.id = getID(option) as string;
+			if (uniqueIds.includes(option.id)) return null;
 			option.label = getLabel(option) as string;
 			if (option.type !== 'executable' && option.type !== 'url' && option.type !== 'folder') return null;
-			if (uniqueIds.includes(option.id)) return null;
 			uniqueIds.push(option.id);
-			return { id: option.id, type: option.type, label: option.label, value: '' };
+			const value = typeof currentPermissions[option.id] === 'string' ? currentPermissions[option.id] : '';
+			return { id: option.id, type: option.type, label: option.label, value: value as string };
 		});
 		setPermissions(list.filter((opt) => opt !== null));
 	}

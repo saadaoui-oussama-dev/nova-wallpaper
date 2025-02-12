@@ -38,7 +38,7 @@ export const getID = ({ id, key, name }: { id?: string; key?: string; name?: str
 export const getLabel = ({ label, text }: { label?: string; text?: string }) =>
 	typeof label === 'string' ? label : typeof text === 'string' ? text : undefined;
 
-export const imageSettings: Settings = {
+export const imageJSON: Settings = {
 	direction: 'row',
 	settings: [
 		{
@@ -98,10 +98,10 @@ export const imageSettings: Settings = {
 	],
 };
 
-export const videoSettings: Settings = {
+export const videoJSON: Settings = {
 	direction: 'row',
 	settings: [
-		...imageSettings.settings.slice(0, 2),
+		...imageJSON.settings.slice(0, 2),
 		{
 			id: 'volume',
 			label: 'Volume',
@@ -111,6 +111,6 @@ export const videoSettings: Settings = {
 			max: 100,
 			step: 1,
 		},
-		...imageSettings.settings.slice(2),
+		...imageJSON.settings.slice(2),
 	],
 };

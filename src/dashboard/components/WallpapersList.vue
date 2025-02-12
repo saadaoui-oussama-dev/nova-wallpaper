@@ -37,10 +37,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { defineEmits, ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWallpaperStore, Wallpaper } from '@/dashboard/store';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import { getFileName } from '@/global/utils';
+
+const emit = defineEmits(['collapse']);
 
 const store = useWallpaperStore();
 
@@ -93,9 +95,9 @@ const deleteWallpaper = (wallpaper: Wallpaper) => {
 	console.log('Delete wallpaper:', wallpaper);
 };
 
-const editWallpaper = (wallpaper: Wallpaper) => {
+const editWallpaper = async (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
-	console.log('Edit wallpaper:', wallpaper);
+	if (await store.viewWallpaper(wallpaper)) emit('collapse');
 };
 
 const setActiveWallpaper = (wallpaper: Wallpaper) => {

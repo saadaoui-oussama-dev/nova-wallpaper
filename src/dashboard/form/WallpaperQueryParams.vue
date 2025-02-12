@@ -46,13 +46,20 @@ watch(
 		if (props.wallpaper.type !== 'webpage') return clearQueryParams();
 
 		const uniqueIds: string[] = [];
+		const currentParams = props.wallpaper.queryParams;
 		const list = (props.json.data['query-params'] as Query[]).map((option) => {
 			if (!option || typeof getID(option) !== 'string') return null;
+			option = { ...option };
 			option.id = getID(option) as string;
-			option.value = `${option.value ? option.value || '' : ''}`;
 			if (uniqueIds.includes(option.id)) return null;
+			const value =
+				typeof currentParams[option.id] === 'string'
+					? (currentParams[option.id] as string)
+					: typeof option.value === 'string'
+					? option.value
+					: '';
 			uniqueIds.push(option.id);
-			return option;
+			return { id: option.id, value: value };
 		});
 		const $list = list.filter((opt) => opt !== null);
 		if (!$list.length) return clearQueryParams();
