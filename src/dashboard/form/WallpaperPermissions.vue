@@ -25,6 +25,7 @@ import { JSONResponse } from '@/types/channels';
 import { Wallpaper } from '@/types/wallpaper';
 import { NovaWallpaper } from '../preload';
 import { getID, getLabel } from '@/global/settings';
+import { Permission } from '@/types/json';
 
 const permissions = ref<Permission[]>([]);
 

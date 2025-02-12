@@ -3,7 +3,7 @@
 		<p class="title">Settings:</p>
 		<div class="column">
 			<settings-option :direction="directionText" v-model="taskbarSetting" />
-			<template v-if="settings">
+			<template v-if="settings && settings.settings">
 				<settings-option
 					v-for="(setting, index) in settings.settings"
 					:key="index"
@@ -20,9 +20,10 @@
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
 import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
-import { Settings, OptionType, ToggleOption, getID, getLabel } from '@/global/settings';
+import { getID, getLabel } from '@/global/settings';
 import { JSONResponse } from '@/types/channels';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
+import { SettingsJSON, SettingOption, ToggleOption } from '@/types/json';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
@@ -31,7 +32,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['change']);
 
-const settings = ref<Settings | null>(null);
+const settings = ref<SettingsJSON | null>(null);
 
 const taskbarSetting = ref<ToggleOption>({
 	id: 'taskbar',
@@ -47,7 +48,7 @@ watch(
 
 		const uniqueIds: string[] = [];
 		const currentSettings = props.wallpaper.settings;
-		const list = (props.json.data.settings as OptionType[]).map((option) => {
+		const list = (props.json.data.settings as SettingOption[]).map((option) => {
 			if (!option || typeof getID(option) !== 'string' || typeof getLabel(option) !== 'string') return null;
 			option = { ...option };
 			option.id = getID(option) as string;
@@ -107,12 +108,12 @@ const getSettings = (): { taskbar: boolean; settings: SimpleMap } => {
 	if (!settings.value) return { taskbar: taskbarSetting.value.value, settings: {} };
 	return {
 		taskbar: taskbarSetting.value.value,
-		settings: Object.fromEntries(settings.value.settings.map((option) => [option.id, option.value])),
+		settings: Object.fromEntries((settings.value.settings || []).map((option) => [option.id, option.value])),
 	};
 };
 
-const setSettings = (data: Settings | null) => {
-	settings.value = data ? { direction: data.direction, settings: [...data.settings] } : null;
+const setSettings = (data: SettingsJSON | null) => {
+	settings.value = data ? { direction: data.direction, settings: [...(data.settings || [])] } : null;
 	emit('change', getSettings());
 };
 

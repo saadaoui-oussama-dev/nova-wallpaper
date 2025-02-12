@@ -50,11 +50,11 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue';
-import { OptionType } from '@/global/settings';
+import { SettingOption } from '@/types/json';
 
 const props = defineProps<{
 	direction: 'row' | 'row-right' | 'column' | 'column-right';
-	modelValue: OptionType;
+	modelValue: SettingOption;
 }>();
 
 const getTrackBackgroundSize = () => {

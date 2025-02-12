@@ -27,6 +27,7 @@ import IconDelete from '@/dashboard/icons/IconDelete.vue';
 import { getID } from '@/global/settings';
 import { JSONResponse } from '@/types/channels';
 import { Wallpaper } from '@/types/wallpaper';
+import { Query } from '@/types/json';
 
 const queryParams = ref<Query[]>([]);
 

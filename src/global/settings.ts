@@ -1,34 +1,4 @@
-export type SliderOption = {
-	id: string;
-	type: 'slider' | 'range';
-	label: string;
-	value: number;
-	min: number;
-	max: number;
-	step: number;
-};
-
-export type ToggleOption = {
-	id: string;
-	type: 'toggle' | 'checkbox';
-	label: string;
-	value: boolean;
-};
-
-export type RadioGroupOption = {
-	id: string;
-	type: 'radio' | 'radio-group' | 'radioGroup';
-	label: string;
-	value: string | number;
-	options: { label: string; value: string | number }[];
-};
-
-export type OptionType = SliderOption | ToggleOption | RadioGroupOption;
-
-export type Settings = {
-	direction: 'row' | 'right' | 'row-right' | 'rowRight' | 'column' | 'column-right' | 'columnRight';
-	settings: OptionType[];
-};
+import { SettingOption, SettingsJSON } from '@/types/json';
 
 export const getID = ({ id, key, name }: { id?: string; key?: string; name?: string }) => {
 	id = typeof id === 'string' ? id : typeof key === 'string' ? key : typeof name === 'string' ? name : '';
@@ -38,7 +8,7 @@ export const getID = ({ id, key, name }: { id?: string; key?: string; name?: str
 export const getLabel = ({ label, text }: { label?: string; text?: string }) =>
 	typeof label === 'string' ? label : typeof text === 'string' ? text : undefined;
 
-export const imageJSON: Settings = {
+export const imageJSON: SettingsJSON = {
 	direction: 'row',
 	settings: [
 		{
@@ -98,10 +68,10 @@ export const imageJSON: Settings = {
 	],
 };
 
-export const videoJSON: Settings = {
+export const videoJSON: SettingsJSON = {
 	direction: 'row',
 	settings: [
-		...imageJSON.settings.slice(0, 2),
+		...(imageJSON.settings as SettingOption[]).slice(0, 2),
 		{
 			id: 'volume',
 			label: 'Volume',
@@ -111,6 +81,6 @@ export const videoJSON: Settings = {
 			max: 100,
 			step: 1,
 		},
-		...imageJSON.settings.slice(2),
+		...(imageJSON.settings as SettingOption[]).slice(2),
 	],
 };
