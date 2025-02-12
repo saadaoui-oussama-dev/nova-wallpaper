@@ -24,14 +24,14 @@
 import { defineProps, defineEmits, useTemplateRef, ref, watch } from 'vue';
 import { getID } from '@/global/settings';
 import { Wallpaper } from '@/types/wallpaper';
-import { JSONResponse } from '@/types/channels';
+import { Response, JSONChannel } from '@/types/channels';
 import { Query } from '@/types/json';
 import IconAdd from '@/dashboard/icons/IconAdd.vue';
 import IconDelete from '@/dashboard/icons/IconDelete.vue';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
-	json: JSONResponse | null;
+	json: Response<JSONChannel> | null;
 }>();
 
 const emit = defineEmits(['change']);

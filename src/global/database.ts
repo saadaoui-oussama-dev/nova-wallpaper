@@ -1,12 +1,12 @@
 const NeDB = require('nedb');
 import { join } from 'path';
 import { app } from 'electron';
-import { DatabaseResponse } from '@/types/channels';
+import { AsyncResponse, DatabaseChannel } from '@/types/channels';
 
 type Database = {
-	read: (table: string, query?: { [key: string]: any }) => Promise<DatabaseResponse>;
-	insert: (table: string, data: { [key: string]: any }) => Promise<DatabaseResponse>;
-	update: (table: string, data: { [key: string]: any }) => Promise<DatabaseResponse>;
+	read: (table: string, query?: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
+	insert: (table: string, data: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
+	update: (table: string, data: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
 };
 
 export const database: Database = new Proxy<Database>({} as Database, {
@@ -16,9 +16,9 @@ export const database: Database = new Proxy<Database>({} as Database, {
 		else {
 			const dbPath = join(app.getPath('userData'), 'data.db');
 			const db = new NeDB({ filename: dbPath, autoload: true });
-			const instance = {
-				read(table: string, filters: { [key: string]: any } = {}): Promise<DatabaseResponse> {
-					return new Promise<DatabaseResponse>((resolve) => {
+			const instance: Database = {
+				read(table: string, filters: { [key: string]: any } = {}) {
+					return new Promise((resolve) => {
 						db.find({ ...filters, table })
 							.sort({ createdAt: -1 })
 							.exec((error: Error | string | null, rows: { [key: string]: any }[]) => {
@@ -41,8 +41,8 @@ export const database: Database = new Proxy<Database>({} as Database, {
 					});
 				},
 
-				insert(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
-					return new Promise<DatabaseResponse>((resolve) => {
+				insert(table: string, data: { [key: string]: any }) {
+					return new Promise((resolve) => {
 						const now = Date.now();
 						data = { ...data, table, createdAt: now, updatedAt: now };
 						delete data.id;
@@ -56,8 +56,8 @@ export const database: Database = new Proxy<Database>({} as Database, {
 					});
 				},
 
-				update(table: string, data: { [key: string]: any }): Promise<DatabaseResponse> {
-					return new Promise<DatabaseResponse>((resolve) => {
+				update(table: string, data: { [key: string]: any }) {
+					return new Promise((resolve) => {
 						const filters = data.id ? { _id: data.id, table } : { table };
 						data = { ...data, updatedAt: Date.now() };
 						delete data.id;

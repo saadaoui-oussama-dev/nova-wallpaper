@@ -21,7 +21,7 @@ import { ref, useTemplateRef, watch, defineExpose } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
-import { JSONResponse } from '@/types/channels';
+import { Response, JSONChannel } from '@/types/channels';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
 import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
@@ -31,7 +31,7 @@ const store = useWallpaperStore();
 
 const permissionsRef = useTemplateRef('permissions');
 
-const wallpaperJSON = ref<JSONResponse | null>(null);
+const wallpaperJSON = ref<Response<JSONChannel> | null>(null);
 
 const wallpaper = ref<Wallpaper | null>(null);
 

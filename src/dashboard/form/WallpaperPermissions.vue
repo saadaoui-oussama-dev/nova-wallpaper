@@ -24,12 +24,12 @@ import { defineProps, defineEmits, ref, watch, defineExpose } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { getID, getLabel } from '@/global/settings';
 import { Wallpaper } from '@/types/wallpaper';
-import { JSONResponse } from '@/types/channels';
+import { Response, JSONChannel } from '@/types/channels';
 import { Permission } from '@/types/json';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
-	json: JSONResponse | null;
+	json: Response<JSONChannel> | null;
 }>();
 
 const emit = defineEmits(['change']);

@@ -1,7 +1,7 @@
 const { app, screen } = require('electron');
 const { join } = require('path');
 const { statSync } = require('fs');
-import { WindowResponse } from '@/types/channels';
+import { Response, WindowChannel } from '@/types/channels';
 
 export * from '@/global/utils';
 
@@ -17,7 +17,7 @@ export const fileSizeChecker = (filePath: string): string => {
 	}
 };
 
-export const getAreas = (): WindowResponse => {
+export const getAreas = (): Response<WindowChannel> => {
 	const $screen = screen.getPrimaryDisplay();
 	const { width: fw, height: fh } = $screen.size;
 	let { width: ww, height: wh } = $screen.workAreaSize;

@@ -2,13 +2,13 @@ import { defineStore } from 'pinia';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { imageJSON, videoJSON } from '@/global/settings';
 import { isSupported, replaceFileName } from '@/global/utils';
-import { Wallpaper, WallpaperType } from '@/types/wallpaper';
-import { FilesContentResponse, FilesResponse, JSONResponse } from '@/types/channels';
+import { Wallpaper, WallpaperType, FolderItem } from '@/types/wallpaper';
+import { AsyncResponse, Response, FilesChannel, JSONChannel } from '@/types/channels';
 
 export interface State {
 	activeWallpaper: string;
 	wallpapers: Wallpaper[];
-	data: { [key: string]: { preview: Promise<FilesResponse> | null; json: Promise<JSONResponse> | null } };
+	data: { [key: string]: { preview: AsyncResponse<FilesChannel> | null; json: AsyncResponse<JSONChannel> | null } };
 	formWallpaper: Wallpaper | null;
 }
 
@@ -34,7 +34,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
-		async addWallpaper(type: WallpaperType, path: string, content: FilesContentResponse[]) {
+		async addWallpaper(type: WallpaperType, path: string, content: FolderItem[]) {
 			const wallpaper = {
 				id: '',
 				label: '',
@@ -84,21 +84,21 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return !error;
 		},
 
-		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<JSONResponse> {
+		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): AsyncResponse<JSONChannel> {
 			const src = this.data[wallpaper.path];
 			if (!(forceFetch || !src || !src.json)) return src.json;
 
-			let resolver: (value: JSONResponse) => void = () => console.log();
+			let resolver: (value: Response<JSONChannel>) => void = () => console.log();
 
 			this.data[wallpaper.path] = {
 				preview: this.data[wallpaper.path] ? this.data[wallpaper.path].preview : null,
 				json:
 					forceFetch || !src || !src.json
-						? new Promise<JSONResponse>((resolve) => (resolver = resolve))
+						? new Promise((resolve) => (resolver = resolve))
 						: this.data[wallpaper.path].json,
 			};
 
-			const data: JSONResponse = { exist: false, valid: false, data: null };
+			const data: Response<JSONChannel> = { exist: false, valid: false, data: null };
 
 			try {
 				if (forceFetch || !src || !src.json) {
@@ -123,21 +123,21 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return data;
 		},
 
-		async fetchPreview(wallpaper: Wallpaper): Promise<FilesResponse> {
+		async fetchPreview(wallpaper: Wallpaper): AsyncResponse<FilesChannel> {
 			const src = this.data[wallpaper.path];
 			if (src && src.preview) return src.preview;
 
-			let resolver: (value: FilesResponse) => void = () => console.log();
+			let resolver: (value: Response<FilesChannel>) => void = () => console.log();
 
 			this.data[wallpaper.path] = {
-				preview: new Promise<FilesResponse>((resolve) => (resolver = resolve)),
+				preview: new Promise((resolve) => (resolver = resolve)),
 				json: this.data[wallpaper.path] ? this.data[wallpaper.path].json : null,
 			};
 			if (this.data[wallpaper.path].json === null) {
 				this.data[wallpaper.path].json = this.fetchJSON(wallpaper, false);
 			}
 
-			const data: FilesResponse = { path: '', error: '' };
+			const data: Response<FilesChannel> = { path: '', error: '' };
 
 			try {
 				const json = await this.data[wallpaper.path].json;

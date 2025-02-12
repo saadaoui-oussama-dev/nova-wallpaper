@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
 import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
-import * as Channels from '@/types/channels';
+import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, FilesChannel } from '@/types/channels';
 
 let dashboard: BrowserWindow | null;
 
@@ -47,16 +47,20 @@ export const openDashboard = async () => {
 		setTimeout(() => events.$emit('dashboard-window', 'minimize'), 400);
 	});
 
-	ipcMain.on('dashboard-window', (_, action: Channels.WindowSendAction) => {
+	ipcMain.on('dashboard-window', (_, action: Send<WindowChannel>) => {
 		if (['close', 'minimize'].includes(action)) return events.$emit('dashboard-window', action);
 	});
 
-	ipcMain.handle('dashboard-window', (_, action: Channels.WindowInvokeAction) => {
-		if (action === 'get-areas') return getAreas();
+	ipcMain.handle('dashboard-window', (_, action: Invoke<WindowChannel>) => {
+		return new Promise<Response<WindowChannel>>((resolve) => {
+			const def = { width: 0, height: 0 };
+			if (action === 'get-areas') return resolve(getAreas());
+			else resolve({ fullscreen: def, workarea: def, taskbar: def });
+		});
 	});
 
-	ipcMain.handle('dashboard-json', (_, action: Channels.JSONInvokeAction, filename: string, dataOrIsArray?: any) => {
-		return new Promise<Channels.JSONResponse>((resolve) => {
+	ipcMain.handle('dashboard-json', (_, action: Invoke<JSONChannel>, filename: string, dataOrIsArray?: any) => {
+		return new Promise<Response<JSONChannel>>((resolve) => {
 			if (action === 'read') resolve(readJson(filename, dataOrIsArray));
 			else if (action === 'write') resolve(writeJSON(filename, dataOrIsArray));
 			else resolve({ exist: false, valid: false, data: null });
@@ -65,8 +69,8 @@ export const openDashboard = async () => {
 
 	ipcMain.handle(
 		'dashboard-database',
-		(_, action: Channels.DatabaseInvokeAction, table: string, dataOrFilters: { [key: string]: any }) => {
-			return new Promise<Channels.DatabaseResponse>(async (resolve) => {
+		(_, action: Invoke<DatabaseChannel>, table: string, dataOrFilters: { [key: string]: any }) => {
+			return new Promise<Response<DatabaseChannel>>(async (resolve) => {
 				if (action === 'read') return resolve(database.read(table, dataOrFilters));
 				if (action === 'insert') return resolve(database.insert(table, dataOrFilters));
 				if (action === 'update') {
@@ -81,58 +85,55 @@ export const openDashboard = async () => {
 		}
 	);
 
-	ipcMain.handle(
-		'dashboard-files',
-		async (_, action: Channels.FilesInvokeAction, path?: string, onlyFolder?: boolean) => {
-			return new Promise<Channels.FilesResponse>((resolve) => {
-				if (action === 'get-url' && path) {
-					if (!isSupported(path)) return resolve({ error: 'Unsupported file type.' });
-					const error = fileSizeChecker(path);
-					if (error) return resolve({ error });
-					return resolve({ path: `data:${getFileType(path).mime};base64,${readFileSync(path).toString('base64')}` });
-				}
+	ipcMain.handle('dashboard-files', async (_, action: Invoke<FilesChannel>, path?: string, onlyFolder?: boolean) => {
+		return new Promise<Response<FilesChannel>>((resolve) => {
+			if (action === 'get-url' && path) {
+				if (!isSupported(path)) return resolve({ error: 'Unsupported file type.' });
+				const error = fileSizeChecker(path);
+				if (error) return resolve({ error });
+				return resolve({ path: `data:${getFileType(path).mime};base64,${readFileSync(path).toString('base64')}` });
+			}
 
-				const openFile = (name: string, extensions: string[]) => {
-					if (!dashboard) return;
-					dialog
-						.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] })
-						.then((result) => {
-							if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
-							const absolutePath = result.filePaths[0];
-							if (action === 'executable') return resolve({ path: absolutePath, content: [] });
-							if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type.' });
-							const error = fileSizeChecker(absolutePath);
-							resolve(error ? { error } : { path: absolutePath, content: [] });
-						});
-				};
-
-				const openDirectory = () => {
-					if (!dashboard) return;
-					dialog.showOpenDialog(dashboard, { properties: ['openDirectory'] }).then((result) => {
+			const openFile = (name: string, extensions: string[]) => {
+				if (!dashboard) return;
+				dialog
+					.showOpenDialog(dashboard, { properties: ['openFile'], filters: [{ name, extensions }] })
+					.then((result) => {
 						if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
-						const folderPath = result.filePaths[0];
-						if (onlyFolder) return resolve({ path: folderPath, content: [] });
-
-						const content: Channels.FilesContentResponse[] = readdirSync(folderPath)
-							.map((filename: string): Channels.FilesContentResponse | undefined => {
-								if (!isSupported(filename, true)) return;
-								const absolutePath = join(folderPath, filename);
-								const error = fileSizeChecker(absolutePath);
-								return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
-							})
-							.filter(Boolean);
-						resolve(content.length ? { path: folderPath, content } : { error: 'The folder is empty.' });
+						const absolutePath = result.filePaths[0];
+						if (action === 'executable') return resolve({ path: absolutePath, content: [] });
+						if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type.' });
+						const error = fileSizeChecker(absolutePath);
+						resolve(error ? { error } : { path: absolutePath, content: [] });
 					});
-				};
+			};
 
-				if (action === 'media') return openFile('Media', ['png', 'jpg', 'jpeg', 'mp4']);
-				if (action === 'webpage') return openFile('Webpage', ['html']);
-				if (action === 'executable') return openFile('Program File', ['exe']);
-				if (action === 'folder') return openDirectory();
-				resolve({ error: `${action}: This action is not supported` });
-			});
-		}
-	);
+			const openDirectory = () => {
+				if (!dashboard) return;
+				dialog.showOpenDialog(dashboard, { properties: ['openDirectory'] }).then((result) => {
+					if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
+					const folderPath = result.filePaths[0];
+					if (onlyFolder) return resolve({ path: folderPath, content: [] });
+
+					const content = readdirSync(folderPath)
+						.map((filename: string) => {
+							if (!isSupported(filename, true)) return;
+							const absolutePath = join(folderPath, filename);
+							const error = fileSizeChecker(absolutePath);
+							return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
+						})
+						.filter(Boolean);
+					resolve(content.length ? { path: folderPath, content } : { error: 'The folder is empty.' });
+				});
+			};
+
+			if (action === 'media') return openFile('Media', ['png', 'jpg', 'jpeg', 'mp4']);
+			if (action === 'webpage') return openFile('Webpage', ['html']);
+			if (action === 'executable') return openFile('Program File', ['exe']);
+			if (action === 'folder') return openDirectory();
+			resolve({ error: `${action}: This action is not supported` });
+		});
+	});
 
 	try {
 		if (process.env.WEBPACK_DEV_SERVER_URL) {

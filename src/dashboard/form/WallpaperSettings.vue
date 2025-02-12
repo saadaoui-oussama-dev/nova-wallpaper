@@ -20,13 +20,13 @@
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
 import { getID, getLabel } from '@/global/settings';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
-import { JSONResponse } from '@/types/channels';
+import { Response, JSONChannel } from '@/types/channels';
 import { SettingsJSON, SettingOption, ToggleOption } from '@/types/json';
 import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
 const props = defineProps<{
 	wallpaper: Wallpaper;
-	json: JSONResponse | null;
+	json: Response<JSONChannel> | null;
 }>();
 
 const emit = defineEmits(['change']);
