@@ -3,6 +3,8 @@ const { join } = require('path');
 const { statSync } = require('fs');
 import { Response, WindowChannel } from '@/types/channels';
 
+export * from '@/global/events';
+
 export * from '@/global/utils';
 
 export const joinPublic = (path: string): string => {

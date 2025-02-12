@@ -1,5 +1,3 @@
-export * from '@/global/events';
-
 export const isSupported = (path: string, onlyMedia?: boolean): boolean => {
 	const extensions = onlyMedia ? ['.mp4', '.png', '.jpg', '.jpeg'] : ['.mp4', '.png', '.jpg', '.jpeg', '.html'];
 	return extensions.some((ext) => path.toLowerCase().endsWith(ext));
