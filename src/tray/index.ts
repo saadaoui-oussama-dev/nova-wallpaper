@@ -12,14 +12,14 @@ export const createTray = () => {
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 
-	events.$on('renderMenu', (options: MenuOption[]) => tray.setContextMenu(Menu.buildFromTemplate(options)));
+	events.$on('tray-render-menu', (options: MenuOption[]) => tray.setContextMenu(Menu.buildFromTemplate(options)));
 
-	events.$on('reloadMenu', async () => {
+	events.$on('tray-reload-menu', async () => {
 		const options: MenuOption[] = [];
 		await renderFavorites(options);
 		renderControls(options);
-		events.$emit('renderMenu', options);
+		events.$emit('tray-render-menu', options);
 	});
 
-	events.$emit('reloadMenu');
+	events.$emit('tray-reload-menu');
 };

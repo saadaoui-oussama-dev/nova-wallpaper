@@ -14,7 +14,7 @@ export const renderControls = (options: MenuOption[]): void => {
 			const oldLabel = noPadding(soundsController.label as string);
 			const newLabel = padding(oldLabel === 'Mute Wallpaper' ? 'Unmute Wallpaper' : 'Mute Wallpaper', pad);
 			soundsStateLabel = soundsController.label = newLabel;
-			events.$emit('renderMenu', options);
+			events.$emit('tray-render-menu', options);
 		},
 	};
 
@@ -25,8 +25,8 @@ export const renderControls = (options: MenuOption[]): void => {
 			const newLabel = padding(oldLabel === 'Hide Wallpaper' ? 'Show Wallpaper' : 'Hide Wallpaper', pad);
 			visibilityController.label = newLabel;
 			if (oldLabel !== 'Show Wallpaper') soundsStateLabel = soundsController.label = padding('Unmute Wallpaper', pad);
-			events.$emit('renderMenu', options);
-			if (oldLabel === 'Show Wallpaper') events.$emit('dashboard', 'minimize');
+			events.$emit('tray-render-menu', options);
+			if (oldLabel === 'Show Wallpaper') events.$emit('dashboard-window', 'minimize');
 		},
 	};
 
@@ -35,8 +35,8 @@ export const renderControls = (options: MenuOption[]): void => {
 		{
 			label: padding('Reload Wallpaper', pad),
 			click: () => {
-				events.$emit('reloadMenu');
-				events.$emit('dashboard', 'minimize');
+				events.$emit('tray-reload-menu');
+				events.$emit('dashboard-window', 'minimize');
 			},
 		},
 		soundsController,
@@ -49,8 +49,8 @@ export const renderControls = (options: MenuOption[]): void => {
 		{
 			label: padding('Exit App', pad),
 			click: () => {
-				events.$emit('renderMenu', [{ label: 'Waiting 3 seconds to close' }]);
-				events.$emit('dashboard', 'close');
+				events.$emit('tray-render-menu', [{ label: 'Waiting 3 seconds to close' }]);
+				events.$emit('dashboard-window', 'close');
 				setTimeout(() => app.exit(), 3000);
 			},
 		}

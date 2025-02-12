@@ -77,9 +77,9 @@ export const useWallpaperStore = defineStore('wallpaper', {
 		},
 
 		async viewWallpaper(wallpaper: Wallpaper) {
-			const response = await this.setActiveWallpaper(wallpaper, false);
-			if (response) this.formWallpaper = wallpaper;
-			return response;
+			const validAction = await this.setActiveWallpaper(wallpaper, false);
+			if (validAction) this.formWallpaper = wallpaper;
+			return validAction;
 		},
 
 		async setActiveWallpaper(wallpaper: Wallpaper | null, readData = true) {

@@ -23,9 +23,9 @@ export const openDashboard = async () => {
 		icon: joinPublic('@/public/img/logo.png'),
 		webPreferences: {
 			devTools: false,
-			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
-			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-			preload: joinPublic('@/public/js/preload.js'),
+			nodeIntegration: false,
+			contextIsolation: true,
+			preload: joinPublic('@/public/js/dashboard-preload.js'),
 		},
 	});
 
@@ -40,11 +40,11 @@ export const openDashboard = async () => {
 		}
 		dashboard.show();
 	} catch {
-		return events.$emit('dashboard', 'close');
+		return events.$emit('dashboard-window', 'close');
 	}
 };
 
-events.$on('dashboard', (action: string) => {
+events.$on('dashboard-window', (action: string) => {
 	if (!dashboard) return;
 	if (action === 'focus') return dashboard.focus();
 	if (action === 'minimize') return dashboard.minimize();
@@ -54,12 +54,13 @@ events.$on('dashboard', (action: string) => {
 	}
 });
 
-events.$on('active-changed', () => {
+events.$on('dashboard-active-changed', () => {
 	if (dashboard) dashboard.webContents.send('refresh', 'database');
+	events.$emit('dashboard-window', 'minimize');
 });
 
 ipcMain.on('window', (_, action: Channels.WindowSendAction) => {
-	if (['close', 'minimize'].includes(action)) return events.$emit('dashboard', action);
+	if (['close', 'minimize'].includes(action)) return events.$emit('dashboard-window', action);
 });
 
 ipcMain.handle('window', (_, action: Channels.WindowInvokeAction) => {
@@ -76,14 +77,14 @@ ipcMain.handle('json', (_, action: Channels.JSONInvokeAction, filename: string, 
 
 ipcMain.handle(
 	'database',
-	(_, action: Channels.DatabaseInvokeAction, table: string, dataOrQuery: { [key: string]: any }) => {
+	(_, action: Channels.DatabaseInvokeAction, table: string, dataOrFilters: { [key: string]: any }) => {
 		return new Promise<Channels.DatabaseResponse>(async (resolve) => {
-			if (action === 'read') return resolve(database.read(table, dataOrQuery));
-			if (action === 'insert') return resolve(database.insert(table, dataOrQuery));
+			if (action === 'read') return resolve(database.read(table, dataOrFilters));
+			if (action === 'insert') return resolve(database.insert(table, dataOrFilters));
 			if (action === 'update') {
-				const response = await database.update(table, dataOrQuery);
-				if (!response.error && (table === 'active' || (table === 'wallpaper' && 'favorite' in dataOrQuery)))
-					events.$emit('reloadMenu');
+				const response = await database.update(table, dataOrFilters);
+				if (!response.error && (table === 'active' || (table === 'wallpaper' && 'favorite' in dataOrFilters)))
+					events.$emit('tray-reload-menu');
 				resolve(response);
 				return;
 			}

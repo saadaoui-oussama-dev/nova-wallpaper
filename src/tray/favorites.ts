@@ -4,7 +4,8 @@ import { events, padding, MenuOption, getFileName } from '@/global/electron-util
 
 export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 	try {
-		const { doc: list } = await database.read('wallpaper', { favorite: true });
+		const { doc: list, error } = await database.read('wallpaper', { favorite: true });
+		if (error || !Array.isArray(list)) return;
 		const { doc: _active } = await database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
 
@@ -14,9 +15,10 @@ export const renderFavorites = async (options: MenuOption[]): Promise<void> => {
 			checked: active === wallpaper.id,
 			click: async () => {
 				try {
-					await database.update('active', { value: wallpaper.id });
-					events.$emit('active-changed');
-					events.$emit('reloadMenu');
+					if (!(await database.update('active', { value: wallpaper.id })).error) {
+						events.$emit('dashboard-active-changed');
+						events.$emit('tray-reload-menu');
+					}
 				} catch {}
 			},
 		}));
