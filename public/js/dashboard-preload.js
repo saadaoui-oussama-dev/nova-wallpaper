@@ -12,8 +12,8 @@ const ChannelConnector = (channel) => {
 			if (callbacks[event]) ipcRenderer.off(event, callbacks[event]);
 			delete callbacks[event];
 		},
-		send: (key, ...data) => ipcRenderer.send(channel, key, ...data),
-		invoke: async (key, ...data) => await ipcRenderer.invoke(channel, key, ...data),
+		send: (key, ...data) => ipcRenderer.send(`dashboard-${channel}`, key, ...data),
+		invoke: async (key, ...data) => await ipcRenderer.invoke(`dashboard-${channel}`, key, ...data),
 	};
 };
 
