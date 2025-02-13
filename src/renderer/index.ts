@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { database } from '@/global/database';
-import { events, isURL, joinPublic } from '@/global/electron-utils';
+import { events, getAreas, isURL, joinPublic } from '@/global/electron-utils';
 import { Wallpaper } from '@/types/wallpaper';
 
 let render: Electron.BrowserWindow;
@@ -12,6 +12,8 @@ export const createRenderer = () => {
 	render = new BrowserWindow({
 		skipTaskbar: true,
 		fullscreen: true,
+		x: 0,
+		y: 0,
 		frame: false,
 		show: false,
 		focusable: false,
@@ -20,13 +22,11 @@ export const createRenderer = () => {
 		title: 'Nova Wallpaper',
 		icon: joinPublic('@/public/img/logo.png'),
 		webPreferences: {
-			devTools: true,
+			devTools: false,
 			nodeIntegration: false,
 			contextIsolation: true,
 		},
 	});
-
-	render.webContents.openDevTools();
 
 	// attach(render, { transparent: true, forwardMouseInput: true });
 
@@ -38,16 +38,18 @@ export const createRenderer = () => {
 		// setTimeout(() => clearInterval(id), 500);
 	};
 
-	events.$on('renderer-active-changed', async () => {
-		// Select the current wallpaper
+	const setCurrentWallpaper = async () => {
 		const { doc: _active } = await database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
-		if (!active || typeof active !== 'string') return;
+		if (!active || typeof active !== 'string') wallpaper = null;
 		const { doc: list } = await database.read('wallpaper', { _id: active });
-		if (!Array.isArray(list) || !list.length || !list[0] || !list[0].path) return;
+		if (!Array.isArray(list) || !list.length || !list[0] || !list[0].path) wallpaper = null;
 		wallpaper = list[0] as Wallpaper;
+	};
 
-		// Show the wallpaper and make the window visible
+	const renderActiveWallpaper = async () => {
+		await setCurrentWallpaper();
+		if (!wallpaper) return;
 		try {
 			if (wallpaper.path.endsWith('.html')) await render.loadFile(wallpaper.path);
 			setVisibility(true, false);
@@ -55,15 +57,23 @@ export const createRenderer = () => {
 			setVisibility(false, false);
 			return;
 		}
-	});
+		onChangesListener(false);
+	};
+
+	const onChangesListener = async (setWallpaper: boolean) => {
+		if (setWallpaper) await setCurrentWallpaper();
+		if (!wallpaper) return;
+		if (wallpaper.taskbar) render.setFullScreen(true);
+		else render.setBounds({ height: getAreas().workarea.height });
+	};
 
 	events.$on('renderer-sync-action', (action: string) => {
-		if (action === 'wallpaper') events.$emit('renderer-active-changed');
-		if (action === 'change') console.log('change');
+		if (action === 'wallpaper') renderActiveWallpaper();
+		if (action === 'change') onChangesListener(true);
 		if (action === 'mute' || action === 'unmute') render.webContents.setAudioMuted(action === 'mute');
 		if (action === 'show' || action === 'hide' || action === 'exit') setVisibility(action === 'show', true);
 		if (action === 'exit') setTimeout(() => app.exit(), 2000);
 	});
 
-	events.$emit('renderer-active-changed');
+	renderActiveWallpaper();
 };
