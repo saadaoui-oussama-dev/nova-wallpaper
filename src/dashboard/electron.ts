@@ -8,6 +8,7 @@ import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas
 import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, FilesChannel } from '@/types/channels';
 
 let dashboard: BrowserWindow | null;
+let firstOpen = true;
 
 export const openDashboard = async () => {
 	if (dashboard) return dashboard.focus();
@@ -31,6 +32,24 @@ export const openDashboard = async () => {
 
 	dashboard.focus();
 	dashboard.on('close', () => (dashboard = null));
+
+	const load = async () => {
+		if (!dashboard) return;
+		try {
+			if (process.env.WEBPACK_DEV_SERVER_URL) {
+				await dashboard.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
+			} else {
+				createProtocol('app');
+				await dashboard.loadURL('app://./index.html');
+			}
+			dashboard.show();
+		} catch {
+			return events.$emit('dashboard-window', 'close');
+		}
+	};
+
+	if (!firstOpen) return load();
+	firstOpen = false;
 
 	events.$on('dashboard-window', (action: string) => {
 		if (!dashboard) return;
@@ -135,15 +154,5 @@ export const openDashboard = async () => {
 		});
 	});
 
-	try {
-		if (process.env.WEBPACK_DEV_SERVER_URL) {
-			await dashboard.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
-		} else {
-			createProtocol('app');
-			await dashboard.loadURL('app://./index.html');
-		}
-		dashboard.show();
-	} catch {
-		return events.$emit('dashboard-window', 'close');
-	}
+	load();
 };
