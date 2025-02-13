@@ -18,6 +18,7 @@ export const renderFavorites = async (options: Electron.MenuItemConstructorOptio
 					if (!(await database.update('active', { value: wallpaper.id })).error) {
 						events.$emit('dashboard-active-changed');
 						events.$emit('tray-reload-menu');
+						events.$emit('renderer-sync-action', 'wallpaper');
 					}
 				} catch {}
 			},

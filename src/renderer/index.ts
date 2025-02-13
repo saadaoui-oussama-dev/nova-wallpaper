@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { database } from '@/global/database';
 import { events, isURL, joinPublic } from '@/global/electron-utils';
 import { Wallpaper } from '@/types/wallpaper';
@@ -55,6 +55,14 @@ export const createRenderer = () => {
 			setVisibility(false, false);
 			return;
 		}
+	});
+
+	events.$on('renderer-sync-action', (action: string) => {
+		if (action === 'wallpaper') events.$emit('renderer-active-changed');
+		if (action === 'change') console.log('change');
+		if (action === 'mute' || action === 'unmute') render.webContents.setAudioMuted(action === 'mute');
+		if (action === 'show' || action === 'hide' || action === 'exit') setVisibility(action === 'show', true);
+		if (action === 'exit') setTimeout(() => app.exit(), 2000);
 	});
 
 	events.$emit('renderer-active-changed');

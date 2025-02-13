@@ -15,6 +15,7 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 			const newLabel = padding(oldLabel === 'Mute Wallpaper' ? 'Unmute Wallpaper' : 'Mute Wallpaper', pad);
 			soundsStateLabel = soundsController.label = newLabel;
 			events.$emit('tray-render-menu', options);
+			events.$emit('renderer-sync-action', oldLabel === 'Mute Wallpaper' ? 'mute' : 'unmute');
 		},
 	};
 
@@ -27,6 +28,7 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 			if (oldLabel !== 'Show Wallpaper') soundsStateLabel = soundsController.label = padding('Unmute Wallpaper', pad);
 			events.$emit('tray-render-menu', options);
 			if (oldLabel === 'Show Wallpaper') events.$emit('dashboard-window', 'minimize');
+			events.$emit('renderer-sync-action', oldLabel === 'Hide Wallpaper' ? 'hide' : 'show');
 		},
 	};
 
@@ -43,6 +45,7 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 			click: () => {
 				events.$emit('tray-render-menu', [{ label: 'Waiting 3 seconds to close' }]);
 				events.$emit('dashboard-window', 'close');
+				events.$emit('renderer-sync-action', 'exit');
 				setTimeout(() => app.exit(), 3000);
 			},
 		}

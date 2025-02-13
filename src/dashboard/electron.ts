@@ -94,10 +94,14 @@ export const openDashboard = async () => {
 				if (action === 'insert') return resolve(database.insert(table, dataOrFilters));
 				if (action === 'update') {
 					const response = await database.update(table, dataOrFilters);
-					if (!response.error && (table === 'active' || (table === 'wallpaper' && 'favorite' in dataOrFilters)))
+					if (response.error) return resolve(response);
+					if (table === 'active' || 'favorite' in dataOrFilters) {
 						events.$emit('tray-reload-menu');
-					resolve(response);
-					return;
+						if (table === 'active') events.$emit('renderer-sync-action', 'wallpaper');
+					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((a) => a in dataOrFilters)) {
+						events.$emit('renderer-sync-action', 'change');
+					}
+					return resolve(response);
 				}
 				return resolve({ doc: null, error: `${action}: This action is not supported` });
 			});
