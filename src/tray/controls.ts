@@ -32,16 +32,8 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 
 	options.push(
 		{ type: 'separator' },
-		{
-			label: padding('Reload Wallpaper', pad),
-			click: () => {
-				events.$emit('tray-reload-menu');
-				events.$emit('dashboard-window', 'minimize');
-			},
-		},
 		soundsController,
 		visibilityController,
-		{ type: 'separator' },
 		{
 			label: padding('Open Dashboard', pad),
 			click: () => openDashboard(),

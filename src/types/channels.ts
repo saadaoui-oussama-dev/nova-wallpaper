@@ -42,5 +42,5 @@ export type DatabaseChannel = Channel<
 export type FilesChannel = Channel<
 	'throw-error' | 'send-is-not-supported',
 	'media' | 'webpage' | 'folder' | 'stickers' | 'create' | 'executable' | 'get-url',
-	{ error?: string; path?: string; content?: { filename: string; path: string; error?: string }[] }
+	{ path?: string; content?: { filename: string; path: string; error?: string }[]; error?: string }
 >;

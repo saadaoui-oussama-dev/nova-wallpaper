@@ -1,6 +1,7 @@
 'use strict';
 
 import { app, dialog, protocol } from 'electron';
+import { createRenderer } from '@/renderer';
 import { createTray } from '@/tray';
 
 require('@electron/remote/main').initialize();
@@ -18,6 +19,7 @@ app.on('ready', async () => {
 		});
 		app.quit();
 	} else {
+		createRenderer();
 		createTray();
 	}
 });
