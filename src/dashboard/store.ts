@@ -150,6 +150,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 						['preview', 'png'],
 						['preview', 'jpg'],
 						['preview', 'jpeg'],
+						['preview', 'gif'],
 						['preview', 'mp4'],
 					];
 					if (json && json.data && typeof json.data.preview === 'string') {

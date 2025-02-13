@@ -1,5 +1,7 @@
 export const isSupported = (path: string, onlyMedia?: boolean): boolean => {
-	const extensions = onlyMedia ? ['.mp4', '.png', '.jpg', '.jpeg'] : ['.mp4', '.png', '.jpg', '.jpeg', '.html'];
+	const extensions = onlyMedia
+		? ['.mp4', '.png', '.jpg', '.jpeg', '.gif']
+		: ['.mp4', '.png', '.jpg', '.jpeg', '.gif', '.html'];
 	return extensions.some((ext) => path.toLowerCase().endsWith(ext));
 };
 
