@@ -1,3 +1,5 @@
+import { Wallpaper } from '@/types/wallpaper';
+
 export const isSupported = (path: string, onlyMedia?: boolean): boolean => {
 	const extensions = onlyMedia
 		? ['.mp4', '.png', '.jpg', '.jpeg', '.gif']
@@ -61,4 +63,16 @@ export const getFileName = (
 	} catch {
 		return '';
 	}
+};
+
+export const compareTwoSimpleMaps = (
+	data1: Wallpaper | null | undefined,
+	data2: Wallpaper | null | undefined,
+	map: 'settings' | 'permissions' | 'queryParams'
+): boolean => {
+	if (!data1 && !data2) return true;
+	if (!data1 || !data2) return false;
+	const data1keys = Object.keys(data1[map]);
+	if (data1keys.length !== Object.keys(data2[map]).length) return false;
+	return data1keys.every((k) => k in data2[map] && data1[map][k] === data2[map][k]);
 };

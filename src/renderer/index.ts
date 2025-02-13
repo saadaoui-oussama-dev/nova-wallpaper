@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { database } from '@/global/database';
-import { events, getAreas, isURL, joinPublic } from '@/global/electron-utils';
+import { events, getAreas, joinPublic, compareTwoSimpleMaps } from '@/global/electron-utils';
 import { Wallpaper } from '@/types/wallpaper';
 
 let render: Electron.BrowserWindow;
@@ -41,9 +41,9 @@ export const createRenderer = () => {
 	const setCurrentWallpaper = async () => {
 		const { doc: _active } = await database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
-		if (!active || typeof active !== 'string') wallpaper = null;
+		if (!active || typeof active !== 'string') return (wallpaper = null);
 		const { doc: list } = await database.read('wallpaper', { _id: active });
-		if (!Array.isArray(list) || !list.length || !list[0] || !list[0].path) wallpaper = null;
+		if (!Array.isArray(list) || !list.length || !list[0] || !list[0].path) return (wallpaper = null);
 		wallpaper = list[0] as Wallpaper;
 	};
 
@@ -51,7 +51,11 @@ export const createRenderer = () => {
 		await setCurrentWallpaper();
 		if (!wallpaper) return;
 		try {
-			if (wallpaper.path.endsWith('.html')) await render.loadFile(wallpaper.path);
+			if (wallpaper.path.endsWith('.html')) {
+				const query = Object.entries(wallpaper.queryParams || {});
+				const url = query.length ? wallpaper.path + '?' + query.map(([k, v]) => `${k}=${v}`).join('&') : wallpaper.path;
+				await render.loadURL(url);
+			}
 			setVisibility(true, false);
 		} catch {
 			setVisibility(false, false);
@@ -61,7 +65,11 @@ export const createRenderer = () => {
 	};
 
 	const onChangesListener = async (setWallpaper: boolean) => {
-		if (setWallpaper) await setCurrentWallpaper();
+		if (setWallpaper) {
+			const oldWallpaper = wallpaper;
+			await setCurrentWallpaper();
+			if (wallpaper && !compareTwoSimpleMaps(oldWallpaper, wallpaper, 'queryParams')) return renderActiveWallpaper();
+		}
 		if (!wallpaper) return;
 		if (wallpaper.taskbar) render.setFullScreen(true);
 		else render.setBounds({ height: getAreas().workarea.height });
