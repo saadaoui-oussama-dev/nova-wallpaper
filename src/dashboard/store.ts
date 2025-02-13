@@ -40,7 +40,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				label: '',
 				type,
 				path,
-				content,
+				content: content ? [] : [],
 				taskbar: false,
 				favorite: false,
 				settings: {},
