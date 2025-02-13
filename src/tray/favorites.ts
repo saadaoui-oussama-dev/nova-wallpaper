@@ -4,8 +4,8 @@ import { Wallpaper } from '@/types/wallpaper';
 
 export const renderFavorites = async (options: Electron.MenuItemConstructorOptions[]): Promise<void> => {
 	try {
-		const { doc: list, error } = await database.read('wallpaper', { favorite: true });
-		if (error || !Array.isArray(list)) return;
+		const { doc: list } = await database.read('wallpaper', { favorite: true });
+		if (!Array.isArray(list) || !list.length) return;
 		const { doc: _active } = await database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as string) : '';
 

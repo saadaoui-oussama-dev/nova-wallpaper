@@ -4,7 +4,7 @@ import { app } from 'electron';
 import { AsyncResponse, DatabaseChannel } from '@/types/channels';
 
 type Database = {
-	read: (table: string, query?: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
+	read: (table: string, filters?: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
 	insert: (table: string, data: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
 	update: (table: string, data: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
 };

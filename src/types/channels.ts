@@ -1,4 +1,4 @@
-// Channels Creator
+// Channels Creator & Parts Detectors
 
 type Channel<Send extends string, Invoke extends string, Response = void> = {
 	on: (event: string, callback: (...data: any[]) => void) => void;
@@ -7,7 +7,7 @@ type Channel<Send extends string, Invoke extends string, Response = void> = {
 	invoke: (key: Invoke, ...data: any[]) => Promise<Response>;
 };
 
-export type Send<T> = T extends Channel<any, infer R, any> ? R : never;
+export type Send<T> = T extends Channel<infer R, any, any> ? R : never;
 
 export type Invoke<T> = T extends Channel<any, infer R, any> ? R : never;
 
