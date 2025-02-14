@@ -1,11 +1,13 @@
 const { spawn } = require('child_process');
 const { existsSync } = require('fs');
+const { join } = require('path');
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { database } from '@/global/database';
+import { readJson, writeJSON } from '@/global/json';
 import { events, getAreas, isURL, joinPublic } from '@/global/electron-utils';
 import { multipleThreadsManager, compareMaps, getMapChanges } from '@/global/electron-utils';
 import { Wallpaper } from '@/types/wallpaper';
-import { Invoke, Response, ExecuteChannel } from '@/types/channels';
+import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
 
 let render: Electron.BrowserWindow;
 let wallpaper: Wallpaper | null = null;
@@ -50,6 +52,20 @@ export const createRenderer = () => {
 		if (action === 'mute' || action === 'unmute') render.webContents.setAudioMuted(action === 'mute');
 		if (action === 'show' || action === 'hide' || action === 'exit') setVisibility(action === 'show', true);
 		if (action === 'exit') setTimeout(() => app.exit(), 2000);
+	});
+
+	ipcMain.handle('renderer-json', (_, action: Invoke<RenderJSONChannel>, path: string, dataOrIsArray?: any) => {
+		return new Promise<Response<RenderJSONChannel>>((resolve) => {
+			if (wallpaper === null) return;
+			if (path === '' || typeof path !== 'string' || !path.startsWith('@'))
+				return resolve({ permitted: false, exist: false, valid: false, data: null });
+			else if (path.includes('../') || path.includes('/..') || path.includes('..\\') || path.includes('\\..'))
+				return resolve({ permitted: false, exist: false, valid: false, data: null });
+			path = join(wallpaper.path, '../', path.slice(1));
+			if (action === 'read') resolve({ permitted: true, ...readJson(path, dataOrIsArray) });
+			else if (action === 'write') resolve({ permitted: true, ...writeJSON(path, dataOrIsArray) });
+			else resolve({ permitted: false, exist: false, valid: false, data: null });
+		});
 	});
 
 	ipcMain.handle('renderer-execute', (_, __: Invoke<ExecuteChannel>, permissionId: string) => {

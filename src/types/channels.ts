@@ -47,6 +47,12 @@ export type FilesChannel = Channel<
 
 // Renderer Channels
 
+export type RenderJSONChannel = Channel<
+	'throw-error' | 'send-is-not-supported',
+	'read' | 'write',
+	{ permitted: boolean; exist: boolean; valid: boolean; data: any }
+>;
+
 export type ExecuteChannel = Channel<
 	'throw-error' | 'send-is-not-supported',
 	'execute',
