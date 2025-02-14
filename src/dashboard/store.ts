@@ -3,6 +3,7 @@ import { NovaWallpaper } from '@/dashboard/preload';
 import { imageJSON, videoJSON } from '@/global/settings';
 import { isSupported, replaceFileName } from '@/global/files';
 import { Wallpaper, WallpaperType, FolderItem } from '@/types/wallpaper';
+import { SettingOption } from '@/types/json';
 import { AsyncResponse, Response, FilesChannel, JSONChannel } from '@/types/channels';
 
 export interface State {
@@ -110,9 +111,18 @@ export const useWallpaperStore = defineStore('wallpaper', {
 					} else if (wallpaper.type === 'webpage') {
 						const filename = replaceFileName(wallpaper.path, { name: 'settings', extension: 'json' });
 						const response = await NovaWallpaper.json.invoke('read', filename);
-						data.valid = response.valid;
-						data.exist = response.exist;
-						data.data = response.data;
+						const livelyFilename = replaceFileName(wallpaper.path, { name: 'LivelyProperties', extension: 'json' });
+						const livelyResponse = await NovaWallpaper.json.invoke('read', livelyFilename);
+						if (livelyResponse.valid) {
+							response.valid = true;
+							response.exist = true;
+							if (!response.data) response.data = { settings: [] };
+							if (!response.data.settings) response.data.settings = [];
+							Object.entries(livelyResponse.data as { [key: string]: SettingOption }).map(([p, v]) => {
+								response.data.settings.push({ ...v, id: p });
+							});
+						}
+						Object.assign(data, response);
 					}
 				}
 			} catch {

@@ -137,6 +137,10 @@ export const createRenderer = () => {
 					const instruction = `window.novaSettingsListener(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
 					await render.webContents.executeJavaScript(instruction).catch(() => {});
 				}),
+				...settings.map(async ([id, value]) => {
+					const instruction = `window.livelyPropertyListener(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
+					await render.webContents.executeJavaScript(instruction).catch(() => {});
+				}),
 				...permissions.map(async ([id, path]) => {
 					const instruction = `window.novaPermissionsListener(${JSON.stringify(id)}, ${path ? 'true' : 'false'});`;
 					await render.webContents.executeJavaScript(instruction).catch(() => {});
