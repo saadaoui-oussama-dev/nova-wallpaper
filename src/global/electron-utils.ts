@@ -6,7 +6,7 @@ import { Response, WindowChannel } from '@/types/channels';
 
 export * from '@/global/events';
 
-export * from '@/global/utils';
+export * from '@/global/files';
 
 export const joinPublic = (path: string): string => {
 	return join(__dirname, path.replace('@/public', app.isPackaged ? '' : '../public'));

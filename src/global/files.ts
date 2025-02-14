@@ -29,14 +29,6 @@ export const replaceFileName = (fullPath: string, { name, extension }: { name: s
 	return filenameParts.join('\\');
 };
 
-export const noPadding = (label: string) => {
-	return label.endsWith('        ') ? label.substring(0, label.length - '        '.length) : label;
-};
-
-export const padding = (label: string, padding = true) => {
-	return `${noPadding(label)}${padding ? '        ' : ''}`;
-};
-
 export const getFileName = (
 	name: string,
 	type: 'path' | 'filename' | 'name',

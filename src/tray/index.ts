@@ -12,6 +12,14 @@ export const createTray = () => {
 	tray.setToolTip('Nova Wallpaper');
 	tray.on('click', () => tray.popUpContextMenu());
 
+	events.$on('noPadding', (label: string) => {
+		return label.endsWith('        ') ? label.substring(0, label.length - '        '.length) : label;
+	});
+
+	events.$on('padding', (label: string, padding = true) => {
+		return `${events.$emit('noPadding', label)}${padding ? '        ' : ''}`;
+	});
+
 	events.$on('tray-render-menu', (options: Electron.MenuItemConstructorOptions[]) => {
 		tray.setContextMenu(Menu.buildFromTemplate(options));
 	});
