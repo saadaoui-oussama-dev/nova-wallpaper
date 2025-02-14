@@ -18,6 +18,8 @@ export const database: Database = new Proxy<Database>({} as Database, {
 			const db = new NeDB({ filename: dbPath, autoload: true });
 			const instance: Database = {
 				read(table: string, filters: { [key: string]: any } = {}) {
+					filters = 'id' in filters ? { ...filters, _id: filters.id } : { ...filters };
+					delete filters.id;
 					return new Promise((resolve) => {
 						db.find({ ...filters, table })
 							.sort({ createdAt: -1 })
@@ -58,7 +60,7 @@ export const database: Database = new Proxy<Database>({} as Database, {
 
 				update(table: string, data: { [key: string]: any }) {
 					return new Promise((resolve) => {
-						const filters = data.id ? { _id: data.id, table } : { table };
+						const filters = 'id' in data ? { _id: data.id, table } : { table };
 						data = { ...data, updatedAt: Date.now() };
 						delete data.id;
 						db.update(filters, { $set: data }, { multi: true }, (error: Error | string | null, numReplaced: number) => {

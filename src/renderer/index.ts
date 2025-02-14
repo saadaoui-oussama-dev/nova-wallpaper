@@ -93,7 +93,7 @@ export const createRenderer = () => {
 			const { doc: _active } = await database.read('active');
 			const active = Array.isArray(_active) && _active[0] ? _active[0].value : '';
 			if (active && typeof active === 'string') {
-				const { doc: list } = await database.read('wallpaper', { _id: active });
+				const { doc: list } = await database.read('wallpaper', { id: active });
 				if (Array.isArray(list) && list[0]) newWallpaper = list[0] as Wallpaper;
 			}
 
