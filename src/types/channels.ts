@@ -44,3 +44,11 @@ export type FilesChannel = Channel<
 	'media' | 'webpage' | 'folder' | 'stickers' | 'create' | 'executable' | 'get-url',
 	{ path?: string; content?: { filename: string; path: string; error?: string }[]; error?: string }
 >;
+
+// Renderer Channels
+
+export type ExecuteChannel = Channel<
+	'throw-error' | 'send-is-not-supported',
+	'execute',
+	{ permitted: boolean; success: boolean }
+>;

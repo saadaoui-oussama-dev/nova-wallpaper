@@ -1,8 +1,11 @@
-import { app, BrowserWindow } from 'electron';
+const { spawn } = require('child_process');
+const { existsSync } = require('fs');
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { database } from '@/global/database';
-import { events, getAreas, joinPublic } from '@/global/electron-utils';
+import { events, getAreas, isURL, joinPublic } from '@/global/electron-utils';
 import { multipleThreadsManager, compareMaps, getMapChanges } from '@/global/electron-utils';
 import { Wallpaper } from '@/types/wallpaper';
+import { Invoke, Response, ExecuteChannel } from '@/types/channels';
 
 let render: Electron.BrowserWindow;
 let wallpaper: Wallpaper | null = null;
@@ -26,6 +29,7 @@ export const createRenderer = () => {
 			devTools: false,
 			nodeIntegration: false,
 			contextIsolation: true,
+			preload: joinPublic('@/public/js/renderer-preload.js'),
 		},
 	});
 
@@ -48,6 +52,23 @@ export const createRenderer = () => {
 		if (action === 'exit') setTimeout(() => app.exit(), 2000);
 	});
 
+	ipcMain.handle('renderer-execute', (_, __: Invoke<ExecuteChannel>, permissionId: string) => {
+		return new Promise<Response<ExecuteChannel>>((resolve) => {
+			if (wallpaper === null) return resolve({ permitted: false, success: false });
+			const path = wallpaper.permissions ? wallpaper.permissions[permissionId] : '';
+			if (!path || typeof path !== 'string') return resolve({ permitted: false, success: false });
+			try {
+				if (isURL(path)) return shell.openExternal(path);
+				if (!path.startsWith('::{') && !existsSync(path)) throw new Error('File Not Found');
+				const params = path.endsWith('.exe') ? [path, []] : ['explorer', [path]];
+				spawn(...params, { detached: true, stdio: 'ignore' }).unref();
+				return resolve({ permitted: true, success: true });
+			} catch {
+				return resolve({ permitted: true, success: false });
+			}
+		});
+	});
+
 	const onChangesListener = () => {
 		multipleThreadsManager('change-wallpaper', async () => {
 			let newWallpaper: Wallpaper | null = null;
@@ -67,7 +88,8 @@ export const createRenderer = () => {
 				!newWallpaper ||
 				oldWallpaper.id !== newWallpaper.id ||
 				!compareMaps(newWallpaper.queryParams, oldWallpaper.queryParams) ||
-				!compareMaps(newWallpaper.settings, oldWallpaper.settings, true);
+				!compareMaps(newWallpaper.settings, oldWallpaper.settings, true) ||
+				!compareMaps(newWallpaper.permissions, oldWallpaper.permissions, true);
 			wallpaper = newWallpaper as Wallpaper;
 
 			// Load or reload the active wallpaper if necessary
@@ -90,16 +112,22 @@ export const createRenderer = () => {
 			if (wallpaper.taskbar) render.setFullScreen(true);
 			else render.setBounds({ height: getAreas().workarea.height });
 
-			// Identify and apply only the changed settings
+			// Identify and apply only the changed settings and permissions
 			render.webContents.removeAllListeners('did-stop-loading');
 			const settings = getMapChanges(wallpaper.settings, oldWallpaper ? oldWallpaper.settings : undefined);
+			const permissions = getMapChanges(wallpaper.permissions, oldWallpaper ? oldWallpaper.permissions : undefined);
 			await Promise.all([
 				...settings.map(async ([id, value]) => {
 					const instruction = `window.novaSettingsListener(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
 					await render.webContents.executeJavaScript(instruction).catch(() => {});
 				}),
+				...permissions.map(async ([id, path]) => {
+					const instruction = `window.novaPermissionsListener(${JSON.stringify(id)}, ${path ? 'true' : 'false'});`;
+					await render.webContents.executeJavaScript(instruction).catch(() => {});
+				}),
 			]);
-			await render.webContents.executeJavaScript('window.novaLoaded()').catch(() => {});
+			if (settings.length || permissions.length || !oldWallpaper)
+				await render.webContents.executeJavaScript('window.novaLoadedListener()').catch(() => {});
 		});
 	};
 

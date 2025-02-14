@@ -1,3 +1,5 @@
+export const isURL = (path: string) => /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(path);
+
 export const isSupported = (path: string, onlyMedia?: boolean): boolean => {
 	const extensions = onlyMedia
 		? ['.mp4', '.png', '.jpg', '.jpeg', '.gif']
