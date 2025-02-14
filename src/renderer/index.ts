@@ -132,19 +132,16 @@ export const createRenderer = () => {
 			render.webContents.removeAllListeners('did-stop-loading');
 			const settings = getMapChanges(wallpaper.settings, oldWallpaper ? oldWallpaper.settings : undefined);
 			const permissions = getMapChanges(wallpaper.permissions, oldWallpaper ? oldWallpaper.permissions : undefined);
+			const sendOptions = (functionName: string, options: [string, string | number | boolean][]) => {
+				return options.map(async ([id, value]) => {
+					const instruction = `window.${functionName}(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
+					await render.webContents.executeJavaScript(instruction).catch(() => {});
+				});
+			};
 			await Promise.all([
-				...settings.map(async ([id, value]) => {
-					const instruction = `window.novaSettingsListener(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
-					await render.webContents.executeJavaScript(instruction).catch(() => {});
-				}),
-				...settings.map(async ([id, value]) => {
-					const instruction = `window.livelyPropertyListener(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
-					await render.webContents.executeJavaScript(instruction).catch(() => {});
-				}),
-				...permissions.map(async ([id, path]) => {
-					const instruction = `window.novaPermissionsListener(${JSON.stringify(id)}, ${path ? 'true' : 'false'});`;
-					await render.webContents.executeJavaScript(instruction).catch(() => {});
-				}),
+				...sendOptions('novaSettingsListener', settings),
+				...sendOptions('livelyPropertyListener', settings),
+				...sendOptions('novaPermissionsListener', permissions),
 			]);
 			if (settings.length || permissions.length || !oldWallpaper)
 				await render.webContents.executeJavaScript('window.novaLoadedListener()').catch(() => {});
