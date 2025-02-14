@@ -32,7 +32,7 @@ export const getAreas = (): Response<WindowChannel> => {
 
 const threads: { [key: string]: { current: Promise<void> | null; next: boolean } } = {};
 
-export const multipleThreadsManager = async (key: string, callback: () => Promise<void>) => {
+export const threadsManager = async (key: string, callback: () => Promise<void>) => {
 	if (!threads[key]) threads[key] = { current: null, next: false };
 	if (threads[key].current) {
 		if (threads[key].next) return;

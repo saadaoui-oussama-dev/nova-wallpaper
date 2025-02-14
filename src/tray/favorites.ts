@@ -1,5 +1,5 @@
 import { database } from '@/global/database';
-import { events, getFileName } from '@/global/electron-utils';
+import { events, getFileName } from '@/global/utils';
 import { Wallpaper } from '@/types/wallpaper';
 
 export const renderFavorites = async (options: Electron.MenuItemConstructorOptions[]): Promise<void> => {
@@ -19,7 +19,10 @@ export const renderFavorites = async (options: Electron.MenuItemConstructorOptio
 					if (!(await database.update('active', { value: wallpaper.id })).error) {
 						events.$emit('dashboard-active-changed');
 						events.$emit('tray-reload-menu');
-						events.$emit('renderer-sync-action', 'change');
+						setTimeout(() => {
+							events.$emit('dashboard-window', 'minimize');
+							events.$emit('renderer-sync-action', 'change');
+						}, 400);
 					}
 				} catch {}
 			},

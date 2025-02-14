@@ -4,7 +4,7 @@ import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
-import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/electron-utils';
+import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/utils';
 import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, FilesChannel } from '@/types/channels';
 
 let dashboard: BrowserWindow | null;
@@ -63,7 +63,6 @@ export const openDashboard = async () => {
 
 	events.$on('dashboard-active-changed', () => {
 		if (dashboard) dashboard.webContents.send('refresh', 'database');
-		setTimeout(() => events.$emit('dashboard-window', 'minimize'), 400);
 	});
 
 	ipcMain.on('dashboard-window', (_, action: Send<WindowChannel>) => {

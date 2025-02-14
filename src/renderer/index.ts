@@ -4,8 +4,7 @@ const { join } = require('path');
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
-import { events, getAreas, isURL, joinPublic } from '@/global/electron-utils';
-import { multipleThreadsManager, compareMaps, getMapChanges } from '@/global/electron-utils';
+import { events, getAreas, isURL, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
 import { Wallpaper } from '@/types/wallpaper';
 import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
 
@@ -86,7 +85,7 @@ export const createRenderer = () => {
 	});
 
 	const onChangesListener = () => {
-		multipleThreadsManager('change-wallpaper', async () => {
+		threadsManager('change-wallpaper', async () => {
 			let newWallpaper: Wallpaper | null = null;
 			let oldWallpaper = wallpaper;
 
