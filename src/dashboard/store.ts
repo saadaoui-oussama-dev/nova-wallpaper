@@ -167,7 +167,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 						const type = attempts[cursor][1] === 'mp4' ? 'video' : 'image';
 						const response = await this.fetchPreview({ ...wallpaper, path, type });
 						if (response.path) data.path = response.path;
-						else if (!response.error?.includes('limit')) cursor++;
+						else if (response.error && !response.error.includes('limit')) cursor++;
 						else data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
 					}
 					if (cursor === attempts.length)

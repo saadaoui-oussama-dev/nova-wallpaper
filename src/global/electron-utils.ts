@@ -1,6 +1,7 @@
 const { app, screen } = require('electron');
 const { join } = require('path');
 const { statSync } = require('fs');
+import { SimpleMap } from '@/types/wallpaper';
 import { Response, WindowChannel } from '@/types/channels';
 
 export * from '@/global/events';
@@ -27,4 +28,26 @@ export const getAreas = (): Response<WindowChannel> => {
 	if (fh > wh) wh += 1;
 	const taskbar = { width: fw - ww, height: fh - wh };
 	return { fullscreen: { width: fw, height: fh }, workarea: { width: ww, height: wh }, taskbar };
+};
+
+const threads: { [key: string]: { current: Promise<void> | null; next: boolean } } = {};
+
+export const multipleThreadsManager = async (key: string, callback: () => Promise<void>) => {
+	if (!threads[key]) threads[key] = { current: null, next: false };
+	if (threads[key].current) {
+		if (threads[key].next) return;
+		threads[key].next = true;
+		await threads[key].current;
+		threads[key].next = false;
+	}
+	let resolveThread = () => console.log();
+	threads[key].current = new Promise((resolve) => (resolveThread = resolve));
+	await callback();
+	resolveThread();
+};
+
+export const compareMaps = (data1: SimpleMap, data2: SimpleMap, onlyKeys = false): boolean => {
+	const data1keys = Object.keys(data1);
+	if (data1keys.length !== Object.keys(data2).length) return false;
+	return data1keys.every((k) => k in data2 && (onlyKeys || data1[k] === data2[k]));
 };
