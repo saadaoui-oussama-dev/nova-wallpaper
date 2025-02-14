@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { WallpaperType } from '@/types/wallpaper';
@@ -25,8 +25,10 @@ import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
 import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
 import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
+// eslint-disable-next-line
 const props = defineProps<{ visible: boolean }>();
 
+// eslint-disable-next-line
 const emit = defineEmits(['collapse']);
 
 const store = useWallpaperStore();

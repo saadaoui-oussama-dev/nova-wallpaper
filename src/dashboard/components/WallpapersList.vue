@@ -37,12 +37,13 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
 import { Wallpaper } from '@/types/wallpaper';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 
+// eslint-disable-next-line
 const emit = defineEmits(['collapse']);
 
 const store = useWallpaperStore();

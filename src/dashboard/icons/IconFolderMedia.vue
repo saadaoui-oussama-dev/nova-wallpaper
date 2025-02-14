@@ -18,8 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-
+// eslint-disable-next-line
 const props = defineProps({
 	color: { type: String, default: 'currentColor' },
 });

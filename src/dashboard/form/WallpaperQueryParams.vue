@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, useTemplateRef, ref, watch } from 'vue';
+import { useTemplateRef, ref, watch } from 'vue';
 import { getID } from '@/global/settings';
 import { Wallpaper } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
@@ -29,11 +29,13 @@ import { Query } from '@/types/json';
 import IconAdd from '@/dashboard/icons/IconAdd.vue';
 import IconDelete from '@/dashboard/icons/IconDelete.vue';
 
+// eslint-disable-next-line
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: Response<JSONChannel> | null;
 }>();
 
+// eslint-disable-next-line
 const emit = defineEmits(['change']);
 
 const queryParams = ref<Query[]>([]);

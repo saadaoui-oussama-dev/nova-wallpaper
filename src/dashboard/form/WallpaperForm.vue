@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef, watch, defineExpose } from 'vue';
+import { ref, useTemplateRef, watch } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { getFileName } from '@/global/utils';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
@@ -121,6 +121,7 @@ const save = async () => {
 	}
 };
 
+// eslint-disable-next-line
 defineExpose({ save });
 </script>
 

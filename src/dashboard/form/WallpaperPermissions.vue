@@ -20,18 +20,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, ref, watch, defineExpose } from 'vue';
+import { ref, watch } from 'vue';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { getID, getLabel } from '@/global/settings';
 import { Wallpaper } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import { Permission } from '@/types/json';
 
+// eslint-disable-next-line
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: Response<JSONChannel> | null;
 }>();
 
+// eslint-disable-next-line
 const emit = defineEmits(['change']);
 
 const permissions = ref<Permission[]>([]);
@@ -98,6 +100,7 @@ const onChange = (trim: boolean, set: boolean) => {
 	return data;
 };
 
+// eslint-disable-next-line
 defineExpose({ onChange });
 </script>
 

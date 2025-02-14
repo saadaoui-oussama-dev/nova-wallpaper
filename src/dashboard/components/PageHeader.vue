@@ -13,11 +13,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 
+// eslint-disable-next-line
 const props = defineProps<{ visible: boolean }>();
 
+// eslint-disable-next-line
 const emit = defineEmits(['action']);
 
 const store = useWallpaperStore();

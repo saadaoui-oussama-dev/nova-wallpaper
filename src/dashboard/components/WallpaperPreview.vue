@@ -32,11 +32,12 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { Wallpaper } from '@/types/wallpaper';
 
+// eslint-disable-next-line
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	settings?: { taskbar: boolean; settings: { [key: string]: string | number | boolean } };

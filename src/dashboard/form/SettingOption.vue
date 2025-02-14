@@ -49,14 +49,15 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
 import { SettingOption } from '@/types/json';
 
+// eslint-disable-next-line
 const props = defineProps<{
 	direction: 'row' | 'row-right' | 'column' | 'column-right';
 	modelValue: SettingOption;
 }>();
 
+// eslint-disable-next-line
 const emit = defineEmits(['change', 'update:modelValue']);
 
 const getTrackBackgroundSize = () => {

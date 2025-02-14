@@ -17,18 +17,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, computed, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { getID, getLabel } from '@/global/settings';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import { SettingsJSON, SettingOption, ToggleOption } from '@/types/json';
 import SettingsOption from '@/dashboard/form/SettingOption.vue';
 
+// eslint-disable-next-line
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	json: Response<JSONChannel> | null;
 }>();
 
+// eslint-disable-next-line
 const emit = defineEmits(['change']);
 
 const settings = ref<SettingsJSON | null>(null);
