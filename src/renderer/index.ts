@@ -29,6 +29,8 @@ export const createRenderer = () => {
 		},
 	});
 
+	render.webContents.setMaxListeners(0);
+
 	// attach(render, { transparent: true, forwardMouseInput: true });
 
 	const setVisibility = (state: boolean, byUser: boolean) => {
@@ -89,6 +91,7 @@ export const createRenderer = () => {
 			else render.setBounds({ height: getAreas().workarea.height });
 
 			// Identify and apply only the changed settings
+			render.webContents.removeAllListeners('did-stop-loading');
 			const settings = getMapChanges(wallpaper.settings, oldWallpaper ? oldWallpaper.settings : undefined);
 			await Promise.all([
 				...settings.map(async ([id, value]) => {
