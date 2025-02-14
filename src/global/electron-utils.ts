@@ -51,3 +51,7 @@ export const compareMaps = (data1: SimpleMap, data2: SimpleMap, onlyKeys = false
 	if (data1keys.length !== Object.keys(data2).length) return false;
 	return data1keys.every((k) => k in data2 && (onlyKeys || data1[k] === data2[k]));
 };
+
+export const getMapChanges = (data1?: SimpleMap, data2?: SimpleMap) => {
+	return data1 && data2 ? Object.entries(data1).filter(([id, val]) => data2[id] !== val) : Object.entries(data1 || {});
+};
