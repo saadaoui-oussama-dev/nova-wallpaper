@@ -1,28 +1,19 @@
 'use strict';
 
-import { app, dialog, protocol } from 'electron';
+import { app, protocol } from 'electron';
 import { createRenderer } from '@/renderer';
 import { createTray } from '@/tray';
 
+app.requestSingleInstanceLock();
 require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
-const alreadyRunning = !app.requestSingleInstanceLock();
-
 app.on('ready', async () => {
-	if (alreadyRunning) {
-		dialog.showMessageBoxSync({
-			type: 'error',
-			title: 'Nova Wallpaper',
-			message: 'Another instance of Nova Wallpaper is already running.\nPlease close the application from the task manager and try again.', // prettier-ignore
-			buttons: ['OK'],
-		});
-		app.quit();
-	} else {
-		createRenderer();
-		createTray();
-	}
+	createRenderer();
+	createTray();
 });
+
+app.on('second-instance', () => app.exit());
 
 app.on('window-all-closed', ((event: Electron.Event) => event && event.preventDefault()) as () => void);
 
