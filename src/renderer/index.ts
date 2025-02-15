@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const { existsSync } = require('fs');
 const { join } = require('path');
+import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
@@ -9,6 +10,7 @@ import { Wallpaper } from '@/types/wallpaper';
 import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
 
 let render: Electron.BrowserWindow;
+
 let wallpaper: Wallpaper | null = null;
 
 export const createRenderer = () => {
@@ -36,14 +38,14 @@ export const createRenderer = () => {
 
 	render.webContents.setMaxListeners(0);
 
-	// attach(render, { transparent: true, forwardMouseInput: true });
+	attach(render, { transparent: true, forwardMouseInput: false });
 
 	const setVisibility = (state: boolean, byUser: boolean) => {
 		if (state) return render.show();
 		if (byUser) render.webContents.setAudioMuted(true);
 		render.hide();
-		// const id = setInterval(() => reset(), 10);
-		// setTimeout(() => clearInterval(id), 500);
+		const id = setInterval(() => reset(), 10);
+		setTimeout(() => clearInterval(id), 500);
 	};
 
 	events.$on('renderer-sync-action', (action: string) => {
