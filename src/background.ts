@@ -5,7 +5,6 @@ import { processType, processesConnection } from '@/process';
 import { createRenderer } from '@/renderer';
 import { createTray } from '@/tray';
 
-app.requestSingleInstanceLock();
 require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
@@ -14,6 +13,8 @@ app.on('ready', async () => {
 	if (processType !== 'main') createTray();
 	processesConnection();
 });
+
+app.requestSingleInstanceLock();
 
 app.on('second-instance', () => app.exit());
 
