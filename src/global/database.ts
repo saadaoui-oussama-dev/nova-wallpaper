@@ -14,19 +14,18 @@ export const database: Database = new Proxy<Database>({} as Database, {
 		if (prop !== 'read' && prop !== 'insert' && prop !== 'update') return;
 		if (prop in target) return target[prop];
 		else {
-			const dbPath = join(app.getPath('userData'), 'data.db');
-			const db = new NeDB({ filename: dbPath, autoload: true });
+			const db = new NeDB({ filename: join(app.getPath('userData'), '../Nova Wallpaper/data.db'), autoload: true });
+
 			const instance: Database = {
 				read(table: string, filters: { [key: string]: any } = {}) {
 					filters = 'id' in filters ? { ...filters, _id: filters.id } : { ...filters };
 					delete filters.id;
 					return new Promise((resolve) => {
-						db.find({ ...filters, table })
-							.sort({ createdAt: -1 })
-							.exec((error: Error | string | null, rows: { [key: string]: any }[]) => {
-								if (error) {
-									resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
-								} else {
+						try {
+							db.find({ ...filters, table })
+								.sort({ createdAt: -1 })
+								.exec((error: Error, rows: { [key: string]: any }[]) => {
+									if (error) return resolve({ doc: null, error: getError(error) });
 									const ids: string[] = [];
 									const row = rows.map((data) => {
 										if (!data) return;
@@ -38,38 +37,42 @@ export const database: Database = new Proxy<Database>({} as Database, {
 										return data;
 									});
 									resolve({ doc: row.filter((data) => data), error: '' });
-								}
-							});
+								});
+						} catch (error) {
+							resolve({ doc: null, error: getError(error) });
+						}
 					});
 				},
 
 				insert(table: string, data: { [key: string]: any }) {
 					return new Promise((resolve) => {
-						const now = Date.now();
-						data = { ...data, table, createdAt: now, updatedAt: now };
-						delete data.id;
-						db.insert(data, (error: Error | string | null, newDoc: any) => {
-							if (error) {
-								resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
-							} else {
-								resolve({ doc: { createdAt: newDoc.createdAt, id: newDoc._id }, error: '' });
-							}
-						});
+						try {
+							const now = Date.now();
+							data = { ...data, table, createdAt: now, updatedAt: now };
+							delete data.id;
+							db.insert(data, (error: Error, newDoc: any) => {
+								error
+									? resolve({ doc: null, error: getError(error) })
+									: resolve({ doc: { createdAt: newDoc.createdAt, id: newDoc._id }, error: '' });
+							});
+						} catch (error) {
+							resolve({ doc: null, error: getError(error) });
+						}
 					});
 				},
 
 				update(table: string, data: { [key: string]: any }) {
 					return new Promise((resolve) => {
-						const filters = 'id' in data ? { _id: data.id, table } : { table };
-						data = { ...data, updatedAt: Date.now() };
-						delete data.id;
-						db.update(filters, { $set: data }, { multi: true }, (error: Error | string | null, numReplaced: number) => {
-							if (error) {
-								resolve({ doc: null, error: typeof error === 'string' ? error : error.message });
-							} else {
-								resolve({ doc: numReplaced, error: '' });
-							}
-						});
+						try {
+							const filters = 'id' in data ? { _id: data.id, table } : { table };
+							data = { ...data, updatedAt: Date.now() };
+							delete data.id;
+							db.update(filters, { $set: data }, { multi: true }, (error: Error, numReplaced: number) => {
+								error ? resolve({ doc: null, error: getError(error) }) : resolve({ doc: numReplaced, error: '' });
+							});
+						} catch (error) {
+							resolve({ doc: null, error: getError(error) });
+						}
 					});
 				},
 			};
@@ -79,3 +82,11 @@ export const database: Database = new Proxy<Database>({} as Database, {
 		}
 	},
 });
+
+const getError = (error: any) => {
+	return error && typeof error === 'object' && 'message' in error
+		? (error.message as string)
+		: typeof error === 'string'
+		? error
+		: '';
+};
