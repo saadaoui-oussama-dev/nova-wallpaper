@@ -1,7 +1,15 @@
 const NeDB = require('nedb');
+const SQLite = require('better-sqlite3');
+import bindings from 'bindings';
 import { join } from 'path';
 import { app } from 'electron';
+import { joinPublic } from '@/global/utils';
 import { AsyncResponse, DatabaseChannel } from '@/types/channels';
+
+const better_sqlite3 = bindings({
+	bindings: 'better_sqlite3',
+	module_root: joinPublic('@/public/build/better-sqlite3'),
+});
 
 type Database = {
 	read: (table: string, filters?: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
@@ -18,7 +26,37 @@ export const database: Database = new Proxy<Database>({} as Database, {
 });
 
 const initDatabase = (): Database => {
-	const db = new NeDB({ filename: join(app.getPath('userData'), '../Nova Wallpaper/data.db'), autoload: true });
+	const db = new SQLite(join(app.getPath('userData'), '../Nova Wallpaper/data.db'), { nativeBinding: better_sqlite3 });
+	db.pragma('journal_mode = WAL');
+	console.log(db);
+
+	const instance: Database = {
+		read: async () => {
+			return new Promise((resolve) => {
+				console.log('Database is not prepared yet.');
+				resolve({ doc: null, error: 'Database is not prepared yet.' });
+			});
+		},
+		insert: async () => {
+			return new Promise((resolve) => {
+				console.log('Database is not prepared yet.');
+				resolve({ doc: null, error: 'Database is not prepared yet.' });
+			});
+		},
+		update: async () => {
+			return new Promise((resolve) => {
+				console.log('Database is not prepared yet.');
+				resolve({ doc: null, error: 'Database is not prepared yet.' });
+			});
+		},
+	};
+
+	Object.assign(database, instance);
+	return instance;
+};
+
+const initDatabaseOldNeDBDatabase = (): Database => {
+	const db = new NeDB({ filename: join(app.getPath('userData'), '../Nova Wallpaper/data-old.db'), autoload: true });
 
 	const instance: Database = {
 		read(table: string, filters: { [key: string]: any } = {}) {
