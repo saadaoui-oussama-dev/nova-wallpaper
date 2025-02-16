@@ -65,8 +65,8 @@ export const openDashboard = async () => {
 		if (dashboard) dashboard.webContents.send('refresh', 'database');
 	});
 
-	ipcMain.on('dashboard-window', (_, action: Send<WindowChannel>) => {
-		if (['close', 'minimize'].includes(action)) return events.$emit('dashboard-window', action);
+	ipcMain.on('dashboard-window', (_, action: Send<WindowChannel>): void => {
+		if (['close', 'minimize'].includes(action)) events.$emit('dashboard-window', action);
 	});
 
 	ipcMain.handle('dashboard-window', (_, action: Invoke<WindowChannel>) => {
