@@ -7,7 +7,7 @@ export const renderFavorites = async (options: Electron.MenuItemConstructorOptio
 		const { doc: list } = await database.read('wallpaper', { favorite: true });
 		if (!Array.isArray(list) || !list.length) return;
 		const { doc: _active } = await database.read('active');
-		const active = Array.isArray(_active) && _active[0] ? _active[0].value : '';
+		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as number) : -1;
 		const padding = (label: string, padding = true) => events.$emit('padding', label, padding)[0] as string;
 
 		const wallpapers: Electron.MenuItemConstructorOptions[] = list.map((wallpaper: Wallpaper, index: number) => ({

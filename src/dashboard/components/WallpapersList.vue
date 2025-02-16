@@ -50,11 +50,11 @@ const store = useWallpaperStore();
 
 const wallpapers = computed(() => store.wallpapers);
 
-const activeMenu = ref<string | null>(null);
+const activeMenu = ref<number | null>(null);
 
-const clickTimeoutId = ref<{ id: string; timeout: number } | null>(null);
+const clickTimeoutId = ref<{ id: number; timeout: number } | null>(null);
 
-const onAnyClick = (id?: string): boolean => {
+const onAnyClick = (id?: number): boolean => {
 	const current = clickTimeoutId.value ? clickTimeoutId.value.id : '';
 	if (clickTimeoutId.value) clearTimeout(clickTimeoutId.value.timeout);
 	clickTimeoutId.value = null;

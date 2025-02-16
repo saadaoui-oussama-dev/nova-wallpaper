@@ -7,7 +7,7 @@ import { SettingOption } from '@/types/json';
 import { AsyncResponse, Response, FilesChannel, JSONChannel } from '@/types/channels';
 
 export interface State {
-	activeWallpaper: string;
+	activeWallpaper: number;
 	wallpapers: Wallpaper[];
 	data: { [key: string]: { preview: AsyncResponse<FilesChannel> | null; json: AsyncResponse<JSONChannel> | null } };
 	formWallpaper: Wallpaper | null;
@@ -17,7 +17,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 	// To access the state in the console: const pinia = () => { ...window.__VUE_DEVTOOLS_PLUGINS__[1].pluginDescriptor.app.config.globalProperties.$pinia.state.value.wallpaper }
 
 	state: (): State => ({
-		activeWallpaper: '',
+		activeWallpaper: -3,
 		wallpapers: [],
 		data: {},
 		formWallpaper: null,
@@ -37,7 +37,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 
 		async addWallpaper(type: WallpaperType, path: string, content: FolderItem[]) {
 			const wallpaper = {
-				id: '',
+				id: -2,
 				label: '',
 				type,
 				path,
@@ -52,7 +52,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				...wallpaper,
 				label: 'Draft',
 			});
-			if (error) return false;
+			if (error || !doc || typeof doc.id !== 'number') return false;
 			wallpaper.id = doc.id;
 			return this.viewWallpaper(wallpaper);
 		},
