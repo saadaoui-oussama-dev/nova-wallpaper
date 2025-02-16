@@ -1,6 +1,7 @@
 'use strict';
 
 import { app, protocol } from 'electron';
+import { processType, processesConnection } from '@/process';
 import { createRenderer } from '@/renderer';
 import { createTray } from '@/tray';
 
@@ -9,8 +10,9 @@ require('@electron/remote/main').initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 app.on('ready', async () => {
-	createRenderer();
-	createTray();
+	if (processType !== 'child') createRenderer();
+	if (processType !== 'main') createTray();
+	processesConnection();
 });
 
 app.on('second-instance', () => app.exit());

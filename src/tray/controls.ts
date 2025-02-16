@@ -1,4 +1,5 @@
-const { app } = require('electron');
+import { app } from 'electron';
+import { processType } from '@/process';
 import { openDashboard } from '@/dashboard/electron';
 import { events } from '@/global/utils';
 
@@ -47,10 +48,10 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 		{
 			label: padding('Exit App', pad),
 			click: () => {
-				events.$emit('tray-render-menu', [{ label: 'Waiting 3 seconds to close' }]);
+				events.$emit('tray-render-menu', []);
 				events.$emit('dashboard-window', 'close');
 				events.$emit('renderer-sync-action', 'exit');
-				setTimeout(() => app.exit(), 3000);
+				if (processType !== 'both') setTimeout(() => app.exit(), 3000);
 			},
 		}
 	);

@@ -1,8 +1,9 @@
 const { spawn } = require('child_process');
 const { existsSync } = require('fs');
 const { join } = require('path');
-import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { processType } from '@/process';
+import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
 import { events, getAreas, isURL, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
@@ -38,7 +39,7 @@ export const createRenderer = () => {
 
 	render.webContents.setMaxListeners(0);
 
-	attach(render, { transparent: true, forwardMouseInput: false });
+	attach(render, { transparent: true, forwardMouseInput: true });
 
 	const setVisibility = (state: boolean, byUser: boolean) => {
 		if (state) return render.show();
@@ -52,7 +53,7 @@ export const createRenderer = () => {
 		if (action === 'change') onChangesListener();
 		if (action === 'mute' || action === 'unmute') render.webContents.setAudioMuted(action === 'mute');
 		if (action === 'show' || action === 'hide' || action === 'exit') setVisibility(action === 'show', true);
-		if (action === 'exit') setTimeout(() => app.exit(), 2000);
+		if (action === 'exit') setTimeout(() => app.exit(), 500);
 	});
 
 	ipcMain.handle('renderer-json', (_, action: Invoke<RenderJSONChannel>, path: string, dataOrIsArray?: any) => {
