@@ -59,9 +59,23 @@ const initDatabase = (): Database => {
 		`
 	).run();
 
-	const JSONs = ['settings', 'permissions', 'queryParams', 'content'];
-
-	const Booleans = ['favorite', 'taskbar'];
+	const adaptEntry = (data: { [key: string]: any }, insert: boolean) => {
+		try {
+			data = { ...data, updated_at: Date.now() };
+			if (insert) data.created_at = data.updated_at;
+			const id = data.id as string;
+			delete data.id;
+			const entries: [string, any][] = Object.entries(data).map(([key, value]) => {
+				if (['favorite', 'taskbar'].includes(key)) value = value ? 1 : 0;
+				if (['settings', 'permissions', 'queryParams', 'content'].includes(key)) value = JSON.stringify(value);
+				return [key, value];
+			});
+			const values = entries.map(([_, value]) => value);
+			return { id, entries, values, error: '' };
+		} catch {
+			return { id: '', entries: [], values: [], error: 'Invalid data.' };
+		}
+	};
 
 	const instance: Database = {
 		read: async () => {
@@ -70,12 +84,22 @@ const initDatabase = (): Database => {
 				resolve({ doc: null, error: 'Database is not prepared yet.' });
 			});
 		},
-		insert: async () => {
-			return new Promise((resolve) => {
-				console.log('Database is not prepared yet.');
-				resolve({ doc: null, error: 'Database is not prepared yet.' });
-			});
+
+		insert: async (table: string, data: { [key: string]: any }) => {
+			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
+			const { entries, values, error } = adaptEntry(data, true);
+			if (error) return { doc: null, error };
+			try {
+				data.created_at = data.updated_at;
+				const keys = entries.map(([key]) => key).join(', ');
+				const placeholders = entries.map(() => '?').join(', ');
+				const result = db.prepare(`INSERT INTO ${table} (${keys}) VALUES (${placeholders})`).run(...values);
+				return { doc: { id: result.lastInsertRowid }, error: '' };
+			} catch (error) {
+				return { doc: null, error: getError(error) };
+			}
 		},
+
 		update: async () => {
 			return new Promise((resolve) => {
 				console.log('Database is not prepared yet.');
