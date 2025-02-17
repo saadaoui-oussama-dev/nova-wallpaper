@@ -28,7 +28,40 @@ export const database: Database = new Proxy<Database>({} as Database, {
 const initDatabase = (): Database => {
 	const db = new SQLite(join(app.getPath('userData'), '../Nova Wallpaper/data.db'), { nativeBinding: better_sqlite3 });
 	db.pragma('journal_mode = WAL');
-	console.log(db);
+
+	db.prepare(
+		`
+			CREATE TABLE IF NOT EXISTS wallpaper (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				created_at INTEGER NOT NULL,
+				updated_at INTEGER NOT NULL,
+				label TEXT NOT NULL,
+				type TEXT NOT NULL,
+				path TEXT NOT NULL,
+				favorite INTEGER NOT NULL CHECK(favorite IN (0, 1)),
+				taskbar INTEGER NOT NULL CHECK(taskbar IN (0, 1)),
+				settings TEXT NOT NULL,
+				permissions TEXT NOT NULL,
+				queryParams TEXT NOT NULL,
+				content TEXT NOT NULL
+			);
+		`
+	).run();
+
+	db.prepare(
+		`
+			CREATE TABLE IF NOT EXISTS active (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				created_at INTEGER NOT NULL,
+				updated_at INTEGER NOT NULL,
+				value INTEGER NOT NULL
+			);
+		`
+	).run();
+
+	const JSONs = ['settings', 'permissions', 'queryParams', 'content'];
+
+	const Booleans = ['favorite', 'taskbar'];
 
 	const instance: Database = {
 		read: async () => {
