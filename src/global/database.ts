@@ -5,10 +5,7 @@ import { app } from 'electron';
 import { joinPublic } from '@/global/utils';
 import { AsyncResponse, DatabaseChannel } from '@/types/channels';
 
-const better_sqlite3 = bindings({
-	bindings: 'better_sqlite3',
-	module_root: joinPublic('@/public/build/better-sqlite3'),
-});
+const node = bindings({ bindings: 'better-sqlite3', module_root: joinPublic('@/public') });
 
 type Database = {
 	read: (table: string, filters?: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
@@ -25,7 +22,7 @@ export const database: Database = new Proxy<Database>({} as Database, {
 });
 
 const initDatabase = (): Database => {
-	const db = new SQLite(join(app.getPath('userData'), '../Nova Wallpaper/data.db'), { nativeBinding: better_sqlite3 });
+	const db = new SQLite(join(app.getPath('userData'), '../Nova Wallpaper/data.db'), { nativeBinding: node });
 	db.pragma('journal_mode = WAL');
 
 	db.prepare(
