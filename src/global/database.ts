@@ -63,7 +63,7 @@ const initDatabase = (): Database => {
 		try {
 			data = { ...data, updated_at: Date.now() };
 			if (insert) data.created_at = data.updated_at;
-			const id = data.id as string;
+			const id = typeof data.id === 'number' ? data.id : undefined;
 			delete data.id;
 			const entries: [string, any][] = Object.entries(data).map(([key, value]) => {
 				if (['favorite', 'taskbar'].includes(key)) value = value ? 1 : 0;
@@ -73,7 +73,7 @@ const initDatabase = (): Database => {
 			const values = entries.map(([_, value]) => value);
 			return { id, entries, values, error: '' };
 		} catch {
-			return { id: '', entries: [], values: [], error: 'Invalid data.' };
+			return { id: undefined, entries: [], values: [], error: 'Invalid data.' };
 		}
 	};
 
@@ -100,11 +100,23 @@ const initDatabase = (): Database => {
 			}
 		},
 
-		update: async () => {
-			return new Promise((resolve) => {
-				console.log('Database is not prepared yet.');
-				resolve({ doc: null, error: 'Database is not prepared yet.' });
-			});
+		update: async (table: string, data: { [key: string]: any }) => {
+			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
+			const { id, entries, values, error } = adaptEntry(data, false);
+			if (error) return { doc: null, error };
+			try {
+				const setClause = entries.map(([key]) => `${key} = ?`).join(', ');
+				const values = entries.map(([_, value]) => value);
+				let sql = `UPDATE ${table} SET ${setClause}`;
+				if (typeof id === 'number') {
+					sql += ' WHERE id = ?';
+					values.push(id);
+				}
+				const result = db.prepare(sql).run(...values);
+				return { doc: result.changes, error: '' };
+			} catch (error) {
+				return { doc: null, error: getError(error) };
+			}
 		},
 	};
 
