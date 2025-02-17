@@ -2,7 +2,6 @@ const { spawn } = require('child_process');
 const { existsSync } = require('fs');
 const { join } = require('path');
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import { processType } from '@/process';
 import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';

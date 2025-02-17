@@ -14,7 +14,7 @@ export interface State {
 }
 
 export const useWallpaperStore = defineStore('wallpaper', {
-	// To access the state in the console: const pinia = () => { ...window.__VUE_DEVTOOLS_PLUGINS__[1].pluginDescriptor.app.config.globalProperties.$pinia.state.value.wallpaper }
+	// To access the state in the console: const pinia = () => ({ ...window.__VUE_DEVTOOLS_PLUGINS__[1].pluginDescriptor.app.config.globalProperties.$pinia.state.value.wallpaper })
 
 	state: (): State => ({
 		activeWallpaper: -3,
