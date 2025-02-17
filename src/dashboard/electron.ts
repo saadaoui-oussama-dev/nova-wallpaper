@@ -92,7 +92,7 @@ export const openDashboard = async () => {
 				if (action === 'read') return resolve(database.read(table, dataOrFilters));
 				if (action === 'insert') return resolve(database.insert(table, dataOrFilters));
 				if (action === 'update') {
-					const response = await database.update(table, dataOrFilters);
+					const response = database.update(table, dataOrFilters);
 					if (response.error) return resolve(response);
 					if (table === 'active' || 'favorite' in dataOrFilters) {
 						events.$emit('tray-reload-menu');

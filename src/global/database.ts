@@ -3,14 +3,14 @@ import bindings from 'bindings';
 import { join } from 'path';
 import { app } from 'electron';
 import { joinPublic } from '@/global/utils';
-import { AsyncResponse, DatabaseChannel } from '@/types/channels';
+import { Response, DatabaseChannel } from '@/types/channels';
 
 const node = bindings({ bindings: 'better-sqlite3', module_root: joinPublic('@/public') });
 
 type Database = {
-	read: (table: string, filters?: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
-	insert: (table: string, data: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
-	update: (table: string, data: { [key: string]: any }) => AsyncResponse<DatabaseChannel>;
+	read: (table: string, filters?: { [key: string]: any }) => Response<DatabaseChannel>;
+	insert: (table: string, data: { [key: string]: any }) => Response<DatabaseChannel>;
+	update: (table: string, data: { [key: string]: any }) => Response<DatabaseChannel>;
 };
 
 export const database: Database = new Proxy<Database>({} as Database, {
@@ -78,7 +78,7 @@ const initDatabase = (): Database => {
 	};
 
 	const instance: Database = {
-		read: async (table: string, filters?: { [key: string]: any }) => {
+		read: (table: string, filters?: { [key: string]: any }) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
 			try {
 				let filterEntries = filters ? Object.entries(filters) : [];
@@ -107,7 +107,7 @@ const initDatabase = (): Database => {
 			}
 		},
 
-		insert: async (table: string, data: { [key: string]: any }) => {
+		insert: (table: string, data: { [key: string]: any }) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
 			const { entries, values, error } = adaptEntry(data, true);
 			if (error) return { doc: null, error };
@@ -122,7 +122,7 @@ const initDatabase = (): Database => {
 			}
 		},
 
-		update: async (table: string, data: { [key: string]: any }) => {
+		update: (table: string, data: { [key: string]: any }) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
 			const { id, entries, values, error } = adaptEntry(data, false);
 			if (error) return { doc: null, error };
