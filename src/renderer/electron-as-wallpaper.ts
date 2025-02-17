@@ -1,5 +1,6 @@
 import bindings from 'bindings';
 import { joinPublic } from '@/global/utils';
+import { processType } from '@/process';
 
 type AttachOptions = {
 	transparent: boolean;
@@ -17,6 +18,10 @@ export const attach = (window: BrowserWindow, options: Partial<AttachOptions>) =
 		forwardMouseInput: !!options.forwardMouseInput || false,
 		forwardKeyboardInput: !!options.forwardKeyboardInput || false,
 	};
+	if (processType === 'both') {
+		attachOptions.forwardMouseInput = false;
+		attachOptions.forwardKeyboardInput = false;
+	}
 	window.wallpaperState = { ...attachOptions, attached: true };
 	neon.attach(window.getNativeWindowHandle().readUInt32LE(0), attachOptions);
 };

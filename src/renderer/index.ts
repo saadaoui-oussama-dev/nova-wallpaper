@@ -39,7 +39,7 @@ export const createRenderer = () => {
 
 	render.webContents.setMaxListeners(0);
 
-	attach(render, { transparent: true, forwardMouseInput: false });
+	attach(render, { transparent: true, forwardMouseInput: true });
 
 	const setVisibility = (state: boolean, byUser: boolean) => {
 		if (state) return render.show();
