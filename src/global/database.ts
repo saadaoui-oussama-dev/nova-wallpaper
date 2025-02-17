@@ -59,6 +59,10 @@ const initDatabase = (): Database => {
 		`
 	).run();
 
+	const json = ['settings', 'permissions', 'queryParams', 'content'];
+
+	const boolean = ['favorite', 'taskbar'];
+
 	const adaptEntry = (data: { [key: string]: any }, insert: boolean) => {
 		try {
 			data = { ...data, updated_at: Date.now() };
@@ -66,8 +70,8 @@ const initDatabase = (): Database => {
 			const id = typeof data.id === 'number' ? data.id : undefined;
 			delete data.id;
 			const entries: [string, any][] = Object.entries(data).map(([key, value]) => {
-				if (['favorite', 'taskbar'].includes(key)) value = value ? 1 : 0;
-				if (['settings', 'permissions', 'queryParams', 'content'].includes(key)) value = JSON.stringify(value);
+				if (boolean.includes(key)) value = value ? 1 : 0;
+				if (json.includes(key)) value = JSON.stringify(value);
 				return [key, value];
 			});
 			const values = entries.map(([_, value]) => value);
@@ -78,11 +82,33 @@ const initDatabase = (): Database => {
 	};
 
 	const instance: Database = {
-		read: async () => {
-			return new Promise((resolve) => {
-				console.log('Database is not prepared yet.');
-				resolve({ doc: null, error: 'Database is not prepared yet.' });
-			});
+		read: async (table: string, filters?: { [key: string]: any }) => {
+			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
+			try {
+				let filterEntries = filters ? Object.entries(filters) : [];
+				try {
+					filterEntries = filterEntries.map(([key, value]) => {
+						if (boolean.includes(key)) value = value ? 1 : 0;
+						if (json.includes(key)) value = JSON.stringify(value);
+						return [key, value];
+					});
+				} catch {
+					return { doc: null, error: 'Invalid Filters.' };
+				}
+				const filterClause = filterEntries.map(([key]) => `${key} = ?`).join(' AND ');
+				const filterValues = filterEntries.map(([_, value]) => value);
+				const sql = filterEntries.length ? `SELECT * FROM ${table} WHERE ${filterClause}` : `SELECT * FROM ${table}`;
+				const rows = filterEntries.length > 0 ? db.prepare(sql).all(...filterValues) : db.prepare(sql).all();
+				if (table === 'wallpaper') {
+					rows.forEach((row: { [key: string]: any }) => {
+						boolean.forEach((key) => key in row && (row[key] = row[key] ? true : false));
+						json.forEach((key) => key in row && typeof row[key] === 'string' && (row[key] = JSON.parse(row[key])));
+					});
+				}
+				return { doc: rows, error: '' };
+			} catch (error) {
+				return { doc: null, error: getError(error) };
+			}
 		},
 
 		insert: async (table: string, data: { [key: string]: any }) => {
