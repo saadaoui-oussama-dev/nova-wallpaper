@@ -94,8 +94,8 @@ export const createRenderer = () => {
 
 			// Retrieve the active wallpaper from the database
 			const { doc: _active } = await database.read('active');
-			const active = Array.isArray(_active) && _active[0] ? _active[0].value : '';
-			if (active && typeof active === 'string') {
+			const active = Array.isArray(_active) && _active[0] ? _active[0].value : -1;
+			if (active !== -1 && typeof active === 'number') {
 				const { doc: list } = await database.read('wallpaper', { id: active });
 				if (Array.isArray(list) && list[0]) newWallpaper = list[0] as Wallpaper;
 			}
