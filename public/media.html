@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Nova Wallpaper Media</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				user-select: none;
+				-webkit-user-drag: none;
+			}
+
+			body {
+				width: 100vw;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background-color: black;
+				font-family: 'Roboto', 'Segoe UI', sans-serif;
+			}
+
+			.container {
+				width: 100vw;
+				height: 100vh;
+			}
+
+			img,
+			video {
+				width: 100vw;
+				height: 100vh;
+				object-fit: cover;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				translate: -50% -50%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container"></div>
+
+		<script>
+			const container = document.querySelector('.container');
+
+			async function novaSettingsListener(property, value) {
+				if (property === 'path') {
+					if (container.children.length) return;
+					const isVideo = value.startsWith('data:video') || value.endsWith('.mp4');
+					const media = document.createElement(isVideo ? 'video' : 'img');
+					container.appendChild(media);
+					media.src = value;
+					if (isVideo) {
+						media.autoplay = true;
+						media.loop = true;
+						media.playsinline = true;
+					}
+					await new Promise((resolve) => setTimeout(resolve, 1));
+					media.src = 'h' + media.src;
+					await new Promise((resolve) => setTimeout(resolve, 1));
+					media.src = media.src.slice(1);
+					return;
+				}
+			}
+
+			async function novaLoadedListener() {
+				console.log('Loaded');
+			}
+		</script>
+	</body>
+</html>

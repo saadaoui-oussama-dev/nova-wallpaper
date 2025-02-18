@@ -5,8 +5,9 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
-import { events, getAreas, isURL, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
-import { Wallpaper } from '@/types/wallpaper';
+import { events, getAreas, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
+import { isSupported, isURL } from '@/global/files';
+import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
 
 let render: Electron.BrowserWindow;
@@ -99,6 +100,14 @@ export const createRenderer = () => {
 				if (Array.isArray(list) && list[0]) newWallpaper = list[0] as Wallpaper;
 			}
 
+			// Prepare media wallpaper if it's an image or video
+			const isMedia = !!newWallpaper && !newWallpaper.path.endsWith('.html');
+			const mediaPayload: [string, string][] = [];
+			if (isMedia && newWallpaper) {
+				if (!isSupported(newWallpaper.path, true) || !existsSync(newWallpaper.path)) newWallpaper = null;
+				else mediaPayload.push(['path', newWallpaper.path]);
+			}
+
 			// Determine if the wallpaper needs to be reloaded
 			const wallpaperChanged =
 				!oldWallpaper ||
@@ -112,8 +121,8 @@ export const createRenderer = () => {
 			// Load or reload the active wallpaper if necessary
 			if (wallpaperChanged) {
 				try {
-					const path = wallpaper.path.endsWith('.html') ? wallpaper.path : './renderer/media.html';
-					const query = Object.entries(path === './renderer/media.html' ? {} : wallpaper.queryParams || {});
+					const path = isMedia ? joinPublic('@/public/media.html') : wallpaper.path;
+					const query = Object.entries(isMedia ? {} : wallpaper.queryParams || {});
 					const url = query.length ? path + '?' + query.map(([k, v]) => `${k}=${v}`).join('&') : path;
 					await render.loadURL(url);
 					oldWallpaper = null;
@@ -135,10 +144,11 @@ export const createRenderer = () => {
 			const permissions = getMapChanges(wallpaper.permissions, oldWallpaper ? oldWallpaper.permissions : undefined);
 			const sendOptions = (functionName: string, options: [string, string | number | boolean][]) => {
 				return options.map(async ([id, value]) => {
-					const instruction = `window.${functionName}(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
+					const instruction = `window.${functionName}?.(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
 					await render.webContents.executeJavaScript(instruction).catch(() => {});
 				});
 			};
+			await Promise.all(sendOptions('novaSettingsListener', mediaPayload));
 			await Promise.all([
 				...sendOptions('novaSettingsListener', settings),
 				...sendOptions('livelyPropertyListener', settings),

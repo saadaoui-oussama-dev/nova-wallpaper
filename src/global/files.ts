@@ -51,7 +51,7 @@ export const getFileName = (
 		name = name.replace(/\s+/g, ' ');
 		if (trim !== false) name = name.trim();
 		if (cutIn && cutIn > 2) name = name.substring(0, cutIn);
-		return name as string;
+		return name;
 	} catch {
 		return '';
 	}
