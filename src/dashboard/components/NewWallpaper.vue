@@ -1,5 +1,8 @@
 <template>
-	<div :class="`options ${visible ? ' ' : 'collapsed'}`">
+	<div
+		:class="`options ${visible ? ' ' : 'collapsed'}`"
+		:style="`--options-lines-num: ${Math.ceil(options.length / 2)};`"
+	>
 		<div v-for="option in options" :key="option.label">
 			<div
 				:class="`option${option.class}`"
@@ -44,10 +47,10 @@ const icons = {
 };
 
 const options = ref<Option[]>([
-	{ label: 'Import Stickers Wallpaper', type: 'stickers', class: '' },
-	{ label: 'Create Stickers Wallpaper', type: 'create', class: '' },
+	// { label: 'Import Stickers Wallpaper', type: 'stickers', class: '' },
+	// { label: 'Create Stickers Wallpaper', type: 'create', class: '' },
 	{ label: 'Import Image/Video', type: 'media', class: '' },
-	{ label: 'Import Carousel Folder', type: 'folder', class: '' },
+	// { label: 'Import Carousel Folder', type: 'folder', class: '' },
 	{ label: 'Import Webpage', type: 'webpage', class: '' },
 ]);
 
@@ -73,13 +76,15 @@ const createWallpaper = async ({ type }: Option) => {
 
 <style scoped>
 .options {
+	--option-height: 98px;
+	--options-gap: 10px;
 	width: 460px;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 10px;
 	padding: 0 25px 0 0px;
 	margin-bottom: 40px;
-	height: 314px;
+	height: calc(var(--options-lines-num) * (var(--option-height) + var(--options-gap)) - var(--options-gap));
+	gap: var(--options-gap);
 	overflow: hidden;
 	opacity: 1;
 	transition: margin-bottom 0.3s ease-in-out, opacity 0.3s ease-in-out, height 0.3s ease-in-out;
@@ -90,7 +95,7 @@ const createWallpaper = async ({ type }: Option) => {
 	border-radius: 7px;
 	cursor: pointer;
 	padding: 15px 10px 15px;
-	height: 98px;
+	height: var(--option-height);
 	overflow: hidden;
 	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, height 0.3s ease-in-out;
 }
