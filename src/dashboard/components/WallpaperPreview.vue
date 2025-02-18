@@ -165,8 +165,8 @@ watch(speed, setSpeed);
 			)
 		)
 		rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
-	filter: saturate(calc(var(--saturate) * 0.01)) contrast(calc(var(--contrast) * 1%))
-		brightness(calc(var(--brightness) * 1%)) hue-rotate(calc(var(--hue-rotate) * 1deg));
+	filter: saturate(calc(var(--saturate, 100) * 0.01)) contrast(calc(var(--contrast, 100) * 1%))
+		brightness(calc(var(--brightness, 100) * 1%)) hue-rotate(calc(var(--hue-rotate, 0) * 1deg));
 }
 
 .rotate-vertical .content {

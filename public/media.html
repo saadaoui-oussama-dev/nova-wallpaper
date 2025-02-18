@@ -36,7 +36,14 @@
 				position: absolute;
 				left: 50%;
 				top: 50%;
-				translate: -50% -50%;
+				transform: translate(-50%, -50%) rotateY(calc(var(--flip, 0) * 1deg)) rotateZ(calc(var(--rotate, 0) * 1deg));
+				filter: saturate(calc(var(--saturate, 100) * 0.01)) contrast(calc(var(--contrast, 100) * 1%))
+					brightness(calc(var(--brightness, 100) * 1%)) hue-rotate(calc(var(--hue-rotate, 0) * 1deg));
+			}
+
+			.rotate-vertical {
+				width: 100vh;
+				height: 100vw;
 			}
 		</style>
 	</head>
@@ -47,23 +54,43 @@
 		<script>
 			const container = document.querySelector('.container');
 
+			const getElement = () => {
+				return container.querySelector('video') || container.querySelector('img');
+			};
+
 			async function novaSettingsListener(property, value) {
+				let media = getElement();
+				while (!media && property !== 'path') {
+					await Promise((resolve) => setTimeout(resolve, 1));
+					media = getElement();
+				}
 				if (property === 'path') {
-					if (container.children.length) return;
+					if (media) return;
 					const isVideo = value.startsWith('data:video') || value.endsWith('.mp4');
-					const media = document.createElement(isVideo ? 'video' : 'img');
-					container.appendChild(media);
-					media.src = value;
+					const el = document.createElement(isVideo ? 'video' : 'img');
+					container.appendChild(el);
+					el.src = value;
 					if (isVideo) {
-						media.autoplay = true;
-						media.loop = true;
-						media.playsinline = true;
+						el.autoplay = true;
+						el.loop = true;
+						el.playsinline = true;
 					}
 					await new Promise((resolve) => setTimeout(resolve, 1));
-					media.src = 'h' + media.src;
+					el.src = 'h' + el.src;
 					await new Promise((resolve) => setTimeout(resolve, 1));
-					media.src = media.src.slice(1);
-					return;
+					el.src = el.src.slice(1);
+				} else if (property === 'volume') {
+					media.volume = value * 0.01;
+				} else if (property === 'speed') {
+					media.playbackRate = value;
+				} else if (property === 'flip') {
+					media.style.setProperty(`--${property}`, `${value ? 180 : 0}`);
+				} else {
+					media.style.setProperty(`--${property}`, `${value}`);
+					if (property === 'rotate') {
+						if (value === 90 || value === -90) media.classList.add('rotate-vertical');
+						else media.classList.remove('rotate-vertical');
+					}
 				}
 			}
 
