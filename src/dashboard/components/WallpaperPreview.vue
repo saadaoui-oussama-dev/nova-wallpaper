@@ -116,13 +116,22 @@ const volume = computed(() => {
 	return Number((props.settings || props.wallpaper).settings.volume) || 0;
 });
 
+const speed = computed(() => {
+	if (props.wallpaper.type !== 'video') return 1;
+	return Number((props.settings || props.wallpaper).settings.speed) || 1;
+});
+
 const video = useTemplateRef('video');
 
 const setVolume = () => props.wallpaper.type === 'video' && video.value && (video.value.volume = volume.value / 100);
 
-watch(video, setVolume);
+const setSpeed = () => props.wallpaper.type === 'video' && video.value && (video.value.playbackRate = speed.value);
+
+watch(video, () => (setVolume(), setSpeed()));
 
 watch(volume, setVolume);
+
+watch(speed, setSpeed);
 </script>
 
 <style scoped>

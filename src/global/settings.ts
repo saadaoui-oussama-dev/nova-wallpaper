@@ -81,6 +81,15 @@ export const videoJSON: SettingsJSON = {
 			max: 100,
 			step: 1,
 		},
+		{
+			id: 'speed',
+			label: 'Speed',
+			type: 'slider',
+			value: 1,
+			min: 0.25,
+			max: 5,
+			step: 0.05,
+		},
 		...(imageJSON.settings as SettingOption[]).slice(2),
 	],
 };

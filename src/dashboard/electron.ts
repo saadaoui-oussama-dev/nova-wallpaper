@@ -15,7 +15,7 @@ export const openDashboard = async () => {
 
 	dashboard = new BrowserWindow({
 		width: 500,
-		height: 750,
+		height: 770,
 		frame: false,
 		show: false,
 		transparent: true,
