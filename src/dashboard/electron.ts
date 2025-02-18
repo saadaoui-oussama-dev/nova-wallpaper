@@ -95,7 +95,7 @@ export const openDashboard = async () => {
 				if (action === 'update') {
 					const response = database.update(table, dataOrFilters);
 					if (response.error) return resolve(response);
-					if (table === 'active' || 'favorite' in dataOrFilters) {
+					if (table === 'active' || ['favorite', 'label'].some((a) => a in dataOrFilters)) {
 						events.$emit('tray-reload-menu');
 						if (table === 'active') events.$emit('renderer-sync-action', 'change');
 					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((a) => a in dataOrFilters)) {
