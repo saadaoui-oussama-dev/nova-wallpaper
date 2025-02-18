@@ -52,22 +52,21 @@ const pageHeaderAction = (action: string) => {
 
 onMounted(async () => {
 	NovaWallpaper.database.on('refresh', () => store.readData());
-	window.onblur = () =>
-		document.querySelectorAll('video').forEach((video) => {
-			try {
-				video.pause();
-			} catch {
-				console.log();
-			}
+	window.onblur = () => {
+		document.querySelectorAll('video').forEach((video) => video.pause());
+		document.querySelectorAll('img').forEach((gif) => {
+			if (!gif.src.startsWith('data:image/gif') && !gif.src.endsWith('.gif')) return console.log(gif);
+			const canvas = document.createElement('canvas');
+			const context = canvas.getContext('2d');
+			if (context) context.drawImage(gif, 0, 0, (canvas.width = gif.width), (canvas.height = gif.height));
+			(gif as unknown as { origin: string }).origin = gif.src;
+			gif.src = canvas.toDataURL('image/gif');
 		});
-	window.onfocus = () =>
-		document.querySelectorAll('video').forEach((video) => {
-			try {
-				video.play();
-			} catch {
-				console.log();
-			}
-		});
+	};
+	window.onfocus = () => {
+		document.querySelectorAll('video').forEach((video) => video.play());
+		document.querySelectorAll('img').forEach((i) => (i.src = (i as unknown as { origin: string }).origin || i.src));
+	};
 	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) visible.value = true;
 	document.body.classList.add('ready');

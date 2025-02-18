@@ -13,6 +13,7 @@ export const getFileType = (filePath: string): { ext: string; mime: string } => 
 		png: 'image/png',
 		jpg: 'image/jpeg',
 		jpeg: 'image/jpeg',
+		gif: 'image/gif',
 		html: 'text/html',
 	};
 	const filenameParts = filePath.split('.');

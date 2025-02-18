@@ -37,6 +37,7 @@ export const createRenderer = () => {
 		},
 	});
 
+	render.webContents.openDevTools();
 	render.webContents.setMaxListeners(0);
 
 	attach(render, { transparent: true, forwardMouseInput: true });

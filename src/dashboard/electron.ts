@@ -30,6 +30,7 @@ export const openDashboard = async () => {
 		},
 	});
 
+	dashboard.webContents.openDevTools();
 	dashboard.focus();
 	dashboard.on('close', () => (dashboard = null));
 
