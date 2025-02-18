@@ -1,6 +1,6 @@
 <template>
 	<div class="wallpaper-form" v-if="wallpaper">
-		<wallpaper-preview :wallpaper="wallpaper" :settings="settings" :muted="false" />
+		<wallpaper-preview :wallpaper="wallpaper" :settings="settings" />
 		<div class="section">
 			<p class="title">Name:</p>
 			<div class="column">

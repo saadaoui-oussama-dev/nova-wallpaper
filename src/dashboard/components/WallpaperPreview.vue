@@ -18,7 +18,7 @@
 						class="content"
 						:style="previewStyles.styles"
 						:src="base64url"
-						:muted="wallpaper.type !== 'video'"
+						muted
 						autoplay
 						loop
 						playsinline
@@ -41,7 +41,6 @@ import { Wallpaper } from '@/types/wallpaper';
 const props = defineProps<{
 	wallpaper: Wallpaper;
 	settings?: { taskbar: boolean; settings: { [key: string]: string | number | boolean } };
-	muted: boolean;
 	onlyPreview?: boolean;
 }>();
 
@@ -111,25 +110,16 @@ const previewStyles = computed(() => {
 	return { styles, rotate: styles.includes('--rotate: 90') || styles.includes('--rotate: -90') };
 });
 
-const volume = computed(() => {
-	if (props.muted || props.wallpaper.type !== 'video') return 0;
-	return Number((props.settings || props.wallpaper).settings.volume) || 0;
-});
+const video = useTemplateRef('video');
 
 const speed = computed(() => {
 	if (props.wallpaper.type !== 'video') return 1;
 	return Number((props.settings || props.wallpaper).settings.speed) || 1;
 });
 
-const video = useTemplateRef('video');
-
-const setVolume = () => props.wallpaper.type === 'video' && video.value && (video.value.volume = volume.value / 100);
-
 const setSpeed = () => props.wallpaper.type === 'video' && video.value && (video.value.playbackRate = speed.value);
 
-watch(video, () => (setVolume(), setSpeed()));
-
-watch(volume, setVolume);
+watch(video, setSpeed);
 
 watch(speed, setSpeed);
 </script>

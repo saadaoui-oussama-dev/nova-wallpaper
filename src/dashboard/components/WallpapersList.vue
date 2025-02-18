@@ -7,7 +7,7 @@
 			:class="{ active: wallpaper.id === store.activeWallpaper }"
 			@click.stop="openMenuOrSetAsActive(wallpaper)"
 		>
-			<wallpaper-preview :wallpaper="wallpaper" muted only-preview />
+			<wallpaper-preview :wallpaper="wallpaper" only-preview />
 
 			<div class="info">
 				<span class="label">{{ getFileName(wallpaper.label, 'name', 25) || 'Untitled Wallpaper' }}</span>
