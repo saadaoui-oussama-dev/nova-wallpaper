@@ -150,7 +150,7 @@ export const openDashboard = async () => {
 				});
 			};
 
-			if (action === 'media') return openFile('Media', ['png', 'jpg', 'jpeg', 'mp4']);
+			if (action === 'media') return openFile('Media', ['png', 'jpg', 'jpeg', 'mp4', 'gif']);
 			if (action === 'webpage') return openFile('Webpage', ['html']);
 			if (action === 'executable') return openFile('Program File', ['exe']);
 			if (action === 'folder') return openDirectory();
