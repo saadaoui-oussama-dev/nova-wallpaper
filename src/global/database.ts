@@ -9,6 +9,7 @@ const node = bindings({ bindings: 'better-sqlite3', module_root: joinPublic('@/p
 
 type ReadOptions = {
 	where?: { [key: string]: any };
+	order_by?: { property: string; type: 'ASC' | 'DESC' };
 };
 
 type Database = {
@@ -83,7 +84,7 @@ const initDatabase = (): Database => {
 	};
 
 	const instance: Database = {
-		read: (table: string, { where }: ReadOptions = {}) => {
+		read: (table: string, { where, order_by }: ReadOptions = {}) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
 			try {
 				let filterEntries = where ? Object.entries(where) : [];
@@ -98,7 +99,8 @@ const initDatabase = (): Database => {
 				}
 				const filterClause = filterEntries.map(([key]) => `${key} = ?`).join(' AND ');
 				const filterValues = filterEntries.map(([_, value]) => value);
-				const sql = filterEntries.length ? `SELECT * FROM ${table} WHERE ${filterClause}` : `SELECT * FROM ${table}`;
+				let sql = filterEntries.length ? `SELECT * FROM ${table} WHERE ${filterClause}` : `SELECT * FROM ${table}`;
+				if (order_by) sql = `${sql} ORDER BY ${order_by.property} ${order_by.type}`;
 				const rows = filterEntries.length > 0 ? db.prepare(sql).all(...filterValues) : db.prepare(sql).all();
 				if (table === 'wallpaper') {
 					rows.forEach((row: { [key: string]: any }) => {

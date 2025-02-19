@@ -26,7 +26,9 @@ export const useWallpaperStore = defineStore('wallpaper', {
 	actions: {
 		async readData() {
 			try {
-				const { doc } = await NovaWallpaper.database.invoke('read', 'wallpaper');
+				const { doc } = await NovaWallpaper.database.invoke('read', 'wallpaper', {
+					order_by: { property: 'created_at', type: 'DESC' },
+				});
 				if (Array.isArray(doc)) this.wallpapers = doc;
 				const { doc: active } = await NovaWallpaper.database.invoke('read', 'active');
 				this.activeWallpaper = active[0] ? active[0].value : '';
