@@ -40,6 +40,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { getFileName } from '@/global/files';
+import { useDialog } from '@/global/dialog';
 import { Wallpaper } from '@/types/wallpaper';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
 
@@ -94,7 +95,11 @@ const toggleFavorite = async (wallpaper: Wallpaper) => {
 
 const deleteWallpaper = async (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
-	await store.deleteWallpaper(wallpaper);
+	const response = await useDialog('Are you sure you want to delete this wallpaper?', {
+		neutralBtn: 'Cancel',
+		primaryBtn: { text: 'Delete', danger: true },
+	});
+	if (response) await store.deleteWallpaper(wallpaper);
 };
 
 const editWallpaper = async (wallpaper: Wallpaper) => {
