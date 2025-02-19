@@ -97,7 +97,7 @@ export const createRenderer = () => {
 			const { doc: _active } = database.read('active');
 			const active = Array.isArray(_active) && _active[0] ? _active[0].value : -1;
 			if (active !== -1 && typeof active === 'number') {
-				const { doc: list } = database.read('wallpaper', { id: active });
+				const { doc: list } = database.read('wallpaper', { where: { id: active } });
 				if (Array.isArray(list) && list[0]) newWallpaper = list[0] as Wallpaper;
 			}
 

@@ -7,8 +7,12 @@ import { Response, DatabaseChannel } from '@/types/channels';
 
 const node = bindings({ bindings: 'better-sqlite3', module_root: joinPublic('@/public') });
 
+type ReadOptions = {
+	where?: { [key: string]: any };
+};
+
 type Database = {
-	read: (table: string, filters?: { [key: string]: any }) => Response<DatabaseChannel>;
+	read: (table: string, options?: ReadOptions) => Response<DatabaseChannel>;
 	insert: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
 	update: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
 	delete: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
@@ -79,10 +83,10 @@ const initDatabase = (): Database => {
 	};
 
 	const instance: Database = {
-		read: (table: string, filters?: { [key: string]: any }) => {
+		read: (table: string, { where }: ReadOptions = {}) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
 			try {
-				let filterEntries = filters ? Object.entries(filters) : [];
+				let filterEntries = where ? Object.entries(where) : [];
 				try {
 					filterEntries = filterEntries.map(([key, value]) => {
 						if (boolean.includes(key)) value = value ? 1 : 0;

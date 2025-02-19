@@ -4,7 +4,7 @@ import { Wallpaper } from '@/types/wallpaper';
 
 export const renderFavorites = async (options: Electron.MenuItemConstructorOptions[]): Promise<void> => {
 	try {
-		const { doc: list } = database.read('wallpaper', { favorite: true });
+		const { doc: list } = database.read('wallpaper', { where: { favorite: true } });
 		if (!Array.isArray(list) || !list.length) return;
 		const { doc: _active } = database.read('active');
 		const active = Array.isArray(_active) && _active[0] ? (_active[0].value as number) : -1;
@@ -16,7 +16,7 @@ export const renderFavorites = async (options: Electron.MenuItemConstructorOptio
 			checked: active === wallpaper.id,
 			click: async () => {
 				try {
-					if (!database.update('active', { value: wallpaper.id }).error) {
+					if (!database.update('active', { value: active === wallpaper.id ? '' : wallpaper.id }).error) {
 						events.$emit('dashboard-active-changed');
 						events.$emit('tray-reload-menu');
 						setTimeout(() => {
