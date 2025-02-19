@@ -3,8 +3,11 @@
 		<h1>{{ store.formWallpaper ? 'Parameters' : 'Wallpapers' }}</h1>
 
 		<div class="right-side">
-			<button v-if="store.formWallpaper" class="text-btn" @click="emit('action', 'restore')">Reset All</button>
-			<button v-if="store.formWallpaper" class="text-btn primary" @click="emit('action', 'finish')">Finish</button>
+			<template v-if="store.formWallpaper">
+				<button class="text-btn" @click="emit('action', 'restore')">Reset All</button>
+				<button class="text-btn danger" @click="emit('action', 'delete')">Delete</button>
+				<button class="text-btn primary" @click="emit('action', 'finish')">Finish</button>
+			</template>
 
 			<button v-else-if="visible" class="text-btn fixed" @click="emit('action', 'collapse')">Cancel</button>
 			<button v-else class="text-btn primary fixed" @click="emit('action', 'expand')">Add</button>
@@ -55,6 +58,14 @@ const store = useWallpaperStore();
 
 .fixed {
 	width: 85px;
+}
+
+.danger {
+	background-color: var(--danger-color);
+}
+
+.danger:hover {
+	background-color: var(--danger-color-hover);
 }
 
 .primary {

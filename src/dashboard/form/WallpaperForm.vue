@@ -20,6 +20,7 @@
 import { ref, useTemplateRef, watch } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { getFileName } from '@/global/files';
+import { useDialog } from '@/global/dialog';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
@@ -102,7 +103,18 @@ const setQueryParams = (data: SimpleMap) => {
 	});
 };
 
-const save = async () => {
+const remove = async () => {
+	if (!wallpaper.value) return;
+	const response = await useDialog('Are you sure you want to delete this wallpaper?', {
+		neutralBtn: 'Cancel',
+		primaryBtn: { text: 'Delete', danger: true },
+	});
+	if (!response) return;
+	const valid = await store.deleteWallpaper(wallpaper.value);
+	if (valid) store.formWallpaper = null;
+};
+
+const finish = async () => {
 	if (!wallpaper.value) return;
 	label.value = getFileName(label.value, 'name', 25);
 	const valid = await store.updateWallpaper({
@@ -113,16 +125,13 @@ const save = async () => {
 		permissions: permissionsRef.value ? permissionsRef.value.onChange(true, true) : { ...permissions.value },
 		queryParams: { ...queryParams.value },
 	});
-	if (valid) {
-		store.formWallpaper = null;
-		await store.readData();
-	} else {
-		console.log('error');
-	}
+	if (!valid) return;
+	store.formWallpaper = null;
+	await store.readData();
 };
 
 // eslint-disable-next-line
-defineExpose({ save });
+defineExpose({ remove, finish });
 </script>
 
 <style>

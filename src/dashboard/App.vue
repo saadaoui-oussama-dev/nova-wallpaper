@@ -43,8 +43,10 @@ const pageHeaderAction = (action: string) => {
 	} else if (action === 'expand') {
 		visible.value = true;
 		if (main.value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
+	} else if (action === 'delete') {
+		if (form.value) form.value.remove();
 	} else if (action === 'finish') {
-		if (form.value) form.value.save();
+		if (form.value) form.value.finish();
 	} else if (action === 'restore') {
 		console.log('restore');
 	}
