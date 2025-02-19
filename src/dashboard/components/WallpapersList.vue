@@ -92,9 +92,9 @@ const toggleFavorite = async (wallpaper: Wallpaper) => {
 	await store.readData();
 };
 
-const deleteWallpaper = (wallpaper: Wallpaper) => {
+const deleteWallpaper = async (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
-	console.log('Delete wallpaper:', wallpaper);
+	await store.deleteWallpaper(wallpaper);
 };
 
 const editWallpaper = async (wallpaper: Wallpaper) => {

@@ -92,6 +92,7 @@ export const openDashboard = async () => {
 			return new Promise<Response<DatabaseChannel>>(async (resolve) => {
 				if (action === 'read') return resolve(database.read(table, dataOrFilters));
 				if (action === 'insert') return resolve(database.insert(table, dataOrFilters));
+				if (action === 'delete') return resolve(database.delete(table, dataOrFilters));
 				if (action === 'update') {
 					const response = database.update(table, dataOrFilters);
 					if (response.error) return resolve(response);

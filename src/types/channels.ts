@@ -35,7 +35,7 @@ export type JSONChannel = Channel<
 
 export type DatabaseChannel = Channel<
 	'throw-error' | 'send-is-not-supported',
-	'read' | 'insert' | 'update',
+	'read' | 'insert' | 'update' | 'delete',
 	{ doc: any; error: string }
 >;
 

@@ -85,6 +85,13 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return !error;
 		},
 
+		async deleteWallpaper(wallpaper: Partial<Wallpaper>) {
+			const { error } = await NovaWallpaper.database.invoke('delete', 'wallpaper', { id: wallpaper.id });
+			if (error) return false;
+			await this.readData();
+			return true;
+		},
+
 		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): AsyncResponse<JSONChannel> {
 			const src = this.data[wallpaper.path];
 			if (!(forceFetch || !src || !src.json)) return src.json;

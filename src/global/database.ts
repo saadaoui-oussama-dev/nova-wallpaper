@@ -11,11 +11,12 @@ type Database = {
 	read: (table: string, filters?: { [key: string]: any }) => Response<DatabaseChannel>;
 	insert: (table: string, data: { [key: string]: any }) => Response<DatabaseChannel>;
 	update: (table: string, data: { [key: string]: any }) => Response<DatabaseChannel>;
+	delete: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
 };
 
 export const database: Database = new Proxy<Database>({} as Database, {
-	get(target: Database, prop: 'read' | 'insert' | 'update') {
-		if (prop !== 'read' && prop !== 'insert' && prop !== 'update') return;
+	get(target: Database, prop: 'read' | 'insert' | 'update' | 'delete') {
+		if (prop !== 'read' && prop !== 'insert' && prop !== 'update' && prop !== 'delete') return;
 		if (prop in target) return target[prop];
 		else return initDatabase()[prop];
 	},
@@ -135,6 +136,17 @@ const initDatabase = (): Database => {
 					values.push(id);
 				}
 				const result = db.prepare(sql).run(...values);
+				return { doc: result.changes, error: '' };
+			} catch (error) {
+				return { doc: null, error: getError(error) };
+			}
+		},
+
+		delete: (table: string, entry: { [key: string]: any }) => {
+			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
+			if (typeof entry.id !== 'string' && typeof entry.id !== 'number') return { doc: null, error: 'Invalid id.' };
+			try {
+				const result = db.prepare(`DELETE FROM ${table} WHERE id = ?`).run(entry.id);
 				return { doc: result.changes, error: '' };
 			} catch (error) {
 				return { doc: null, error: getError(error) };
