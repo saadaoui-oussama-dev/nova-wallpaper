@@ -7,7 +7,7 @@ import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
 import { events, getAreas, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
 import { isSupported, isURL } from '@/global/files';
-import { Wallpaper, SimpleMap } from '@/types/wallpaper';
+import { Wallpaper } from '@/types/wallpaper';
 import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
 
 let render: Electron.BrowserWindow;

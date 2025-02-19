@@ -55,7 +55,7 @@ onMounted(async () => {
 	window.onblur = () => {
 		document.querySelectorAll('video').forEach((video) => video.pause());
 		document.querySelectorAll('img').forEach((gif) => {
-			if (!gif.src.startsWith('data:image/gif') && !gif.src.endsWith('.gif')) return console.log(gif);
+			if (!gif.src.startsWith('data:image/gif') && !gif.src.endsWith('.gif')) return;
 			const canvas = document.createElement('canvas');
 			const context = canvas.getContext('2d');
 			if (context) context.drawImage(gif, 0, 0, (canvas.width = gif.width), (canvas.height = gif.height));

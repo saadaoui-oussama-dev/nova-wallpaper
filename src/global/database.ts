@@ -9,8 +9,8 @@ const node = bindings({ bindings: 'better-sqlite3', module_root: joinPublic('@/p
 
 type Database = {
 	read: (table: string, filters?: { [key: string]: any }) => Response<DatabaseChannel>;
-	insert: (table: string, data: { [key: string]: any }) => Response<DatabaseChannel>;
-	update: (table: string, data: { [key: string]: any }) => Response<DatabaseChannel>;
+	insert: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
+	update: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
 	delete: (table: string, entry: { [key: string]: any }) => Response<DatabaseChannel>;
 };
 
@@ -108,12 +108,12 @@ const initDatabase = (): Database => {
 			}
 		},
 
-		insert: (table: string, data: { [key: string]: any }) => {
+		insert: (table: string, entry: { [key: string]: any }) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
-			const { entries, values, error } = adaptEntry(data, true);
+			const { entries, values, error } = adaptEntry(entry, true);
 			if (error) return { doc: null, error };
 			try {
-				data.created_at = data.updated_at;
+				entry.created_at = entry.updated_at;
 				const keys = entries.map(([key]) => key).join(', ');
 				const placeholders = entries.map(() => '?').join(', ');
 				const result = db.prepare(`INSERT INTO ${table} (${keys}) VALUES (${placeholders})`).run(...values);
@@ -123,13 +123,12 @@ const initDatabase = (): Database => {
 			}
 		},
 
-		update: (table: string, data: { [key: string]: any }) => {
+		update: (table: string, entry: { [key: string]: any }) => {
 			if (table !== 'wallpaper' && table !== 'active') return { doc: null, error: 'Invalid table name.' };
-			const { id, entries, values, error } = adaptEntry(data, false);
+			const { id, entries, values, error } = adaptEntry(entry, false);
 			if (error) return { doc: null, error };
 			try {
 				const setClause = entries.map(([key]) => `${key} = ?`).join(', ');
-				const values = entries.map(([_, value]) => value);
 				let sql = `UPDATE ${table} SET ${setClause}`;
 				if (typeof id === 'number') {
 					sql += ' WHERE id = ?';

@@ -88,18 +88,18 @@ export const openDashboard = async () => {
 
 	ipcMain.handle(
 		'dashboard-database',
-		(_, action: Invoke<DatabaseChannel>, table: string, dataOrFilters: { [key: string]: any }) => {
+		(_, action: Invoke<DatabaseChannel>, table: string, payload: { [key: string]: any }) => {
 			return new Promise<Response<DatabaseChannel>>(async (resolve) => {
-				if (action === 'read') return resolve(database.read(table, dataOrFilters));
-				if (action === 'insert') return resolve(database.insert(table, dataOrFilters));
-				if (action === 'delete') return resolve(database.delete(table, dataOrFilters));
+				if (action === 'read') return resolve(database.read(table, payload));
+				if (action === 'insert') return resolve(database.insert(table, payload));
+				if (action === 'delete') return resolve(database.delete(table, payload));
 				if (action === 'update') {
-					const response = database.update(table, dataOrFilters);
+					const response = database.update(table, payload);
 					if (response.error) return resolve(response);
-					if (table === 'active' || ['favorite', 'label'].some((a) => a in dataOrFilters)) {
+					if (table === 'active' || ['favorite', 'label'].some((a) => a in payload)) {
 						events.$emit('tray-reload-menu');
 						if (table === 'active') events.$emit('renderer-sync-action', 'change');
-					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((a) => a in dataOrFilters)) {
+					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((a) => a in payload)) {
 						events.$emit('renderer-sync-action', 'change');
 					}
 					return resolve(response);
