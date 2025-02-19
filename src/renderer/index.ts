@@ -100,12 +100,13 @@ export const createRenderer = () => {
 				const { doc: list } = database.read('wallpaper', { where: { id: active } });
 				if (Array.isArray(list) && list[0]) newWallpaper = list[0] as Wallpaper;
 			}
+			if (newWallpaper && !existsSync(newWallpaper.path)) newWallpaper = null;
 
 			// Prepare media wallpaper if it's an image or video
 			const isMedia = !!newWallpaper && !newWallpaper.path.endsWith('.html');
 			const mediaPayload: [string, string][] = [];
 			if (isMedia && newWallpaper) {
-				if (!isSupported(newWallpaper.path, true) || !existsSync(newWallpaper.path)) newWallpaper = null;
+				if (!isSupported(newWallpaper.path, true)) newWallpaper = null;
 				else mediaPayload.push(['path', newWallpaper.path]);
 			}
 
