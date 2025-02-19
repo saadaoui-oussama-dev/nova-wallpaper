@@ -4,7 +4,7 @@
 
 		<div class="right-side">
 			<template v-if="store.formWallpaper">
-				<button class="text-btn" @click="emit('action', 'restore')">Reset All</button>
+				<!-- <button class="text-btn" @click="emit('action', 'restore')">Reset All</button> -->
 				<button class="text-btn danger" @click="emit('action', 'delete')">Delete</button>
 				<button class="text-btn primary" @click="emit('action', 'finish')">Finish</button>
 			</template>

@@ -106,6 +106,7 @@ export const openDashboard = async () => {
 					const response = database.delete(table, payload);
 					if (response.error) return resolve(response);
 					events.$emit('tray-reload-menu');
+					events.$emit('renderer-sync-action', 'change');
 					return resolve(response);
 				}
 				return resolve({ doc: null, error: `${action}: This action is not supported` });

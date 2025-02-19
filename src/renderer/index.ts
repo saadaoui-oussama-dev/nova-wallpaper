@@ -123,6 +123,7 @@ export const createRenderer = () => {
 			// Load or reload the active wallpaper if necessary
 			if (wallpaperChanged) {
 				try {
+					await render.loadURL('about:blank');
 					const path = isMedia ? joinPublic('@/public/media.html') : wallpaper.path;
 					const query = Object.entries(isMedia ? {} : wallpaper.queryParams || {});
 					const url = query.length ? path + '?' + query.map(([k, v]) => `${k}=${v}`).join('&') : path;
