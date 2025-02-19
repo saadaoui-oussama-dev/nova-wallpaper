@@ -91,9 +91,8 @@ export const openDashboard = async () => {
 		(_, action: Invoke<DatabaseChannel>, table: string, payload: { [key: string]: any }) => {
 			return new Promise<Response<DatabaseChannel>>(async (resolve) => {
 				if (action === 'read') return resolve(database.read(table, payload));
-				if (action === 'insert') return resolve(database.insert(table, payload));
-				if (action === 'delete') return resolve(database.delete(table, payload));
-				if (action === 'update') {
+				else if (action === 'insert') return resolve(database.insert(table, payload));
+				else if (action === 'update') {
 					const response = database.update(table, payload);
 					if (response.error) return resolve(response);
 					if (table === 'active' || ['favorite', 'label'].some((a) => a in payload)) {
@@ -102,6 +101,11 @@ export const openDashboard = async () => {
 					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((a) => a in payload)) {
 						events.$emit('renderer-sync-action', 'change');
 					}
+					return resolve(response);
+				} else if (action === 'delete') {
+					const response = database.delete(table, payload);
+					if (response.error) return resolve(response);
+					events.$emit('tray-reload-menu');
 					return resolve(response);
 				}
 				return resolve({ doc: null, error: `${action}: This action is not supported` });
