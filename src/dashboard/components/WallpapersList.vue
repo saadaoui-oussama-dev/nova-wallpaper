@@ -3,7 +3,7 @@
 		<div
 			v-for="wallpaper in wallpapers"
 			:key="wallpaper.id"
-			class="card"
+			class="wallpaper"
 			:class="{ active: wallpaper.id === store.activeWallpaper }"
 			@click.stop="openMenuOrSetAsActive(wallpaper)"
 		>
@@ -122,14 +122,16 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 
 <style scoped>
 .wallpapers {
-	width: 460px;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	display: flex;
+	flex-wrap: wrap;
 	gap: 12px;
 }
 
-.card {
+.wallpaper {
 	--width: 190;
+	width: 200px;
+	flex-grow: 1;
+	max-width: 280px;
 	border-radius: 8px;
 	overflow: hidden;
 	cursor: pointer;
@@ -144,12 +146,12 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 	position: relative;
 }
 
-.card:hover {
+.wallpaper:hover {
 	background-color: var(--neutral-color);
 	border-color: var(--neutral-color);
 }
 
-.card.active {
+.wallpaper.active {
 	border-color: var(--primary-color);
 }
 
