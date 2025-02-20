@@ -122,6 +122,7 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 
 <style scoped>
 .wallpapers {
+	min-width: 460px;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 12px;
@@ -129,9 +130,7 @@ onUnmounted(() => document.removeEventListener('click', closeMenu));
 
 .wallpaper {
 	--width: 190;
-	width: 200px;
-	flex-grow: 1;
-	max-width: 280px;
+	width: 224px;
 	border-radius: 8px;
 	overflow: hidden;
 	cursor: pointer;

@@ -1,17 +1,16 @@
 <template>
-	<div
-		:class="`options ${visible ? ' ' : 'collapsed'}`"
-		:style="`--options-lines-num: ${Math.ceil(options.length / 2)};`"
-	>
-		<div v-for="option in options" :key="option.label">
-			<div
-				:class="`option${option.class}`"
-				@mousedown="clicked(option, true)"
-				@mouseup="clicked(option, false)"
-				@click="createWallpaper(option)"
-			>
-				<component :is="icons[option.type]" />
-				<div class="option-label">{{ option.label }}</div>
+	<div :class="`wrapper${visible ? '' : ' collapsed'}`">
+		<div class="options">
+			<div v-for="option in options" :key="option.label">
+				<div
+					:class="`option${option.class}`"
+					@mousedown="clicked(option, true)"
+					@mouseup="clicked(option, false)"
+					@click="createWallpaper(option)"
+				>
+					<component :is="icons[option.type]" />
+					<div class="option-label">{{ option.label }}</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -71,38 +70,45 @@ const createWallpaper = async ({ type }: Option) => {
 </script>
 
 <style scoped>
-.options {
-	--option-height: 98px;
-	--options-gap: 10px;
-	width: 460px;
+.wrapper {
+	min-width: 460px;
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	padding: 0 25px 0 0px;
+	grid-template-rows: 1fr;
+	overflow: hidden;
+	transition: grid-template-rows 0.3s ease-in-out;
+}
+
+.options {
+	display: flex;
+	flex-wrap: wrap;
 	margin-bottom: 40px;
-	height: calc(var(--options-lines-num) * (var(--option-height) + var(--options-gap)) - var(--options-gap));
-	gap: var(--options-gap);
+	gap: 10px;
 	overflow: hidden;
 	opacity: 1;
-	transition: margin-bottom 0.3s ease-in-out, opacity 0.3s ease-in-out, height 0.3s ease-in-out;
+	transition: margin-bottom 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .option {
+	width: 213px;
+	height: 98px;
+	padding: 15px 10px 15px;
 	border: 2px solid var(--border-color);
 	border-radius: 7px;
 	cursor: pointer;
-	padding: 15px 10px 15px;
-	height: var(--option-height);
 	overflow: hidden;
 	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, height 0.3s ease-in-out;
 }
 
-.options.collapsed {
-	height: 0;
+.wrapper.collapsed {
+	grid-template-rows: 0fr;
+}
+
+.wrapper.collapsed .options {
 	opacity: 0;
 	margin-bottom: 0px;
 }
 
-.options.collapsed .option {
+.wrapper.collapsed .options .option {
 	height: 0;
 }
 
