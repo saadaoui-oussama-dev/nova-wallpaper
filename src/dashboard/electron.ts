@@ -1,64 +1,69 @@
 const { readdirSync, readFileSync } = require('fs');
 import { join } from 'path';
 import { dialog, BrowserWindow, ipcMain } from 'electron';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
-import { events, getFileType, isSupported, fileSizeChecker, joinPublic, getAreas } from '@/global/utils';
+import { getFileType, isSupported } from '@/global/files';
+import { events, fileSizeChecker, getAreas, VueBrowserWindow, loadVueApp } from '@/global/utils';
 import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, FilesChannel } from '@/types/channels';
 
 let dashboard: BrowserWindow | null;
+
+let splashscreen: BrowserWindow | null;
+
 let firstOpen = true;
 
 export const openDashboard = async () => {
-	if (dashboard) return dashboard.focus();
+	if (dashboard) {
+		dashboard.show();
+		return dashboard.focus();
+	}
 
-	dashboard = new BrowserWindow({
+	dashboard = VueBrowserWindow(() => (dashboard = null), {
+		title: 'Nova Wallpaper',
 		width: 500,
 		height: 770,
 		frame: false,
-		show: false,
 		transparent: true,
 		resizable: false,
-		title: 'Nova Wallpaper',
-		icon: joinPublic('@/public/img/logo.png'),
-		webPreferences: {
-			devTools: false,
-			nodeIntegration: false,
-			contextIsolation: true,
-			preload: joinPublic('@/public/js/dashboard-preload.js'),
-		},
 	});
 
 	dashboard.webContents.openDevTools();
 	dashboard.focus();
-	dashboard.on('close', () => (dashboard = null));
 
-	const load = async () => {
-		if (!dashboard) return;
-		try {
-			if (process.env.WEBPACK_DEV_SERVER_URL) {
-				await dashboard.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
-			} else {
-				createProtocol('app');
-				await dashboard.loadURL('app://./index.html');
-			}
-			dashboard.show();
-		} catch {
-			return events.$emit('dashboard-window', 'close');
-		}
+	splashscreen = VueBrowserWindow(() => (splashscreen = null), {
+		title: 'Nova Wallpaper Splashscreen',
+		width: 180,
+		height: 180,
+		frame: false,
+		alwaysOnTop: true,
+		transparent: true,
+		skipTaskbar: true,
+		resizable: false,
+		hasShadow: false,
+	});
+
+	const onload = async () => {
+		if (dashboard) await loadVueApp(dashboard, 'main=true', false);
+		if (splashscreen) await loadVueApp(splashscreen, 'splashscreen=true');
 	};
 
-	if (!firstOpen) return load();
+	if (!firstOpen) return onload();
 	firstOpen = false;
 
 	events.$on('dashboard-window', (action: string) => {
-		if (!dashboard) return;
-		if (action === 'focus') return dashboard.focus();
-		if (action === 'minimize') return dashboard.minimize();
-		if (action === 'close') {
-			dashboard.destroy();
+		if (action === 'focus' && dashboard) {
+			dashboard.show();
+			return dashboard.focus();
+		} else if (action === 'minimize' && dashboard) {
+			return dashboard.minimize();
+		} else if (action === 'close') {
+			if (dashboard) dashboard.destroy();
 			dashboard = null;
+		} else if (action === 'close-splashscreen') {
+			if (splashscreen) splashscreen.destroy();
+			if (dashboard) dashboard.show();
+			splashscreen = null;
 		}
 	});
 
@@ -67,7 +72,7 @@ export const openDashboard = async () => {
 	});
 
 	ipcMain.on('dashboard-window', (_, action: Send<WindowChannel>): void => {
-		if (['close', 'minimize'].includes(action)) events.$emit('dashboard-window', action);
+		events.$emit('dashboard-window', action);
 	});
 
 	ipcMain.handle('dashboard-window', (_, action: Invoke<WindowChannel>) => {
@@ -164,5 +169,5 @@ export const openDashboard = async () => {
 		});
 	});
 
-	load();
+	onload();
 };

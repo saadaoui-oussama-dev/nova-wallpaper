@@ -29,7 +29,7 @@ import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
 
 const store = useWallpaperStore();
 
-const splashscreen = ref(true);
+const splashscreen = ref(false);
 
 const visible = ref(false);
 
@@ -52,8 +52,7 @@ const pageHeaderAction = (action: string) => {
 	}
 };
 
-onMounted(async () => {
-	NovaWallpaper.database.on('refresh', () => store.readData());
+const toggleVideoGifPlayingStatus = () => {
 	window.onblur = () => {
 		document.querySelectorAll('video').forEach((video) => video.pause());
 		document.querySelectorAll('img').forEach((gif) => {
@@ -69,10 +68,21 @@ onMounted(async () => {
 		document.querySelectorAll('video').forEach((video) => video.play());
 		document.querySelectorAll('img').forEach((i) => (i.src = (i as unknown as { origin: string }).origin || i.src));
 	};
-	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
-	if (!store.wallpapers.length) visible.value = true;
-	document.body.classList.add('ready');
-	setTimeout(() => (splashscreen.value = false), 1000);
+};
+
+onMounted(async () => {
+	const queryParams: Record<string, string> = {};
+	new URLSearchParams(window.location.search).forEach((value, key) => (queryParams[key] = value));
+	if (queryParams.main) {
+		document.documentElement.classList.add('main');
+		NovaWallpaper.database.on('refresh', () => store.readData());
+		toggleVideoGifPlayingStatus();
+		await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
+		if (!store.wallpapers.length) visible.value = true;
+		NovaWallpaper.window.send('close-splashscreen');
+	} else if (queryParams.splashscreen) {
+		splashscreen.value = true;
+	}
 });
 </script>
 
