@@ -1,6 +1,6 @@
 <template>
 	<div class="header">
-		<h1>{{ store.formWallpaper ? 'Parameters' : 'Wallpapers' }}</h1>
+		<h1>{{ store.formWallpaper ? 'Customize Wallpaper' : 'Wallpapers' }}</h1>
 
 		<div class="right-side">
 			<template v-if="store.formWallpaper">

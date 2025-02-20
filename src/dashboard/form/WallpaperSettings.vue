@@ -38,7 +38,7 @@ const settings = ref<SettingsJSON | null>(null);
 const taskbarSetting = ref<ToggleOption>({
 	id: 'taskbar',
 	type: 'checkbox',
-	label: 'Show behind taskbar',
+	label: 'Fullscreen (Extend Below Taskbar)',
 	value: props.wallpaper && typeof props.wallpaper.taskbar === 'boolean' ? props.wallpaper.taskbar : false,
 });
 

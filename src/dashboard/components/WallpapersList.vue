@@ -25,7 +25,7 @@
 						<button @click.stop="toggleFavorite(wallpaper)">
 							{{ wallpaper.favorite ? 'Remove from favorites' : 'Add to favorites' }}
 						</button>
-						<button @click.stop="editWallpaper(wallpaper)">Edit Settings</button>
+						<button @click.stop="editWallpaper(wallpaper)">Customize</button>
 						<button @click.stop="setActiveWallpaper(wallpaper)">
 							{{ wallpaper.id === store.activeWallpaper ? 'Deactivate' : 'Activate' }}
 						</button>

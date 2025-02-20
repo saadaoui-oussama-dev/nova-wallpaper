@@ -5,7 +5,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
-import { events, getAreas, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
+import { events, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
 import { isSupported, isURL } from '@/global/files';
 import { Wallpaper } from '@/types/wallpaper';
 import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
@@ -139,7 +139,7 @@ export const createRenderer = () => {
 
 			// Adjust fullscreen mode based on taskbar settings
 			if (wallpaper.taskbar) render.setFullScreen(true);
-			else render.setBounds({ height: getAreas().workarea.height });
+			else render.maximize();
 
 			// Identify and apply only the changed settings and permissions
 			render.webContents.removeAllListeners('did-stop-loading');
