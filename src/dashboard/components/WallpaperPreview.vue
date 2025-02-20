@@ -35,6 +35,7 @@
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
+import { isSupported } from '@/global/files';
 import { Wallpaper } from '@/types/wallpaper';
 
 // eslint-disable-next-line
@@ -103,7 +104,7 @@ watch(() => store.data, setURL);
 // Preview Options
 
 const previewStyles = computed(() => {
-	if (!['image', 'video'].includes(props.wallpaper.type)) return { styles: '', rotate: false };
+	if (!isSupported(props.wallpaper.path, true)) return { styles: '', rotate: false };
 	const styles = Object.entries((props.settings || props.wallpaper).settings)
 		.map(([key, value]) => (key === 'flip' ? `--flip: ${value ? 180 : 0}` : `--${key}: ${value}`))
 		.join('; ');
@@ -113,11 +114,10 @@ const previewStyles = computed(() => {
 const video = useTemplateRef('video');
 
 const speed = computed(() => {
-	if (props.wallpaper.type !== 'video') return 1;
 	return Number((props.settings || props.wallpaper).settings.speed) || 1;
 });
 
-const setSpeed = () => props.wallpaper.type === 'video' && video.value && (video.value.playbackRate = speed.value);
+const setSpeed = () => props.wallpaper.path.endsWith('.mp4') && video.value && (video.value.playbackRate = speed.value);
 
 watch(video, setSpeed);
 

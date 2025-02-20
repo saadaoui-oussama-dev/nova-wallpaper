@@ -42,7 +42,7 @@ watch(
 	() => props.json,
 	() => {
 		if (!props.json || !props.json.data || !Array.isArray(props.json.data.permissions)) return setPermissions([]);
-		if (props.wallpaper.type !== 'webpage') return setPermissions([]);
+		if (!props.wallpaper.path.endsWith('.html')) return setPermissions([]);
 
 		const uniqueIds: string[] = [];
 		const currentPermissions = props.wallpaper.permissions;

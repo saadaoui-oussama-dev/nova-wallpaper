@@ -46,7 +46,7 @@ watch(
 	() => props.json,
 	() => {
 		if (!props.json || !props.json.data || !Array.isArray(props.json.data['query-params'])) return clearQueryParams();
-		if (props.wallpaper.type !== 'webpage') return clearQueryParams();
+		if (!props.wallpaper.path.endsWith('.html')) return clearQueryParams();
 
 		const uniqueIds: string[] = [];
 		const currentParams = props.wallpaper.queryParams;

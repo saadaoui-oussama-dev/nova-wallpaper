@@ -38,7 +38,6 @@ const initDatabase = (): Database => {
 				created_at INTEGER NOT NULL,
 				updated_at INTEGER NOT NULL,
 				label TEXT NOT NULL,
-				type TEXT NOT NULL,
 				path TEXT NOT NULL,
 				favorite INTEGER NOT NULL CHECK(favorite IN (0, 1)),
 				taskbar INTEGER NOT NULL CHECK(taskbar IN (0, 1)),

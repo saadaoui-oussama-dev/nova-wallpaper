@@ -21,7 +21,6 @@
 import { ref } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
-import { WallpaperType } from '@/types/wallpaper';
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
 import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
@@ -65,11 +64,8 @@ const createWallpaper = async ({ type }: Option) => {
 	const { path, content, error } = await NovaWallpaper.files.invoke(type);
 	if (error || !path || !content) {
 		return console.log({ error });
-	} else if (type !== 'create') {
-		let selectedType: WallpaperType = 'image';
-		if (path.toLocaleLowerCase().endsWith('.mp4')) selectedType = 'video';
-		else if (path.toLocaleLowerCase().endsWith('.html')) selectedType = 'webpage';
-		if (await store.addWallpaper(selectedType, path, content)) emit('collapse');
+	} else if (type === 'media' || type === 'webpage') {
+		if (await store.addWallpaper(path, content)) emit('collapse');
 	}
 };
 </script>

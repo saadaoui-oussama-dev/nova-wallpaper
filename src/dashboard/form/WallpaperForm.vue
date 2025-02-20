@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
-		<template v-if="wallpaper.type === 'webpage'">
+		<template v-if="wallpaper.path.endsWith('.html')">
 			<wallpaper-permissions ref="permissions" :wallpaper="wallpaper" :json="wallpaperJSON" @change="setPermissions" />
 			<wallpaper-query-params :wallpaper="wallpaper" :json="wallpaperJSON" @change="setQueryParams" />
 		</template>

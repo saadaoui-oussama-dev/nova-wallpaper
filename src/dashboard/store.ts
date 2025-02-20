@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { NovaWallpaper } from '@/dashboard/preload';
 import { imageJSON, videoJSON } from '@/global/settings';
 import { isSupported, replaceFileName } from '@/global/files';
-import { Wallpaper, WallpaperType, FolderItem } from '@/types/wallpaper';
+import { Wallpaper, FolderItem } from '@/types/wallpaper';
 import { SettingOption } from '@/types/json';
 import { AsyncResponse, Response, FilesChannel, JSONChannel } from '@/types/channels';
 
@@ -37,11 +37,10 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			}
 		},
 
-		async addWallpaper(type: WallpaperType, path: string, content: FolderItem[]) {
-			const wallpaper = {
+		async addWallpaper(path: string, content: FolderItem[]) {
+			const wallpaper: Wallpaper = {
 				id: -2,
 				label: '',
-				type,
 				path,
 				content: content ? [] : [],
 				taskbar: false,
@@ -112,12 +111,12 @@ export const useWallpaperStore = defineStore('wallpaper', {
 
 			try {
 				if (forceFetch || !src || !src.json) {
-					if (wallpaper.type === 'image' || wallpaper.type === 'video') {
+					if (isSupported(wallpaper.path, true)) {
 						await new Promise((resolve) => setTimeout(resolve, 1));
 						data.valid = true;
 						data.exist = true;
-						data.data = wallpaper.type === 'image' ? imageJSON : videoJSON;
-					} else if (wallpaper.type === 'webpage') {
+						data.data = wallpaper.path.endsWith('.mp4') ? videoJSON : imageJSON;
+					} else if (wallpaper.path.endsWith('.html')) {
 						const filename = replaceFileName(wallpaper.path, { name: 'settings', extension: 'json' });
 						const response = await NovaWallpaper.json.invoke('read', filename);
 						const livelyFilename = replaceFileName(wallpaper.path, { name: 'LivelyProperties', extension: 'json' });
@@ -160,11 +159,11 @@ export const useWallpaperStore = defineStore('wallpaper', {
 
 			try {
 				const json = await this.data[wallpaper.path].json;
-				if (wallpaper.type === 'image' || wallpaper.type === 'video') {
+				if (isSupported(wallpaper.path, true)) {
 					const response = await NovaWallpaper.files.invoke('get-url', wallpaper.path);
 					data.error = response.error;
 					data.path = response.path;
-				} else if (wallpaper.type === 'webpage') {
+				} else if (wallpaper.path.endsWith('.html')) {
 					const attempts = [
 						['preview', 'png'],
 						['preview', 'jpg'],
@@ -183,8 +182,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 					let cursor = 0;
 					while (!data.error && !data.path && cursor < attempts.length) {
 						const path = replaceFileName(wallpaper.path, { name: attempts[cursor][0], extension: attempts[cursor][1] });
-						const type = attempts[cursor][1] === 'mp4' ? 'video' : 'image';
-						const response = await this.fetchPreview({ ...wallpaper, path, type });
+						const response = await this.fetchPreview({ ...wallpaper, path });
 						if (response.path) data.path = response.path;
 						else if (response.error && !response.error.includes('limit')) cursor++;
 						else data.error = `The wallpaper preview<br />exceeds the 40MB limit.`;
