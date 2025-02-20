@@ -9,6 +9,10 @@
 				<icon-minimize />
 			</button>
 
+			<button class="titlebar-btn" @click="NovaWallpaper.window.send('maximize')">
+				<icon-maximize />
+			</button>
+
 			<button class="titlebar-btn close" @click="NovaWallpaper.window.send('close')">
 				<icon-close />
 			</button>
@@ -18,8 +22,9 @@
 
 <script lang="ts" setup>
 import { NovaWallpaper } from '@/dashboard/preload';
-import IconClose from '@/dashboard/icons/IconClose.vue';
 import IconMinimize from '@/dashboard/icons/IconMinimize.vue';
+import IconMaximize from '@/dashboard/icons/IconMaximize.vue';
+import IconClose from '@/dashboard/icons/IconClose.vue';
 </script>
 
 <style scoped>

@@ -18,7 +18,7 @@ export type AsyncResponse<T> = Promise<Response<T>>;
 // Dashboard Channels
 
 export type WindowChannel = Channel<
-	'close-splashscreen' | 'minimize' | 'close',
+	'close-splashscreen' | 'minimize' | 'is-maximized' | 'maximize' | 'close',
 	'get-areas',
 	{
 		fullscreen: { width: number; height: number };

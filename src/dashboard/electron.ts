@@ -21,11 +21,13 @@ export const openDashboard = async () => {
 
 	dashboard = VueBrowserWindow(() => (dashboard = null), {
 		title: 'Nova Wallpaper',
-		width: 500,
+		width: 1020,
 		height: 770,
+		minWidth: 500,
+		minHeight: 770,
 		frame: false,
-		transparent: true,
-		resizable: false,
+		resizable: true,
+		fullscreenable: false,
 	});
 
 	dashboard.webContents.openDevTools();
@@ -51,12 +53,17 @@ export const openDashboard = async () => {
 	if (!firstOpen) return onload();
 	firstOpen = false;
 
-	events.$on('dashboard-window', (action: string) => {
+	events.$on('dashboard-window', (action: Send<WindowChannel> | 'focus') => {
 		if (action === 'focus' && dashboard) {
 			dashboard.show();
 			return dashboard.focus();
 		} else if (action === 'minimize' && dashboard) {
 			return dashboard.minimize();
+		} else if (action === 'is-maximized') {
+			const isMax = dashboard ? dashboard.isMaximized() : false;
+			if (dashboard) dashboard.webContents.send('is-maximized', 'window', isMax);
+		} else if (action === 'maximize' && dashboard) {
+			return dashboard.isMaximized() ? dashboard.unmaximize() : dashboard.maximize();
 		} else if (action === 'close') {
 			if (dashboard) dashboard.destroy();
 			dashboard = null;
