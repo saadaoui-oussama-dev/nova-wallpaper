@@ -3,7 +3,6 @@
 		<img src="/img/logo.png" width="150" alt="" />
 	</div>
 	<div class="app">
-		<title-bar v-show="!splashscreen" />
 		<page-header v-show="!splashscreen" :visible="visible" @action="pageHeaderAction" />
 		<div class="dashboard" v-show="!splashscreen">
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
@@ -21,7 +20,6 @@
 import { ref, useTemplateRef, onMounted } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
-import TitleBar from '@/dashboard/components/TitleBar.vue';
 import PageHeader from '@/dashboard/components/PageHeader.vue';
 import WallpapersList from '@/dashboard/components/WallpapersList.vue';
 import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
