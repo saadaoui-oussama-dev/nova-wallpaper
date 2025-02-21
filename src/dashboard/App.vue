@@ -18,8 +18,8 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, onMounted } from 'vue';
-import { useWallpaperStore } from '@/dashboard/store';
-import { NovaWallpaper } from '@/dashboard/preload';
+import { useWallpaperStore } from '@/global/store';
+import { NovaWallpaper } from '@/global/vue';
 import PageHeader from '@/components/PageHeader.vue';
 import WallpapersList from '@/components/WallpapersList.vue';
 import NewWallpaper from '@/components/NewWallpaper.vue';

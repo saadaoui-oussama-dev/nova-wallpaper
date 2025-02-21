@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia';
-import { NovaWallpaper } from '@/dashboard/preload';
+import { NovaWallpaper } from '@/global/vue';
 import { imageJSON, videoJSON } from '@/global/settings';
 import { isSupported, replaceFileName } from '@/global/files';
 import { Wallpaper, FolderItem } from '@/types/wallpaper';
 import { SettingOption } from '@/types/json';
 import { AsyncResponse, Response, FilesChannel, JSONChannel } from '@/types/channels';
 
-export interface State {
+type State = {
 	activeWallpaper: number;
 	wallpapers: Wallpaper[];
 	data: { [key: string]: { preview: AsyncResponse<FilesChannel> | null; json: AsyncResponse<JSONChannel> | null } };
 	formWallpaper: Wallpaper | null;
-}
+};
 
 export const useWallpaperStore = defineStore('wallpaper', {
 	// To access the state in the console: const pinia = () => ({ ...window.__VUE_DEVTOOLS_PLUGINS__[1].pluginDescriptor.app.config.globalProperties.$pinia.state.value.wallpaper })

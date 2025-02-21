@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useWallpaperStore } from '@/dashboard/store';
+import { useWallpaperStore } from '@/global/store';
 
 // eslint-disable-next-line
 const props = defineProps<{ visible: boolean }>();

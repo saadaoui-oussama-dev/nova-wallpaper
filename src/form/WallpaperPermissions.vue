@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { NovaWallpaper } from '@/dashboard/preload';
+import { NovaWallpaper } from '@/global/vue';
 import { getID, getLabel } from '@/global/settings';
 import { Wallpaper } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';

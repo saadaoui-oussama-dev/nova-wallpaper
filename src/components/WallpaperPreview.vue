@@ -33,8 +33,8 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
-import { useWallpaperStore } from '@/dashboard/store';
-import { NovaWallpaper } from '@/dashboard/preload';
+import { useWallpaperStore } from '@/global/store';
+import { NovaWallpaper } from '@/global/vue';
 import { isSupported } from '@/global/files';
 import { Wallpaper } from '@/types/wallpaper';
 

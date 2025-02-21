@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, watch } from 'vue';
-import { useWallpaperStore } from '@/dashboard/store';
+import { useWallpaperStore } from '@/global/store';
 import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';

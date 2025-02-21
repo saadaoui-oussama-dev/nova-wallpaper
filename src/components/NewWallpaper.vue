@@ -18,8 +18,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { useWallpaperStore } from '@/dashboard/store';
-import { NovaWallpaper } from '@/dashboard/preload';
+import { useWallpaperStore } from '@/global/store';
+import { NovaWallpaper } from '@/global/vue';
 import IconFileAdd from '@/components/icons/IconFileAdd.vue';
 import IconFileImage from '@/components/icons/IconFileImage.vue';
 import IconFileObjects from '@/components/icons/IconFileObjects.vue';

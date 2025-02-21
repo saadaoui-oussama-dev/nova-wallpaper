@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useWallpaperStore } from '@/dashboard/store';
+import { useWallpaperStore } from '@/global/store';
 import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
 import { Wallpaper } from '@/types/wallpaper';
