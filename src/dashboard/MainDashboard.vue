@@ -67,7 +67,7 @@ onMounted(async () => {
 	toggleVideoGifPlayingStatus();
 	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) newWallpaperVisibility.value = true;
-	NovaWallpaper.window.send('close-splashscreen');
+	NovaWallpaper.window.send('show-dashboard');
 });
 </script>
 

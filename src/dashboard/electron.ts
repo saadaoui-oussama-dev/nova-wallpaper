@@ -10,13 +10,8 @@ let dashboard: BrowserWindow | null;
 
 let splashscreen: BrowserWindow | null;
 
-let firstOpen = true;
-
 export const openDashboard = async () => {
-	if (dashboard) {
-		dashboard.show();
-		return dashboard.focus();
-	}
+	if (dashboard) return events.$emit('dashboard-window', 'show-dashboard');
 
 	dashboard = VueWindow(() => (dashboard = null), {
 		title: 'Nova Wallpaper',
@@ -28,10 +23,6 @@ export const openDashboard = async () => {
 		fullscreenable: false,
 	});
 
-	dashboard.webContents.openDevTools();
-	dashboard.setMenu(null);
-	dashboard.focus();
-
 	splashscreen = VueWindow(() => (splashscreen = null), {
 		title: 'Nova Wallpaper Splashscreen',
 		width: 180,
@@ -41,16 +32,19 @@ export const openDashboard = async () => {
 		transparent: true,
 		skipTaskbar: true,
 		resizable: false,
+		focusable: false,
 		hasShadow: false,
 	});
 
-	const onload = async () => {
-		if (dashboard) await loadVueApp(dashboard, 'main=true', false);
-		if (splashscreen) await loadVueApp(splashscreen, 'splashscreen=true');
-	};
+	dashboard.webContents.openDevTools();
+	dashboard.setMenu(null);
+	startEventsListeners();
+	await loadVueApp(dashboard, 'main=true', false);
+	await loadVueApp(splashscreen, 'splashscreen=true');
+};
 
-	if (!firstOpen) return onload();
-	firstOpen = false;
+let startEventsListeners = () => {
+	startEventsListeners = () => console.log();
 
 	events.$on('dashboard-window', (action: string) => {
 		if (action === 'minimize' && dashboard) {
@@ -58,9 +52,10 @@ export const openDashboard = async () => {
 		} else if (action === 'close') {
 			if (dashboard) dashboard.destroy();
 			dashboard = null;
-		} else if (action === 'close-splashscreen') {
-			if (splashscreen) splashscreen.destroy();
+		} else if (action === 'show-dashboard') {
 			if (dashboard) dashboard.show();
+			if (dashboard) dashboard.focus();
+			if (splashscreen) splashscreen.destroy();
 			splashscreen = null;
 		}
 	});
@@ -166,6 +161,4 @@ export const openDashboard = async () => {
 			resolve({ error: `${action}: This action is not supported` });
 		});
 	});
-
-	onload();
 };
