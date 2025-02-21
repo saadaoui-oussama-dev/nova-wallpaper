@@ -22,7 +22,7 @@ import { getID, getLabel } from '@/global/settings';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import { SettingsJSON, SettingOption, ToggleOption } from '@/types/json';
-import SettingsOption from '@/form/SettingOption.vue';
+import SettingsOption from '@/form/components/SettingOption.vue';
 
 // eslint-disable-next-line
 const props = defineProps<{
