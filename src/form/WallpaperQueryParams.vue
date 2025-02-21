@@ -26,8 +26,8 @@ import { getID } from '@/global/settings';
 import { Wallpaper } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import { Query } from '@/types/json';
-import IconAdd from '@/components/icons/IconAdd.vue';
-import IconDelete from '@/components/icons/IconDelete.vue';
+import IconAdd from '@/form/IconAdd.vue';
+import IconDelete from '@/form/IconDelete.vue';
 
 // eslint-disable-next-line
 const props = defineProps<{
