@@ -1,27 +1,46 @@
 <template>
-	<template v-if="task === 'main'">
-		<main-dashboard />
+	<template v-if="task === 'splashscreen'">
+		<splash-screen />
 	</template>
 
-	<template v-else-if="task === 'splashscreen'">
-		<splash-screen />
+	<template v-else-if="task === 'main'">
+		<main-dashboard />
 	</template>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import MainDashboard from '@/dashboard/MainDashboard.vue';
 import SplashScreen from '@/dashboard/SplashScreen.vue';
+import MainDashboard from '@/dashboard/MainDashboard.vue';
 
-const task = ref<'main' | 'splashscreen' | ''>('');
+const task = ref<'splashscreen' | 'main' | ''>('');
+
+const toggleVideoGifPlayingStatus = () => {
+	window.onblur = () => {
+		document.querySelectorAll('video').forEach((video) => video.pause());
+		document.querySelectorAll('img').forEach((gif) => {
+			if (!gif.src.startsWith('data:image/gif') && !gif.src.endsWith('.gif')) return;
+			const canvas = document.createElement('canvas');
+			const context = canvas.getContext('2d');
+			if (context) context.drawImage(gif, 0, 0, (canvas.width = gif.width), (canvas.height = gif.height));
+			(gif as unknown as { origin: string }).origin = gif.src;
+			gif.src = canvas.toDataURL('image/gif');
+		});
+	};
+	window.onfocus = () => {
+		document.querySelectorAll('video').forEach((video) => video.play());
+		document.querySelectorAll('img').forEach((i) => (i.src = (i as unknown as { origin: string }).origin || i.src));
+	};
+};
 
 onMounted(async () => {
+	toggleVideoGifPlayingStatus();
 	const queryParams: Record<string, string> = {};
 	new URLSearchParams(window.location.search).forEach((value, key) => (queryParams[key] = value));
-	if (queryParams.main) {
-		task.value = 'main';
-	} else if (queryParams.splashscreen) {
+	if (queryParams.splashscreen) {
 		task.value = 'splashscreen';
+	} else if (queryParams.main) {
+		task.value = 'main';
 	}
 });
 </script>

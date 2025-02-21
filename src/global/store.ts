@@ -59,12 +59,11 @@ export const useWallpaperStore = defineStore('wallpaper', {
 		},
 
 		async viewWallpaper(wallpaper: Wallpaper) {
-			const validAction = await this.setActiveWallpaper(wallpaper, false);
-			if (validAction) this.formWallpaper = wallpaper;
+			const validAction = await this.setActiveWallpaper(wallpaper);
 			return validAction;
 		},
 
-		async setActiveWallpaper(wallpaper: Wallpaper | null, readData = true) {
+		async setActiveWallpaper(wallpaper: Wallpaper | null) {
 			let valid = false;
 			try {
 				if (!wallpaper) {
@@ -74,7 +73,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 					if (!err && doc !== 0) valid = true;
 					else valid = !(await NovaWallpaper.database.invoke('insert', 'active', { value: wallpaper.id })).error;
 				}
-				if (readData) await this.readData();
+				await this.readData();
 			} catch {
 				console.log();
 			}
