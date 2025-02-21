@@ -1,12 +1,14 @@
 <template>
-	<page-header :visible="newWallpaperVisibility" @action="pageHeaderAction" />
-	<div class="dashboard">
-		<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
-			<div class="main" ref="main">
-				<new-wallpaper :visible="newWallpaperVisibility" @collapse="pageHeaderAction('collapse')" />
-				<wallpapers-list @collapse="pageHeaderAction('collapse')" />
+	<div class="app">
+		<page-header :visible="newWallpaperVisibility" @action="pageHeaderAction" />
+		<div class="dashboard">
+			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
+				<div class="main" ref="main">
+					<new-wallpaper :visible="newWallpaperVisibility" @collapse="pageHeaderAction('collapse')" />
+					<wallpapers-list @collapse="pageHeaderAction('collapse')" />
+				</div>
+				<wallpaper-form ref="form" />
 			</div>
-			<wallpaper-form ref="form" />
 		</div>
 	</div>
 </template>
@@ -72,19 +74,19 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-#app .app {
+.app {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 	font-size: 14px;
 }
 
-#app .app .dashboard {
+.app .dashboard {
 	flex: 1;
 	overflow: hidden;
 }
 
-#app .app .pages {
+.app .pages {
 	width: 200vw;
 	height: 100%;
 	display: grid;
@@ -92,11 +94,11 @@ onMounted(async () => {
 	transition: transform 0.3s ease-in-out;
 }
 
-#app .app .pages.page-2 {
+.app .pages.page-2 {
 	transform: translateX(-100vw);
 }
 
-#app .app .pages > * {
+.app .pages > * {
 	height: calc(100% - 20px);
 	padding-inline: 20px;
 	overflow-y: auto;
