@@ -1,17 +1,12 @@
 <template>
-	<div v-if="task === 'splashscreen'" class="splashscreen">
-		<img src="/img/logo.png" width="150" alt="" />
-	</div>
-	<div class="app" v-if="task === 'main'">
-		<page-header :visible="visible" @action="pageHeaderAction" />
-		<div class="dashboard">
-			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
-				<div class="main" ref="main">
-					<new-wallpaper :visible="visible" @collapse="pageHeaderAction('collapse')" />
-					<wallpapers-list @collapse="pageHeaderAction('collapse')" />
-				</div>
-				<wallpaper-form ref="form" />
+	<page-header :visible="newWallpaperVisibility" @action="pageHeaderAction" />
+	<div class="dashboard">
+		<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
+			<div class="main" ref="main">
+				<new-wallpaper :visible="newWallpaperVisibility" @collapse="pageHeaderAction('collapse')" />
+				<wallpapers-list @collapse="pageHeaderAction('collapse')" />
 			</div>
+			<wallpaper-form ref="form" />
 		</div>
 	</div>
 </template>
@@ -27,9 +22,7 @@ import WallpaperForm from '@/form/WallpaperForm.vue';
 
 const store = useWallpaperStore();
 
-const task = ref<'main' | 'splashscreen' | ''>('');
-
-const visible = ref(false);
+const newWallpaperVisibility = ref(false);
 
 const main = useTemplateRef('main');
 
@@ -37,9 +30,9 @@ const form = useTemplateRef('form');
 
 const pageHeaderAction = (action: string) => {
 	if (action === 'collapse') {
-		visible.value = false;
+		newWallpaperVisibility.value = false;
 	} else if (action === 'expand') {
-		visible.value = true;
+		newWallpaperVisibility.value = true;
 		if (main.value) main.value.scrollTo({ top: 0, behavior: 'smooth' });
 	} else if (action === 'delete') {
 		if (form.value) form.value.remove();
@@ -69,24 +62,18 @@ const toggleVideoGifPlayingStatus = () => {
 };
 
 onMounted(async () => {
-	const queryParams: Record<string, string> = {};
-	new URLSearchParams(window.location.search).forEach((value, key) => (queryParams[key] = value));
-	if (queryParams.main) {
-		task.value = 'main';
-		document.documentElement.classList.add('main');
-		NovaWallpaper.database.on('refresh', () => store.readData());
-		toggleVideoGifPlayingStatus();
-		await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
-		if (!store.wallpapers.length) visible.value = true;
-		NovaWallpaper.window.send('close-splashscreen');
-	} else if (queryParams.splashscreen) {
-		task.value = 'splashscreen';
-	}
+	document.documentElement.style.backgroundColor = 'var(--body-bg)';
+	NovaWallpaper.database.on('refresh', () => store.readData());
+	toggleVideoGifPlayingStatus();
+	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
+	if (!store.wallpapers.length) newWallpaperVisibility.value = true;
+	NovaWallpaper.window.send('close-splashscreen');
 });
 </script>
 
 <style scoped>
 #app .app {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	font-size: 14px;

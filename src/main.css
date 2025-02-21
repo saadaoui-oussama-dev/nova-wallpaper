@@ -36,10 +36,6 @@
 	border-radius: 4px;
 }
 
-html.main {
-	background-color: var(--body-bg);
-}
-
 body {
 	width: 100vw;
 	height: 100vh;
@@ -47,8 +43,7 @@ body {
 }
 
 body,
-button,
-input:not([type='radio']):not([type='range']) {
+button {
 	color: var(--text-color);
 }
 
@@ -59,23 +54,11 @@ body > #app {
 	overflow: hidden;
 }
 
-body > #app > .splashscreen {
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	gap: 1.5rem;
-}
-
-body > #app > .app {
-	height: 100%;
-}
-
 input:not([type='radio']):not([type='range']) {
 	width: 100%;
 	padding: 7px 10px;
 	border-radius: 7px;
 	border: 1px solid var(--border-color);
 	background-color: var(--content-bg);
+	color: var(--text-color);
 }
