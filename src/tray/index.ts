@@ -5,7 +5,7 @@ import { events, joinPublic } from '@/global/utils';
 
 let tray: Electron.Tray;
 
-export const createTray = () => {
+export const initTray = () => {
 	if (tray) return;
 
 	tray = new Tray(joinPublic('@/public/img/logo.png'));

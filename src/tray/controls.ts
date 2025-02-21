@@ -1,6 +1,5 @@
 import { app } from 'electron';
 import { processType } from '@/process';
-import { openDashboard } from '@/dashboard/electron';
 import { events } from '@/global/utils';
 
 let soundsStateLabel = 'Mute Wallpaper';
@@ -43,7 +42,7 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 		visibilityController,
 		{
 			label: padding('Open Dashboard', pad),
-			click: () => openDashboard(),
+			click: () => events.$emit('dashboard-open'),
 		},
 		{
 			label: padding('Exit App', pad),

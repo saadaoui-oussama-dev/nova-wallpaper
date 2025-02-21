@@ -10,37 +10,39 @@ let dashboard: BrowserWindow | null;
 
 let splashscreen: BrowserWindow | null;
 
-export const openDashboard = async () => {
-	if (dashboard) return events.$emit('dashboard-window', 'show-dashboard');
+export const initDashboard = async () => {
+	events.$on('dashboard-open', async () => {
+		if (dashboard) return events.$emit('dashboard-window', 'show-dashboard');
 
-	dashboard = VueWindow(() => (dashboard = null), {
-		title: 'Nova Wallpaper',
-		width: 1004,
-		height: 770,
-		minWidth: 752,
-		minHeight: 770,
-		resizable: true,
-		fullscreenable: false,
+		dashboard = VueWindow(() => (dashboard = null), {
+			title: 'Nova Wallpaper',
+			width: 1004,
+			height: 770,
+			minWidth: 752,
+			minHeight: 770,
+			resizable: true,
+			fullscreenable: false,
+		});
+
+		splashscreen = VueWindow(() => (splashscreen = null), {
+			title: 'Nova Wallpaper Splashscreen',
+			width: 180,
+			height: 180,
+			frame: false,
+			alwaysOnTop: true,
+			transparent: true,
+			skipTaskbar: true,
+			resizable: false,
+			focusable: false,
+			hasShadow: false,
+		});
+
+		dashboard.webContents.openDevTools();
+		dashboard.setMenu(null);
+		startEventsListeners();
+		await loadVueApp(dashboard, 'main=true', false);
+		await loadVueApp(splashscreen, 'splashscreen=true');
 	});
-
-	splashscreen = VueWindow(() => (splashscreen = null), {
-		title: 'Nova Wallpaper Splashscreen',
-		width: 180,
-		height: 180,
-		frame: false,
-		alwaysOnTop: true,
-		transparent: true,
-		skipTaskbar: true,
-		resizable: false,
-		focusable: false,
-		hasShadow: false,
-	});
-
-	dashboard.webContents.openDevTools();
-	dashboard.setMenu(null);
-	startEventsListeners();
-	await loadVueApp(dashboard, 'main=true', false);
-	await loadVueApp(splashscreen, 'splashscreen=true');
 };
 
 let startEventsListeners = () => {

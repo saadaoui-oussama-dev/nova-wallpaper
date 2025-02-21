@@ -14,7 +14,7 @@ let render: Electron.BrowserWindow;
 
 let wallpaper: Wallpaper | null = null;
 
-export const createRenderer = () => {
+export const initRenderer = () => {
 	if (render) return;
 
 	render = new BrowserWindow({

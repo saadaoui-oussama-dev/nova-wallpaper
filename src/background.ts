@@ -3,15 +3,21 @@
 import { app, protocol } from 'electron';
 import { initialize } from '@electron/remote/main';
 import { processType, processesConnection } from '@/process';
-import { createRenderer } from '@/renderer';
-import { createTray } from '@/tray';
+import { initDashboard } from '@/dashboard';
+import { initRenderer } from '@/renderer';
+import { initTray } from '@/tray';
 
 initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 app.on('ready', async () => {
-	if (processType !== 'child') createRenderer();
-	if (processType !== 'main') createTray();
+	if (processType !== 'child') {
+		initRenderer();
+	}
+	if (processType !== 'main') {
+		initTray();
+		initDashboard();
+	}
 	processesConnection();
 });
 
