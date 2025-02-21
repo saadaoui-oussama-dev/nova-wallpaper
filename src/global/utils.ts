@@ -1,6 +1,6 @@
-const { app, screen, BrowserWindow } = require('electron');
-const { join } = require('path');
-const { statSync } = require('fs');
+import { join } from 'path';
+import { statSync } from 'fs';
+import { app, screen, BrowserWindow } from 'electron';
 import { SimpleMap } from '@/types/wallpaper';
 import { Response, WindowChannel } from '@/types/channels';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
@@ -9,7 +9,7 @@ export * from '@/global/events';
 
 export * from '@/global/files';
 
-export const VueBrowserWindow = (onClose?: () => void, options?: Electron.BrowserWindowConstructorOptions) => {
+export const VueWindow = (onClose?: () => void, options?: Electron.BrowserWindowConstructorOptions) => {
 	const { width, height } = getAreas().workarea;
 	const window = new BrowserWindow({
 		show: false,

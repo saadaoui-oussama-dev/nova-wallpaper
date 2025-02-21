@@ -1,4 +1,4 @@
-const { existsSync, readFileSync, writeFileSync } = require('fs');
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 
 export const readJson = (filename: string, isArray: boolean = false): { exist: boolean; valid: boolean; data: any } => {
 	if (typeof filename !== 'string' || !filename.endsWith('.json')) return { exist: false, valid: false, data: null };

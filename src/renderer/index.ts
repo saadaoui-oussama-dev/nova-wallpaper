@@ -1,6 +1,6 @@
-const { spawn } = require('child_process');
-const { existsSync } = require('fs');
-const { join } = require('path');
+import { join } from 'path';
+import { spawn } from 'child_process';
+import { existsSync } from 'fs';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { database } from '@/global/database';
@@ -79,7 +79,7 @@ export const createRenderer = () => {
 			try {
 				if (isURL(path)) return shell.openExternal(path);
 				if (!path.startsWith('::{') && !existsSync(path)) throw new Error('File Not Found');
-				const params = path.endsWith('.exe') ? [path, []] : ['explorer', [path]];
+				const params: [string, string[]] = path.endsWith('.exe') ? [path, []] : ['explorer', [path]];
 				spawn(...params, { detached: true, stdio: 'ignore' }).unref();
 				return resolve({ permitted: true, success: true });
 			} catch {

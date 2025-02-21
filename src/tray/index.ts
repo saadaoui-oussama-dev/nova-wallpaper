@@ -1,4 +1,4 @@
-const { Tray, Menu } = require('electron');
+import { Tray, Menu } from 'electron';
 import { renderControls } from '@/tray/controls';
 import { renderFavorites } from '@/tray/favorites';
 import { events, joinPublic } from '@/global/utils';

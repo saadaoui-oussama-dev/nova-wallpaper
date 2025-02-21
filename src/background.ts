@@ -1,11 +1,12 @@
 'use strict';
 
 import { app, protocol } from 'electron';
+import { initialize } from '@electron/remote/main';
 import { processType, processesConnection } from '@/process';
 import { createRenderer } from '@/renderer';
 import { createTray } from '@/tray';
 
-require('@electron/remote/main').initialize();
+initialize();
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 app.on('ready', async () => {

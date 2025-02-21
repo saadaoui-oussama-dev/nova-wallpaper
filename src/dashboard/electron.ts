@@ -1,10 +1,9 @@
-const { readdirSync, readFileSync } = require('fs');
 import { join } from 'path';
+import { readdirSync, readFileSync } from 'fs';
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
-import { getFileType, isSupported } from '@/global/files';
-import { events, fileSizeChecker, getAreas, VueBrowserWindow, loadVueApp } from '@/global/utils';
+import { VueWindow, loadVueApp, getFileType, isSupported, events, fileSizeChecker, getAreas } from '@/global/utils';
 import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, FilesChannel } from '@/types/channels';
 
 let dashboard: BrowserWindow | null;
@@ -19,7 +18,7 @@ export const openDashboard = async () => {
 		return dashboard.focus();
 	}
 
-	dashboard = VueBrowserWindow(() => (dashboard = null), {
+	dashboard = VueWindow(() => (dashboard = null), {
 		title: 'Nova Wallpaper',
 		width: 1004,
 		height: 770,
@@ -33,7 +32,7 @@ export const openDashboard = async () => {
 	dashboard.setMenu(null);
 	dashboard.focus();
 
-	splashscreen = VueBrowserWindow(() => (splashscreen = null), {
+	splashscreen = VueWindow(() => (splashscreen = null), {
 		title: 'Nova Wallpaper Splashscreen',
 		width: 180,
 		height: 180,
@@ -155,7 +154,7 @@ export const openDashboard = async () => {
 							const error = fileSizeChecker(absolutePath);
 							return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
 						})
-						.filter(Boolean);
+						.filter((file) => file !== undefined);
 					resolve(content.length ? { path: folderPath, content } : { error: 'The folder is empty.' });
 				});
 			};

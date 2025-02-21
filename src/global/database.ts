@@ -1,4 +1,4 @@
-const SQLite = require('better-sqlite3');
+import SQLite from 'better-sqlite3';
 import bindings from 'bindings';
 import { join } from 'path';
 import { app } from 'electron';
@@ -102,7 +102,7 @@ const initDatabase = (): Database => {
 				if (order_by) sql = `${sql} ORDER BY ${order_by.property} ${order_by.type}`;
 				const rows = filterEntries.length > 0 ? db.prepare(sql).all(...filterValues) : db.prepare(sql).all();
 				if (table === 'wallpaper') {
-					rows.forEach((row: { [key: string]: any }) => {
+					rows.forEach((row: any) => {
 						boolean.forEach((key) => key in row && (row[key] = row[key] ? true : false));
 						json.forEach((key) => key in row && typeof row[key] === 'string' && (row[key] = JSON.parse(row[key])));
 					});
