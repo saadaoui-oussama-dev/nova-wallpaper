@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { ref, useTemplateRef, onMounted } from 'vue';
 import { useWallpaperStore } from '@/global/store';
-import { NovaWallpaper } from '@/global/vue';
+import { NovaWallpaper } from '@/electron-vue/preload';
 import WallpapersList from '@/dashboard/components/WallpapersList.vue';
 import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
 

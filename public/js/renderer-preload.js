@@ -1,5 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+contextBridge.exposeInMainWorld('NovaWallpaper', {
+	readJson: (filename, isArray) => ipcRenderer.invoke('renderer-json', 'read', filename, isArray),
+	writeJson: (filename, data) => ipcRenderer.invoke('renderer-json', 'write', filename, data),
+	execute: (permissionId) => ipcRenderer.invoke('renderer-execute', 'execute', permissionId),
+	dialog: (title, options) => useDialog(title, options),
+});
+
 const useDialog = (() => {
 	const styles = {
 		container: {
@@ -155,10 +162,3 @@ const useDialog = (() => {
 
 	return useDialog;
 })();
-
-contextBridge.exposeInMainWorld('NovaWallpaper', {
-	readJson: (filename, isArray) => ipcRenderer.invoke('renderer-json', 'read', filename, isArray),
-	writeJson: (filename, data) => ipcRenderer.invoke('renderer-json', 'write', filename, data),
-	execute: (permissionId) => ipcRenderer.invoke('renderer-execute', 'execute', permissionId),
-	dialog: (title, options) => useDialog(title, options),
-});

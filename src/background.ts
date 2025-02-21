@@ -1,20 +1,21 @@
 'use strict';
 
-import { app, protocol } from 'electron';
-import { initialize } from '@electron/remote/main';
+import { app } from 'electron';
+import { startVueEventsListeners } from '@/electron-vue/channels';
+import { prepareVueProtocol } from '@/electron-vue/load-app';
 import { processType, processesConnection } from '@/process';
 import { initDashboard } from '@/dashboard';
 import { initRenderer } from '@/renderer';
 import { initTray } from '@/tray';
 
-initialize();
-protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
+prepareVueProtocol();
 
 app.on('ready', async () => {
 	if (processType !== 'child') {
 		initRenderer();
 	}
 	if (processType !== 'main') {
+		startVueEventsListeners();
 		initTray();
 		initDashboard();
 	}

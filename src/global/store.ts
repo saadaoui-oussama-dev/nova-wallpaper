@@ -1,16 +1,18 @@
 import { defineStore } from 'pinia';
-import { NovaWallpaper } from '@/global/vue';
+import { NovaWallpaper } from '@/electron-vue/preload';
 import { imageJSON, videoJSON } from '@/global/settings';
 import { isSupported, replaceFileName } from '@/global/files';
 import { Wallpaper, FolderItem } from '@/types/wallpaper';
 import { SettingOption } from '@/types/json';
-import { AsyncResponse, Response, FilesChannel, JSONChannel } from '@/types/channels';
+import { Response, FilesChannel, JSONChannel } from '@/types/channels';
 
 type State = {
 	activeWallpaper: number;
 	wallpapers: Wallpaper[];
-	data: { [key: string]: { preview: AsyncResponse<FilesChannel> | null; json: AsyncResponse<JSONChannel> | null } };
 	formWallpaper: Wallpaper | null;
+	data: {
+		[key: string]: { preview: Promise<Response<FilesChannel>> | null; json: Promise<Response<JSONChannel>> | null };
+	};
 };
 
 export const useWallpaperStore = defineStore('wallpaper', {
@@ -92,7 +94,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return true;
 		},
 
-		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): AsyncResponse<JSONChannel> {
+		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<Response<JSONChannel>> {
 			const src = this.data[wallpaper.path];
 			if (!(forceFetch || !src || !src.json)) return src.json;
 
@@ -140,7 +142,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return data;
 		},
 
-		async fetchPreview(wallpaper: Wallpaper): AsyncResponse<FilesChannel> {
+		async fetchPreview(wallpaper: Wallpaper): Promise<Response<FilesChannel>> {
 			const src = this.data[wallpaper.path];
 			if (src && src.preview) return src.preview;
 

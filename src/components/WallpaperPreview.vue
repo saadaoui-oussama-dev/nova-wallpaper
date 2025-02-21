@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useWallpaperStore } from '@/global/store';
-import { NovaWallpaper } from '@/global/vue';
+import { NovaWallpaper } from '@/electron-vue/preload';
 import { isSupported } from '@/global/files';
 import { Wallpaper } from '@/types/wallpaper';
 

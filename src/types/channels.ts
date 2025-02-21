@@ -13,8 +13,6 @@ export type Invoke<T> = T extends Channel<any, infer R, any> ? R : never;
 
 export type Response<T> = T extends Channel<any, any, infer R> ? R : never;
 
-export type AsyncResponse<T> = Promise<Response<T>>;
-
 // Dashboard Channels
 
 export type WindowChannel = Channel<

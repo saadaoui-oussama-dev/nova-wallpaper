@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useWallpaperStore } from '@/global/store';
-import { NovaWallpaper } from '@/global/vue';
+import { NovaWallpaper } from '@/electron-vue/preload';
 import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
 import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
 import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
