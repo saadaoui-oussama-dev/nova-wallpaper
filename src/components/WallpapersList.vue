@@ -42,7 +42,7 @@ import { useWallpaperStore } from '@/dashboard/store';
 import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
 import { Wallpaper } from '@/types/wallpaper';
-import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
+import WallpaperPreview from '@/components/WallpaperPreview.vue';
 
 // eslint-disable-next-line
 const emit = defineEmits(['collapse']);

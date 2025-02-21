@@ -23,10 +23,10 @@ import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
-import WallpaperPreview from '@/dashboard/components/WallpaperPreview.vue';
-import WallpaperSettings from '@/dashboard/form/WallpaperSettings.vue';
-import WallpaperPermissions from '@/dashboard/form/WallpaperPermissions.vue';
-import WallpaperQueryParams from '@/dashboard/form/WallpaperQueryParams.vue';
+import WallpaperPreview from '@/components/WallpaperPreview.vue';
+import WallpaperSettings from '@/form/WallpaperSettings.vue';
+import WallpaperPermissions from '@/form/WallpaperPermissions.vue';
+import WallpaperQueryParams from '@/form/WallpaperQueryParams.vue';
 
 const store = useWallpaperStore();
 

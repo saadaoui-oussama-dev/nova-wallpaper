@@ -1,10 +1,10 @@
 <template>
-	<div v-if="splashscreen" class="splashscreen">
+	<div v-if="task === 'splashscreen'" class="splashscreen">
 		<img src="/img/logo.png" width="150" alt="" />
 	</div>
-	<div class="app">
-		<page-header v-show="!splashscreen" :visible="visible" @action="pageHeaderAction" />
-		<div class="dashboard" v-show="!splashscreen">
+	<div class="app" v-if="task === 'main'">
+		<page-header :visible="visible" @action="pageHeaderAction" />
+		<div class="dashboard">
 			<div :class="`pages${store.formWallpaper ? ' page-2' : ''}`">
 				<div class="main" ref="main">
 					<new-wallpaper :visible="visible" @collapse="pageHeaderAction('collapse')" />
@@ -20,14 +20,14 @@
 import { ref, useTemplateRef, onMounted } from 'vue';
 import { useWallpaperStore } from '@/dashboard/store';
 import { NovaWallpaper } from '@/dashboard/preload';
-import PageHeader from '@/dashboard/components/PageHeader.vue';
-import WallpapersList from '@/dashboard/components/WallpapersList.vue';
-import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
-import WallpaperForm from '@/dashboard/form/WallpaperForm.vue';
+import PageHeader from '@/components/PageHeader.vue';
+import WallpapersList from '@/components/WallpapersList.vue';
+import NewWallpaper from '@/components/NewWallpaper.vue';
+import WallpaperForm from '@/form/WallpaperForm.vue';
 
 const store = useWallpaperStore();
 
-const splashscreen = ref(false);
+const task = ref<'main' | 'splashscreen' | ''>('');
 
 const visible = ref(false);
 
@@ -72,6 +72,7 @@ onMounted(async () => {
 	const queryParams: Record<string, string> = {};
 	new URLSearchParams(window.location.search).forEach((value, key) => (queryParams[key] = value));
 	if (queryParams.main) {
+		task.value = 'main';
 		document.documentElement.classList.add('main');
 		NovaWallpaper.database.on('refresh', () => store.readData());
 		toggleVideoGifPlayingStatus();
@@ -79,7 +80,7 @@ onMounted(async () => {
 		if (!store.wallpapers.length) visible.value = true;
 		NovaWallpaper.window.send('close-splashscreen');
 	} else if (queryParams.splashscreen) {
-		splashscreen.value = true;
+		task.value = 'splashscreen';
 	}
 });
 </script>
