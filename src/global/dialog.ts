@@ -47,7 +47,7 @@ const styles: DialogOptions['styles'] = {
 		top: '57%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
-		minWidth: '300px',
+		minWidth: '390px',
 		maxWidth: '85vw',
 		padding: '14px',
 		backgroundColor: 'var(--body-bg, #1e1e1e)',
