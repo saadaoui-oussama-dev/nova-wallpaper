@@ -20,11 +20,11 @@
 import { ref } from 'vue';
 import { useWallpaperStore } from '@/global/store';
 import { NovaWallpaper } from '@/global/vue';
-import IconFileAdd from '@/components/icons/IconFileAdd.vue';
-import IconFileImage from '@/components/icons/IconFileImage.vue';
-import IconFileObjects from '@/components/icons/IconFileObjects.vue';
-import IconFileWebpage from '@/components/icons/IconFileWebpage.vue';
-import IconFolderMedia from '@/components/icons/IconFolderMedia.vue';
+import IconFileAdd from '@/dashboard/icons/IconFileAdd.vue';
+import IconFileImage from '@/dashboard/icons/IconFileImage.vue';
+import IconFileObjects from '@/dashboard/icons/IconFileObjects.vue';
+import IconFileWebpage from '@/dashboard/icons/IconFileWebpage.vue';
+import IconFolderMedia from '@/dashboard/icons/IconFolderMedia.vue';
 
 // eslint-disable-next-line
 const props = defineProps<{ visible: boolean }>();
