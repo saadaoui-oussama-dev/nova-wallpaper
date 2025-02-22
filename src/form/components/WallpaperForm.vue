@@ -109,6 +109,9 @@ const remove = async () => {
 	const response = await useDialog('Are you sure you want to delete this wallpaper?', {
 		neutralBtn: 'Cancel',
 		primaryBtn: { text: 'Delete', danger: true },
+		styles: {
+			modal: { minWidth: '290px' },
+		},
 	});
 	if (!response) return;
 	const valid = await store.deleteWallpaper(wallpaper.value, 'form');
