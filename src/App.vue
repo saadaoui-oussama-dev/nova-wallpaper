@@ -40,13 +40,13 @@ const toggleVideoGifPlayingStatus = () => {
 
 onMounted(async () => {
 	toggleVideoGifPlayingStatus();
-	const queryParams: Record<string, string> = {};
-	new URLSearchParams(window.location.search).forEach((value, key) => (queryParams[key] = value));
-	if (queryParams.splashscreen) {
+	const queries: Record<string, string> = {};
+	new URLSearchParams(window.location.search).forEach((value, key) => (queries[key] = value));
+	if (queries.splashscreen) {
 		task.value = 'splashscreen';
-	} else if (queryParams.main) {
+	} else if (queries.main) {
 		task.value = 'main';
-	} else if (queryParams.form) {
+	} else if (queries.form) {
 		task.value = 'form';
 	}
 });

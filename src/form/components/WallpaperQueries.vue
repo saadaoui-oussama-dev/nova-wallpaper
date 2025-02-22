@@ -1,17 +1,17 @@
 <template>
-	<div class="section" v-if="queryParams.length">
+	<div class="section" v-if="queries.length">
 		<div class="title-container">
 			<p class="title">Query parameters:</p>
-			<button v-if="false" class="icon-btn" @click="addQueryParameter"><icon-add /> Add</button>
+			<button v-if="false" class="icon-btn" @click="addQuery"><icon-add /> Add</button>
 		</div>
 		<div class="column" ref="list">
-			<div v-for="(param, index) in queryParams" :key="index" class="query-param-row">
+			<div v-for="(param, index) in queries" :key="index" class="query-row">
 				<input :value="param.id" disabled placeholder="Key" style="width: 40%" />
 				<input v-model="param.value" @change="onChange" placeholder="Value" style="flex: 1" />
 				<button
 					v-if="false"
-					:class="`icon-btn remove ${isQueryParamsEmpty() ? 'disabled' : ''}`"
-					@click="removeQueryParameter(index)"
+					:class="`icon-btn remove ${areQueriesEmpty() ? 'disabled' : ''}`"
+					@click="removeQuery(index)"
 				>
 					<icon-delete />
 				</button>
@@ -38,19 +38,19 @@ const props = defineProps<{
 // eslint-disable-next-line
 const emit = defineEmits(['change']);
 
-const queryParams = ref<Query[]>([]);
+const queries = ref<Query[]>([]);
 
 const list = useTemplateRef('list');
 
 watch(
 	() => props.json,
 	() => {
-		if (!props.json || !props.json.data || !Array.isArray(props.json.data['query-params'])) return clearQueryParams();
-		if (!props.wallpaper.path.endsWith('.html')) return clearQueryParams();
+		if (!props.json || !props.json.data || !Array.isArray(props.json.data.queries)) return clearQueries();
+		if (!props.wallpaper.path.endsWith('.html')) return clearQueries();
 
 		const uniqueIds: string[] = [];
-		const currentParams = props.wallpaper.queryParams;
-		const list = (props.json.data['query-params'] as Query[]).map((option) => {
+		const currentParams = props.wallpaper.queries;
+		const list = (props.json.data.queries as Query[]).map((option) => {
 			if (!option || typeof getID(option) !== 'string') return null;
 			option = { ...option };
 			option.id = getID(option) as string;
@@ -65,44 +65,44 @@ watch(
 			return { id: option.id, value: value };
 		});
 		const $list = list.filter((opt) => opt !== null);
-		if (!$list.length) return clearQueryParams();
-		queryParams.value = $list;
+		if (!$list.length) return clearQueries();
+		queries.value = $list;
 		onChange();
 	}
 );
 
-const addQueryParameter = () => {
-	if (isQueryParamsEmpty() && list.value) {
+const addQuery = () => {
+	if (areQueriesEmpty() && list.value) {
 		const firstInput = list.value.querySelector('input');
 		if (firstInput) return firstInput.focus();
 	}
-	queryParams.value.push({ id: '', value: '' });
+	queries.value.push({ id: '', value: '' });
 	onChange();
 };
 
-const removeQueryParameter = (index: number) => {
-	queryParams.value.splice(index, 1);
-	if (queryParams.value.length) onChange();
-	else clearQueryParams();
+const removeQuery = (index: number) => {
+	queries.value.splice(index, 1);
+	if (queries.value.length) onChange();
+	else clearQueries();
 };
 
-const clearQueryParams = () => {
-	queryParams.value = [];
-	// setQueryParams([{ id: '', value: '' }]);
+const clearQueries = () => {
+	queries.value = [];
+	// setQueries([{ id: '', value: '' }]);
 	onChange();
 };
 
-const isQueryParamsEmpty = () => {
-	if (queryParams.value.length > 1) return false;
-	if (!queryParams.value.length) return true;
-	return !queryParams.value[0].id && !queryParams.value[0].value;
+const areQueriesEmpty = () => {
+	if (queries.value.length > 1) return false;
+	if (!queries.value.length) return true;
+	return !queries.value[0].id && !queries.value[0].value;
 };
 
-const onChange = () => emit('change', Object.fromEntries(queryParams.value.map((option) => [option.id, option.value])));
+const onChange = () => emit('change', Object.fromEntries(queries.value.map((option) => [option.id, option.value])));
 </script>
 
 <style scoped>
-.query-param-row {
+.query-row {
 	display: flex;
 	align-items: center;
 	gap: 10px;

@@ -43,7 +43,7 @@ const initDatabase = (): Database => {
 				taskbar INTEGER NOT NULL CHECK(taskbar IN (0, 1)),
 				settings TEXT NOT NULL,
 				permissions TEXT NOT NULL,
-				queryParams TEXT NOT NULL,
+				queries TEXT NOT NULL,
 				content TEXT NOT NULL
 			);
 		`
@@ -60,7 +60,7 @@ const initDatabase = (): Database => {
 		`
 	).run();
 
-	const json = ['settings', 'permissions', 'queryParams', 'content'];
+	const json = ['settings', 'permissions', 'queries', 'content'];
 
 	const boolean = ['favorite', 'taskbar'];
 

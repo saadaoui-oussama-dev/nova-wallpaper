@@ -3,7 +3,7 @@ import { events, joinPublic } from '@/global/utils';
 
 type processType = 'main' | 'child' | 'both';
 
-export const processType: processType = 'main' as string as processType;
+export const processType: processType = 'both' as string as processType;
 
 // Establishes communication between the Renderer process and the Library-Tray process
 export const processesConnection = () => {

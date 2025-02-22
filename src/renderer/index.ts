@@ -6,9 +6,9 @@ import { attach, reset } from '@/renderer/electron-as-wallpaper';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
 import { events, joinPublic, threadsManager, compareMaps, getMapChanges } from '@/global/utils';
-import { isSupported, isURL } from '@/global/files';
+import { isSupported } from '@/global/files';
 import { Wallpaper } from '@/types/wallpaper';
-import { Invoke, Response, RenderJSONChannel, ExecuteChannel } from '@/types/channels';
+import { Invoke, Response, RenderJSONChannel } from '@/types/channels';
 
 let render: Electron.BrowserWindow;
 
@@ -71,23 +71,6 @@ export const initRenderer = () => {
 		});
 	});
 
-	ipcMain.handle('renderer-execute', (_, __: Invoke<ExecuteChannel>, permissionId: string) => {
-		return new Promise<Response<ExecuteChannel>>((resolve) => {
-			if (wallpaper === null) return resolve({ permitted: false, success: false });
-			const path = wallpaper.permissions ? wallpaper.permissions[permissionId] : '';
-			if (!path || typeof path !== 'string') return resolve({ permitted: false, success: false });
-			try {
-				if (isURL(path)) return shell.openExternal(path);
-				if (!path.startsWith('::{') && !existsSync(path)) throw new Error('File Not Found');
-				const params: [string, string[]] = path.endsWith('.exe') ? [path, []] : ['explorer', [path]];
-				spawn(...params, { detached: true, stdio: 'ignore' }).unref();
-				return resolve({ permitted: true, success: true });
-			} catch {
-				return resolve({ permitted: true, success: false });
-			}
-		});
-	});
-
 	const onChangesListener = () => {
 		threadsManager('change-wallpaper', async () => {
 			let newWallpaper: Wallpaper | null = null;
@@ -115,9 +98,8 @@ export const initRenderer = () => {
 				!oldWallpaper ||
 				!newWallpaper ||
 				oldWallpaper.id !== newWallpaper.id ||
-				!compareMaps(newWallpaper.queryParams, oldWallpaper.queryParams) ||
-				!compareMaps(newWallpaper.settings, oldWallpaper.settings, true) ||
-				!compareMaps(newWallpaper.permissions, oldWallpaper.permissions, true);
+				!compareMaps(newWallpaper.queries, oldWallpaper.queries) ||
+				!compareMaps(newWallpaper.settings, oldWallpaper.settings, true);
 			wallpaper = newWallpaper as Wallpaper;
 
 			// Load or reload the active wallpaper if necessary
@@ -125,7 +107,7 @@ export const initRenderer = () => {
 				try {
 					await render.loadURL('about:blank');
 					const path = isMedia ? joinPublic('@/public/media.html') : wallpaper.path;
-					const query = Object.entries(isMedia ? {} : wallpaper.queryParams || {});
+					const query = Object.entries(isMedia ? {} : wallpaper.query || {});
 					const url = query.length ? path + '?' + query.map(([k, v]) => `${k}=${v}`).join('&') : path;
 					await render.loadURL(url);
 					oldWallpaper = null;
@@ -141,10 +123,9 @@ export const initRenderer = () => {
 			if (wallpaper.taskbar) render.setFullScreen(true);
 			else render.maximize();
 
-			// Identify and apply only the changed settings and permissions
+			// Identify and apply only the changed settings
 			render.webContents.removeAllListeners('did-stop-loading');
 			const settings = getMapChanges(wallpaper.settings, oldWallpaper ? oldWallpaper.settings : undefined);
-			const permissions = getMapChanges(wallpaper.permissions, oldWallpaper ? oldWallpaper.permissions : undefined);
 			const sendOptions = (functionName: string, options: [string, string | number | boolean][]) => {
 				return options.map(async ([id, value]) => {
 					const instruction = `window.${functionName}?.(${JSON.stringify(id)}, ${JSON.stringify(value)});`;
@@ -155,10 +136,9 @@ export const initRenderer = () => {
 			await Promise.all([
 				...sendOptions('novaSettingsListener', settings),
 				...sendOptions('livelyPropertyListener', settings),
-				...sendOptions('novaPermissionsListener', permissions),
 			]);
-			if (settings.length || permissions.length || !oldWallpaper)
-				await render.webContents.executeJavaScript('window.novaLoadedListener()').catch(() => {});
+			if (settings.length || !oldWallpaper)
+				await render.webContents.executeJavaScript('window.novaLoadedListener?.()').catch(() => {});
 		});
 	};
 

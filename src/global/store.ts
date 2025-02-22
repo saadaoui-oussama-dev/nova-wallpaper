@@ -44,12 +44,12 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				id: -2,
 				label: '',
 				path,
-				content: content ? [] : [],
 				taskbar: false,
 				favorite: false,
 				settings: {},
 				permissions: {},
-				queryParams: {},
+				queries: {},
+				content: content ? [] : [],
 			};
 			const { doc, error } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
 			if (error || !doc || typeof doc.id !== 'number') return false;

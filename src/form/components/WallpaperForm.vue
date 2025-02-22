@@ -9,8 +9,7 @@
 		<wallpaper-preview :wallpaper="wallpaper" :settings="settings" />
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
 		<template v-if="wallpaper.path.endsWith('.html')">
-			<wallpaper-permissions ref="permissions" :wallpaper="wallpaper" :json="wallpaperJSON" @change="setPermissions" />
-			<wallpaper-query-params :wallpaper="wallpaper" :json="wallpaperJSON" @change="setQueryParams" />
+			<wallpaper-queries :wallpaper="wallpaper" :json="wallpaperJSON" @change="setQueries" />
 		</template>
 	</div>
 	<div v-else></div>
@@ -26,12 +25,9 @@ import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import WallpaperPreview from '@/global/WallpaperPreview.vue';
 import WallpaperSettings from '@/form/components/WallpaperSettings.vue';
-import WallpaperPermissions from '@/form/components/WallpaperPermissions.vue';
-import WallpaperQueryParams from '@/form/components/WallpaperQueryParams.vue';
+import WallpaperQueries from '@/form/components/WallpaperQueries.vue';
 
 const store = useWallpaperStore();
-
-const permissionsRef = useTemplateRef('permissions');
 
 const wallpaperJSON = ref<Response<JSONChannel> | null>(null);
 
@@ -41,9 +37,7 @@ const label = ref('');
 
 const settings = ref<{ taskbar: boolean; settings: SimpleMap }>({ taskbar: false, settings: {} });
 
-const permissions = ref<SimpleMap>({});
-
-const queryParams = ref<SimpleMap>({});
+const queries = ref<SimpleMap>({});
 
 watch(
 	() => store.formWallpaper,
@@ -54,8 +48,7 @@ watch(
 			wallpaperJSON.value = null;
 			label.value = '';
 			setSettings({ taskbar: false, settings: {} });
-			setPermissions({});
-			setQueryParams({});
+			setQueries({});
 		} else {
 			label.value = wallpaper.value.label || getFileName(wallpaper.value.path, 'path', 25) || '';
 			wallpaperJSON.value = await store.fetchJSON(wallpaper.value, true);
@@ -86,21 +79,12 @@ const setSettings = (data: { taskbar: boolean; settings: SimpleMap }) => {
 	});
 };
 
-const setPermissions = (data: SimpleMap) => {
-	permissions.value = data;
+const setQueries = (data: SimpleMap) => {
+	queries.value = data;
 	if (!wallpaper.value) return;
 	store.updateWallpaper({
 		id: wallpaper.value.id,
-		permissions: permissionsRef.value ? permissionsRef.value.onChange(true, false) : { ...permissions.value },
-	});
-};
-
-const setQueryParams = (data: SimpleMap) => {
-	queryParams.value = data;
-	if (!wallpaper.value) return;
-	store.updateWallpaper({
-		id: wallpaper.value.id,
-		queryParams: { ...queryParams.value },
+		queries: { ...queries.value },
 	});
 };
 
@@ -126,8 +110,7 @@ const finish = async () => {
 		label: label.value,
 		taskbar: settings.value.taskbar,
 		settings: { ...settings.value.settings },
-		permissions: permissionsRef.value ? permissionsRef.value.onChange(true, true) : { ...permissions.value },
-		queryParams: { ...queryParams.value },
+		queries: { ...queries.value },
 	});
 	if (!valid) return;
 	NovaWallpaper.window.send('close-form');

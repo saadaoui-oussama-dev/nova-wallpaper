@@ -65,5 +65,5 @@ export type Query = { id: string; value: string };
 export type SettingsJSON = {
 	settings?: SettingOption[];
 	permissions?: Permission[];
-	['query-params']?: Query[];
+	queries?: Query[];
 };

@@ -44,7 +44,7 @@ export const startVueEventsListeners = () => {
 					} else if ('label' in payload) {
 						events.$emit('tray-reload-menu');
 						events.$emit('active-wallpaper-changed', 'form');
-					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((prop) => prop in payload)) {
+					} else if (['settings', 'permissions', 'queries', 'taskbar', 'content'].some((prop) => prop in payload)) {
 						events.$emit('renderer-sync-action', 'change');
 						events.$emit('active-wallpaper-changed', 'form');
 					}
