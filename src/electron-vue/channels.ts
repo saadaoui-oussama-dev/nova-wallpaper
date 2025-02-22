@@ -1,10 +1,10 @@
-import { readFileSync } from 'fs';
-import { ipcMain } from 'electron';
+import { join } from 'path';
+import { readdirSync, readFileSync } from 'fs';
+import { BrowserWindow, ipcMain, dialog } from 'electron';
 import { database } from '@/global/database';
 import { readJson, writeJSON } from '@/global/json';
 import { getFileType, isSupported, events, fileSizeChecker, getAreas } from '@/global/utils';
 import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, FilesChannel } from '@/types/channels';
-import { dashboardFilesListener } from '@/dashboard';
 
 export const startVueEventsListeners = () => {
 	ipcMain.on('vue-window', (_, action: Send<WindowChannel>): void => {
@@ -56,7 +56,9 @@ export const startVueEventsListeners = () => {
 		}
 	);
 
-	ipcMain.handle('vue-files', async (_, action: Invoke<FilesChannel>, path?: string, onlyFolder?: boolean) => {
+	ipcMain.handle('vue-files', async (event, action: Invoke<FilesChannel>, path?: string, onlyFolder?: boolean) => {
+		const win = BrowserWindow.fromWebContents(event.sender);
+
 		return new Promise((resolve: (v: Response<FilesChannel>) => void) => {
 			if (action === 'get-url' && path) {
 				if (!isSupported(path)) return resolve({ error: 'Unsupported file type.' });
@@ -64,7 +66,43 @@ export const startVueEventsListeners = () => {
 				if (error) return resolve({ error });
 				return resolve({ path: `data:${getFileType(path).mime};base64,${readFileSync(path).toString('base64')}` });
 			}
-			dashboardFilesListener(action, !!onlyFolder, resolve);
+
+			const openFile = (name: string, extensions: string[]) => {
+				if (!win) return;
+				dialog.showOpenDialog(win, { properties: ['openFile'], filters: [{ name, extensions }] }).then((result) => {
+					if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
+					const absolutePath = result.filePaths[0];
+					if (action === 'executable') return resolve({ path: absolutePath, content: [] });
+					if (!isSupported(absolutePath)) return resolve({ error: 'Unsupported file type.' });
+					const error = fileSizeChecker(absolutePath);
+					resolve(error ? { error } : { path: absolutePath, content: [] });
+				});
+			};
+
+			const openDirectory = () => {
+				if (!win) return;
+				dialog.showOpenDialog(win, { properties: ['openDirectory'] }).then((result) => {
+					if (result.canceled || !result.filePaths.length) return resolve({ error: 'Canceled' });
+					const folderPath = result.filePaths[0];
+					if (onlyFolder) return resolve({ path: folderPath, content: [] });
+
+					const content = readdirSync(folderPath)
+						.map((filename: string) => {
+							if (!isSupported(filename, true)) return;
+							const absolutePath = join(folderPath, filename);
+							const error = fileSizeChecker(absolutePath);
+							return error ? { filename, path: absolutePath, error } : { filename, path: absolutePath };
+						})
+						.filter((file) => file !== undefined);
+					resolve(content.length ? { path: folderPath, content } : { error: 'The folder is empty.' });
+				});
+			};
+
+			if (action === 'media') return openFile('Media', ['png', 'jpg', 'jpeg', 'mp4', 'gif']);
+			if (action === 'webpage') return openFile('Webpage', ['html']);
+			if (action === 'executable') return openFile('Program File', ['exe']);
+			if (action === 'folder') return openDirectory();
+			resolve({ error: `${action}: This action is not supported` });
 		});
 	});
 };
