@@ -1,19 +1,21 @@
 <template>
 	<div class="section" v-if="permissions.length">
-		<p class="title">Permissions: <span class="suffix">(Grant access { only } to open/execute files)</span></p>
+		<p class="title">Permissions:<br /><span class="suffix">(Grant access { only } to open/execute files)</span></p>
 		<div class="column" ref="list">
 			<div v-for="(option, index) in permissions" :key="index" class="permission-row">
-				<p style="width: 40%">{{ option.label }}</p>
-				<input
-					v-model="option.value"
-					@change="onChange(false, false)"
-					:placeholder="getPlaceholder(option)"
-					style="flex: 1"
-					:class="option.type"
-				/>
-				<button v-if="option.type !== 'url'" class="browse" @click="bindFilePath(option)">
-					<span style="opacity: 0.75">Browse...</span>
-				</button>
+				<p>{{ option.label }}</p>
+				<div style="position: relative">
+					<input
+						v-model="option.value"
+						@change="onChange(false, false)"
+						:placeholder="getPlaceholder(option)"
+						style="flex: 1"
+						:class="option.type"
+					/>
+					<button v-if="option.type !== 'url'" class="browse" @click="bindFilePath(option)">
+						<span style="opacity: 0.75">Browse...</span>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -107,9 +109,8 @@ defineExpose({ onChange });
 <style scoped>
 .permission-row {
 	display: flex;
-	align-items: center;
-	gap: 10px;
-	position: relative;
+	flex-direction: column;
+	gap: 7px;
 }
 
 input.folder,

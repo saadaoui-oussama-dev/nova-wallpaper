@@ -63,7 +63,6 @@ export type Permission = { id: string; type: 'executable' | 'url' | 'folder'; la
 export type Query = { id: string; value: string };
 
 export type SettingsJSON = {
-	direction?: 'row' | 'right' | 'row-right' | 'rowRight' | 'column' | 'column-right' | 'columnRight';
 	settings?: SettingOption[];
 	permissions?: Permission[];
 	['query-params']?: Query[];

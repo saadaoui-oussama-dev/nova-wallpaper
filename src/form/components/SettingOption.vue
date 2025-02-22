@@ -1,5 +1,5 @@
 <template>
-	<div :class="`setting ${direction} has-${modelValue.type}`">
+	<div :class="`setting has-${modelValue.type}`">
 		<p class="label">{{ modelValue.label }}</p>
 
 		<!-- Checkbox -->
@@ -53,7 +53,6 @@ import { SettingOption } from '@/types/json';
 
 // eslint-disable-next-line
 const props = defineProps<{
-	direction: 'row' | 'row-right' | 'column' | 'column-right';
 	modelValue: SettingOption;
 }>();
 
@@ -80,33 +79,25 @@ const change = (value: Event | string | number | boolean) => {
 <style scoped>
 .setting {
 	display: flex;
-	align-items: center;
-	gap: 15px;
-}
-
-.setting.row-right {
-	flex-direction: row-reverse;
-}
-
-.setting.column {
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 7px;
 }
 
-.setting.column-right {
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 7px;
+.setting.has-checkbox {
+	flex-direction: row-reverse;
+	align-items: flex-start;
+	gap: 15px;
 }
 
-.setting > .label {
+.setting > .label,
+.setting > div {
+	width: 100%;
 	margin: 0;
 }
 
-.setting.row .label,
-.setting.row-right .label {
-	min-width: 40%;
+.setting.has-checkbox > div {
+	width: auto;
 }
 
 /* Checkbox */

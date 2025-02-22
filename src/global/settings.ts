@@ -9,7 +9,6 @@ export const getLabel = ({ label, text }: { label?: string; text?: string }) =>
 	typeof label === 'string' ? label : typeof text === 'string' ? text : undefined;
 
 export const imageJSON: SettingsJSON = {
-	direction: 'row',
 	settings: [
 		{
 			id: 'flip',
@@ -69,7 +68,6 @@ export const imageJSON: SettingsJSON = {
 };
 
 export const videoJSON: SettingsJSON = {
-	direction: 'row',
 	settings: [
 		...(imageJSON.settings as SettingOption[]).slice(0, 2),
 		{

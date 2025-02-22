@@ -2,12 +2,11 @@
 	<div class="section">
 		<p class="title">Settings:</p>
 		<div class="column">
-			<settings-option :direction="directionText" v-model="taskbarSetting" />
+			<settings-option v-model="taskbarSetting" />
 			<template v-if="settings && settings.settings">
 				<settings-option
 					v-for="(setting, index) in settings.settings"
 					:key="index"
-					:direction="directionText"
 					v-model="settings.settings[index]"
 					@change="emit('change', getSettings())"
 				/>
@@ -91,19 +90,9 @@ watch(
 
 		const $list = list.filter((opt) => opt !== null);
 		if (!$list.length) return setSettings(null);
-		setSettings({ direction: props.json.data.direction || 'row', settings: $list });
+		setSettings({ settings: $list });
 	}
 );
-
-const directionText = computed(() => {
-	if (!settings.value) return 'row';
-	if (`${settings.value.direction}`.toLowerCase().trim() === 'column') return 'column';
-	if (['column-right', 'columnright'].includes(`${settings.value.direction}`.toLowerCase().trim()))
-		return 'column-right';
-	else if (['right', 'row-right', 'rowright'].includes(`${settings.value.direction}`.toLowerCase().trim()))
-		return 'row-right';
-	else return 'row';
-});
 
 const getSettings = (): { taskbar: boolean; settings: SimpleMap } => {
 	if (!settings.value) return { taskbar: taskbarSetting.value.value, settings: {} };
@@ -114,7 +103,7 @@ const getSettings = (): { taskbar: boolean; settings: SimpleMap } => {
 };
 
 const setSettings = (data: SettingsJSON | null) => {
-	settings.value = data ? { direction: data.direction, settings: [...(data.settings || [])] } : null;
+	settings.value = data ? { settings: [...(data.settings || [])] } : null;
 	emit('change', getSettings());
 };
 
