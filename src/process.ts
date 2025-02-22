@@ -3,9 +3,9 @@ import { events, joinPublic } from '@/global/utils';
 
 type processType = 'main' | 'child' | 'both';
 
-export const processType: processType = 'both' as string as processType;
+export const processType: processType = 'main' as string as processType;
 
-// Establishes communication between the Renderer process and the Dashboard-Tray process
+// Establishes communication between the Renderer process and the Library-Tray process
 export const processesConnection = () => {
 	if (processType === 'both') {
 		// No additional event handling is required since all modules are already loaded and listening
@@ -13,17 +13,17 @@ export const processesConnection = () => {
 	}
 
 	if (processType === 'main') {
-		// Define the path to the Dashboard-Tray executable
-		const exe = 'Nova Wallpaper Dashboard\\Nova Wallpaper Dashboard.exe';
+		// Define the path to the Library-Tray executable
+		const exe = 'Nova Wallpaper Library\\Nova Wallpaper Library.exe';
 		const packageFolder = `app.asar\\build\\${exe}`;
 		let path = joinPublic(`@/public/build/${exe}`);
 		if (path.endsWith(packageFolder)) path = path.substring(0, path.length - packageFolder.length) + exe;
 
-		// Launch the Dashboard-Tray as a child process and restart it if it exits
+		// Launch the Library-Tray as a child process and restart it if it exits
 		const child = spawn(path, []);
 		child.on('exit', () => setTimeout(() => processesConnection(), 5000));
 
-		// Forward messages from the Dashboard-Tray process to the Renderer process
+		// Forward messages from the Library-Tray process to the Renderer process
 		child.stdout.on('data', (data) => events.$emit('renderer-sync-action', data.toString().trim()));
 	}
 

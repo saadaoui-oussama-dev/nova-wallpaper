@@ -13,7 +13,7 @@ export type Invoke<T> = T extends Channel<any, infer R, any> ? R : never;
 
 export type Response<T> = T extends Channel<any, any, infer R> ? R : never;
 
-// Dashboard Channels
+// Vue Channels
 
 export type WindowChannel = Channel<
 	'show-library' | 'show-form' | 'close-form',
