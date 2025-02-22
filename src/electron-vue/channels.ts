@@ -30,7 +30,7 @@ export const startVueEventsListeners = () => {
 
 	ipcMain.handle(
 		'vue-database',
-		(_, action: Invoke<DatabaseChannel>, table: string, payload: { [key: string]: any }) => {
+		(_, action: Invoke<DatabaseChannel>, table: string, payload: { [key: string]: any }, trigger: string) => {
 			return new Promise<Response<DatabaseChannel>>(async (resolve) => {
 				if (action === 'read') return resolve(database.read(table, payload));
 				else if (action === 'insert') return resolve(database.insert(table, payload));
@@ -39,7 +39,7 @@ export const startVueEventsListeners = () => {
 					if (response.error) return resolve(response);
 					if (table === 'active' || 'favorite' in payload) {
 						events.$emit('tray-reload-menu');
-						events.$emit('active-wallpaper-changed', 'dashboard');
+						if (table === 'active') events.$emit('active-wallpaper-changed', 'dashboard');
 						if (table === 'active') events.$emit('renderer-sync-action', 'change');
 					} else if ('label' in payload) {
 						events.$emit('tray-reload-menu');
@@ -53,6 +53,7 @@ export const startVueEventsListeners = () => {
 					const response = database.delete(table, payload);
 					if (response.error) return resolve(response);
 					events.$emit('tray-reload-menu');
+					events.$emit('active-wallpaper-changed', trigger);
 					events.$emit('renderer-sync-action', 'change');
 					return resolve(response);
 				}

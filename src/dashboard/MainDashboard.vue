@@ -66,13 +66,13 @@ onMounted(async () => {
 	justify-content: space-between;
 	align-items: center;
 	margin: 15px 20px;
-	padding-bottom: 20px;
+	padding-bottom: 15px;
 	border-bottom: 1px solid var(--border-color);
 }
 
 .right-side {
 	display: flex;
-	gap: 10px;
+	gap: 7px;
 }
 
 .text-btn {
@@ -81,7 +81,8 @@ onMounted(async () => {
 	border-radius: 7px;
 	cursor: pointer;
 	font-weight: 500;
-	padding: 8px 20px;
+	padding: 5px 17px;
+	font-size: 13px;
 	transition: background-color 0.15s ease-in-out;
 }
 

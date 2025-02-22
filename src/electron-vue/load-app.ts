@@ -14,7 +14,7 @@ export const VueApp = (onClose?: () => void, options?: Electron.BrowserWindowCon
 		show: false,
 		icon: joinPublic('@/public/img/logo.png'),
 		webPreferences: {
-			devTools: true,
+			devTools: false,
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: joinPublic('@/public/js/dashboard-preload.js'),
@@ -22,8 +22,10 @@ export const VueApp = (onClose?: () => void, options?: Electron.BrowserWindowCon
 		...options,
 		width: Math.min(options ? options.width || width : width, width),
 		height: Math.min(options ? options.height || height : height, height),
-		minWidth: Math.min(options ? options.minWidth || options.width || width : width, width),
-		minHeight: Math.min(options ? options.minHeight || options.height || height : height, height),
+		minWidth: Math.min(options ? options.minWidth || 150 : 150, width),
+		minHeight: Math.min(options ? options.minHeight || 150 : 150, height),
+		maxWidth: Math.min(options ? options.maxWidth || width + 50 : width + 50, width + 50),
+		maxHeight: Math.min(options ? options.maxHeight || height + 50 : height + 50, height + 50),
 	});
 
 	window.setMenu(null);

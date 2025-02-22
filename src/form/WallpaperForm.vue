@@ -110,7 +110,7 @@ const remove = async () => {
 		primaryBtn: { text: 'Delete', danger: true },
 	});
 	if (!response) return;
-	const valid = await store.deleteWallpaper(wallpaper.value);
+	const valid = await store.deleteWallpaper(wallpaper.value, 'form');
 	if (valid) store.formWallpaper = null;
 };
 

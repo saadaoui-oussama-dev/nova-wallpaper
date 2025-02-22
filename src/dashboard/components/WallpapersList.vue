@@ -99,12 +99,12 @@ const deleteWallpaper = async (wallpaper: Wallpaper) => {
 		neutralBtn: 'Cancel',
 		primaryBtn: { text: 'Delete', danger: true },
 	});
-	if (response) await store.deleteWallpaper(wallpaper);
+	if (response) await store.deleteWallpaper(wallpaper, 'dashboard');
 };
 
 const editWallpaper = async (wallpaper: Wallpaper) => {
 	onAnyClick(wallpaper.id);
-	if (await store.viewWallpaper(wallpaper)) emit('collapse');
+	if (await store.selectWallpaper(wallpaper)) emit('collapse');
 };
 
 const setActiveWallpaper = (wallpaper: Wallpaper) => {

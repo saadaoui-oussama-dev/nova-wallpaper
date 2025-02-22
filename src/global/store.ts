@@ -57,12 +57,28 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			});
 			if (error || !doc || typeof doc.id !== 'number') return false;
 			wallpaper.id = doc.id;
-			return this.viewWallpaper(wallpaper);
+			return this.selectWallpaper(wallpaper);
 		},
 
-		async viewWallpaper(wallpaper: Wallpaper) {
+		async selectWallpaper(wallpaper: Wallpaper) {
 			const validAction = await this.setActiveWallpaper(wallpaper);
+			if (validAction) NovaWallpaper.window.send('show-form');
 			return validAction;
+		},
+
+		async viewWallpaper() {
+			let newWallpaper: Wallpaper | null = null;
+			const { doc: _active } = await NovaWallpaper.database.invoke('read', 'active');
+			const active = Array.isArray(_active) && _active[0] ? _active[0].value : -1;
+			if (active !== -1 && typeof active === 'number') {
+				const { doc: list } = await NovaWallpaper.database.invoke('read', 'wallpaper', { where: { id: active } });
+				if (Array.isArray(list) && list[0]) newWallpaper = list[0] as Wallpaper;
+			}
+			this.formWallpaper = null;
+			await new Promise((resolve) => setTimeout(resolve, 150));
+			this.formWallpaper = newWallpaper;
+			if (this.formWallpaper) NovaWallpaper.window.send('show-form');
+			else NovaWallpaper.window.send('close-form');
 		},
 
 		async setActiveWallpaper(wallpaper: Wallpaper | null) {
@@ -87,11 +103,12 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return !error;
 		},
 
-		async deleteWallpaper(wallpaper: Partial<Wallpaper>) {
-			const { error } = await NovaWallpaper.database.invoke('delete', 'wallpaper', { id: wallpaper.id });
+		async deleteWallpaper(wallpaper: Partial<Wallpaper>, trigger: 'dashboard' | 'form') {
+			const { error } = await NovaWallpaper.database.invoke('delete', 'wallpaper', { id: wallpaper.id }, trigger);
 			if (error) return false;
-			await this.readData();
-			return true;
+			if (trigger === 'form') NovaWallpaper.window.send('close-form');
+			else await this.readData();
+			return trigger !== 'form';
 		},
 
 		async fetchJSON(wallpaper: Wallpaper, forceFetch: boolean): Promise<Response<JSONChannel>> {

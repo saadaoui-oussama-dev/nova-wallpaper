@@ -6,14 +6,19 @@
 	<template v-else-if="task === 'main'">
 		<main-dashboard />
 	</template>
+
+	<template v-else-if="task === 'form'">
+		<wallpaper-form />
+	</template>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import SplashScreen from '@/dashboard/SplashScreen.vue';
 import MainDashboard from '@/dashboard/MainDashboard.vue';
+import WallpaperForm from '@/form/WallpaperFormWrapper.vue';
 
-const task = ref<'splashscreen' | 'main' | ''>('');
+const task = ref<'splashscreen' | 'main' | 'form' | ''>('');
 
 const toggleVideoGifPlayingStatus = () => {
 	window.onblur = () => {
@@ -41,6 +46,8 @@ onMounted(async () => {
 		task.value = 'splashscreen';
 	} else if (queryParams.main) {
 		task.value = 'main';
+	} else if (queryParams.form) {
+		task.value = 'form';
 	}
 });
 </script>
