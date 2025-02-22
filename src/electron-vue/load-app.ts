@@ -25,7 +25,10 @@ export const VueApp = (onClose?: () => void, options?: Electron.BrowserWindowCon
 		minWidth: Math.min(options ? options.minWidth || options.width || width : width, width),
 		minHeight: Math.min(options ? options.minHeight || options.height || height : height, height),
 	});
+
+	window.setMenu(null);
 	window.on('close', () => onClose && onClose());
+	window.webContents.openDevTools();
 	return window;
 };
 
@@ -41,5 +44,14 @@ export const loadVueApp = async (window: Electron.BrowserWindow, query?: string,
 		return true;
 	} catch {
 		return false;
+	}
+};
+
+export const destroyVueApp = (window?: Electron.BrowserWindow | null, onClose?: () => void) => {
+	try {
+		if (window) window.destroy();
+		if (onClose) onClose();
+	} catch {
+		if (onClose) onClose();
 	}
 };

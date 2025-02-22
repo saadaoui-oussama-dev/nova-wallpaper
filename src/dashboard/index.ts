@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { readdirSync } from 'fs';
 import { dialog, BrowserWindow } from 'electron';
-import { VueApp, loadVueApp } from '@/electron-vue/load-app';
+import { VueApp, loadVueApp, destroyVueApp } from '@/electron-vue/load-app';
 import { isSupported, events, fileSizeChecker } from '@/global/utils';
 import { Invoke, Response, FilesChannel } from '@/types/channels';
 
@@ -9,50 +9,47 @@ let dashboard: BrowserWindow | null;
 
 let splashscreen: BrowserWindow | null;
 
-export const initDashboard = async () => {
-	events.$on('dashboard-open', async () => {
-		if (dashboard) return events.$emit('dashboard-window', 'show');
-
-		dashboard = VueApp(() => (dashboard = null), {
-			title: 'Nova Wallpaper',
-			width: 1004,
-			height: 770,
-			minWidth: 752,
-			minHeight: 770,
-			resizable: true,
-			fullscreenable: false,
-		});
-
-		splashscreen = VueApp(() => (splashscreen = null), {
-			title: 'Nova Wallpaper Splashscreen',
-			width: 180,
-			height: 180,
-			frame: false,
-			alwaysOnTop: true,
-			transparent: true,
-			skipTaskbar: true,
-			resizable: false,
-			focusable: false,
-			hasShadow: false,
-		});
-
-		dashboard.webContents.openDevTools();
-		dashboard.setMenu(null);
-		await loadVueApp(dashboard, 'main=true', false);
-		await loadVueApp(splashscreen, 'splashscreen=true');
-	});
-
+export const initDashboard = () => {
 	events.$on('dashboard-window', (action: string) => {
-		if (action === 'minimize' && dashboard) {
-			return dashboard.minimize();
-		} else if (action === 'close') {
-			if (dashboard) dashboard.destroy();
-			dashboard = null;
+		if (action === 'minimize' || action === 'minimize-dashboard') {
+			if (dashboard) dashboard.minimize();
+		} else if (action === 'close' || action === 'close-dashboard') {
+			destroyVueApp(dashboard, () => (dashboard = null));
+			destroyVueApp(splashscreen, () => (splashscreen = null));
 		} else if (action === 'show' || action === 'show-dashboard') {
-			if (dashboard) dashboard.show();
-			if (dashboard) dashboard.focus();
-			if (splashscreen) splashscreen.destroy();
-			splashscreen = null;
+			if (dashboard) {
+				dashboard.show();
+				dashboard.focus();
+				return destroyVueApp(splashscreen, () => (splashscreen = null));
+			}
+
+			dashboard = VueApp(() => (dashboard = null), {
+				title: 'Nova Wallpaper',
+				width: 1004,
+				height: 770,
+				minWidth: 752,
+				minHeight: 770,
+				resizable: true,
+				fullscreenable: false,
+			});
+
+			splashscreen = VueApp(() => (splashscreen = null), {
+				title: 'Nova Wallpaper Splashscreen',
+				width: 180,
+				height: 180,
+				frame: false,
+				alwaysOnTop: true,
+				transparent: true,
+				skipTaskbar: true,
+				resizable: false,
+				focusable: false,
+				hasShadow: false,
+			});
+
+			loadVueApp(dashboard, 'main=true', false).then((isLoaded) => {
+				if (!isLoaded || !dashboard || !splashscreen) return;
+				loadVueApp(splashscreen, 'splashscreen=true');
+			});
 		}
 	});
 

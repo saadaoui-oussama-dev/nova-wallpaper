@@ -42,7 +42,7 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 		visibilityController,
 		{
 			label: padding('Open Dashboard', pad),
-			click: () => events.$emit('dashboard-open'),
+			click: () => events.$emit('dashboard-window', 'show'),
 		},
 		{
 			label: padding('Exit App', pad),
