@@ -37,11 +37,16 @@ export const startVueEventsListeners = () => {
 				else if (action === 'update') {
 					const response = database.update(table, payload);
 					if (response.error) return resolve(response);
-					if (table === 'active' || ['favorite', 'label'].some((a) => a in payload)) {
+					if (table === 'active' || 'favorite' in payload) {
 						events.$emit('tray-reload-menu');
+						events.$emit('active-wallpaper-changed', 'dashboard');
 						if (table === 'active') events.$emit('renderer-sync-action', 'change');
-					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((a) => a in payload)) {
+					} else if ('label' in payload) {
+						events.$emit('tray-reload-menu');
+						events.$emit('active-wallpaper-changed', 'form');
+					} else if (['settings', 'queryParams', 'permissions', 'taskbar', 'content'].some((prop) => prop in payload)) {
 						events.$emit('renderer-sync-action', 'change');
+						events.$emit('active-wallpaper-changed', 'form');
 					}
 					return resolve(response);
 				} else if (action === 'delete') {

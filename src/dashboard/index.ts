@@ -50,7 +50,7 @@ export const initDashboard = () => {
 		}
 	});
 
-	events.$on('dashboard-active-changed', () => {
-		if (dashboard) dashboard.webContents.send('refresh', 'database');
+	events.$on('active-wallpaper-changed', (trigger: string) => {
+		if (dashboard && trigger !== 'dashboard') dashboard.webContents.send('refresh', 'database');
 	});
 };
