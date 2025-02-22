@@ -31,13 +31,17 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[], h
 			visibilityController.label = newLabel;
 			if (oldLabel !== 'Show Wallpaper') soundsStateLabel = soundsController.label = padding('Unmute Wallpaper', pad);
 			events.$emit('tray-render-menu', options);
-			if (oldLabel === 'Show Wallpaper') events.$emit('dashboard-window', 'minimize');
+			if (oldLabel === 'Show Wallpaper') events.$emit('library-window', 'minimize');
 			events.$emit('renderer-sync-action', oldLabel === 'Hide Wallpaper' ? 'hide' : 'show');
 		},
 	};
 
 	options.push(
 		{ type: 'separator' },
+		{
+			label: padding('Open Library', pad),
+			click: () => events.$emit('library-window', 'show'),
+		},
 		{
 			label: padding('Customize Wallpaper', pad),
 			click: () => events.$emit('form-window', 'show'),
@@ -46,14 +50,10 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[], h
 		soundsController,
 		visibilityController,
 		{
-			label: padding('Open Dashboard', pad),
-			click: () => events.$emit('dashboard-window', 'show'),
-		},
-		{
 			label: padding('Exit App', pad),
 			click: () => {
 				events.$emit('tray-render-menu', []);
-				events.$emit('dashboard-window', 'close');
+				events.$emit('library-window', 'close');
 				events.$emit('form-window', 'close');
 				events.$emit('renderer-sync-action', 'exit');
 				if (processType !== 'both') setTimeout(() => app.exit(), 3000);

@@ -16,7 +16,7 @@ export type Response<T> = T extends Channel<any, any, infer R> ? R : never;
 // Dashboard Channels
 
 export type WindowChannel = Channel<
-	'show-dashboard' | 'show-form' | 'close-form',
+	'show-library' | 'show-form' | 'close-form',
 	'get-areas',
 	{
 		fullscreen: { width: number; height: number };

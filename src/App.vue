@@ -4,7 +4,7 @@
 	</template>
 
 	<template v-else-if="task === 'main'">
-		<main-dashboard />
+		<main-library />
 	</template>
 
 	<template v-else-if="task === 'form'">
@@ -14,8 +14,8 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import SplashScreen from '@/dashboard/SplashScreen.vue';
-import MainDashboard from '@/dashboard/MainDashboard.vue';
+import SplashScreen from '@/library/SplashScreen.vue';
+import MainLibrary from '@/library/MainLibrary.vue';
 import WallpaperFormWrapper from '@/form/WallpaperFormWrapper.vue';
 
 const task = ref<'splashscreen' | 'main' | 'form' | ''>('');

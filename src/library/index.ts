@@ -2,26 +2,26 @@ import { BrowserWindow } from 'electron';
 import { VueApp, loadVueApp, destroyVueApp } from '@/electron-vue/load-app';
 import { events } from '@/global/utils';
 
-let dashboard: BrowserWindow | null;
+let library: BrowserWindow | null;
 
 let splashscreen: BrowserWindow | null;
 
-export const initDashboard = () => {
-	events.$on('dashboard-window', (action: string) => {
-		if (action === 'minimize' || action === 'minimize-dashboard') {
-			if (dashboard) dashboard.minimize();
-		} else if (action === 'close' || action === 'close-dashboard') {
-			destroyVueApp(dashboard, () => (dashboard = null));
+export const initLibrary = () => {
+	events.$on('library-window', (action: string) => {
+		if (action === 'minimize' || action === 'minimize-library') {
+			if (library) library.minimize();
+		} else if (action === 'close' || action === 'close-library') {
+			destroyVueApp(library, () => (library = null));
 			destroyVueApp(splashscreen, () => (splashscreen = null));
-		} else if (action === 'show' || action === 'show-dashboard') {
-			if (dashboard) {
-				dashboard.show();
-				dashboard.focus();
+		} else if (action === 'show' || action === 'show-library') {
+			if (library) {
+				library.show();
+				library.focus();
 				return destroyVueApp(splashscreen, () => (splashscreen = null));
 			}
 
-			dashboard = VueApp(() => (dashboard = null), {
-				title: 'Nova Wallpaper',
+			library = VueApp(() => (library = null), {
+				title: 'Nova Wallpaper Library',
 				width: 1004,
 				height: 770,
 				minWidth: 752,
@@ -43,14 +43,14 @@ export const initDashboard = () => {
 				hasShadow: false,
 			});
 
-			loadVueApp(dashboard, 'main=true', false).then((isLoaded) => {
-				if (!isLoaded || !dashboard || !splashscreen) return;
+			loadVueApp(library, 'main=true', false).then((isLoaded) => {
+				if (!isLoaded || !library || !splashscreen) return;
 				loadVueApp(splashscreen, 'splashscreen=true');
 			});
 		}
 	});
 
 	events.$on('active-wallpaper-changed', (trigger: string) => {
-		if (dashboard && trigger !== 'dashboard') dashboard.webContents.send('refresh', 'database');
+		if (library && trigger !== 'library') library.webContents.send('refresh', 'database');
 	});
 };

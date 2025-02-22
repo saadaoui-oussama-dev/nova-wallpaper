@@ -1,7 +1,7 @@
 <template>
-	<div class="dashboard">
+	<div class="library">
 		<div class="header">
-			<h1>Wallpapers</h1>
+			<h1>Library</h1>
 			<div class="right-side">
 				<button v-if="newWallpapersVisible" class="text-btn fixed" @click="setNewWallpapers('collapse')">Cancel</button>
 				<button v-else class="text-btn primary fixed" @click="setNewWallpapers('expand')">Add</button>
@@ -19,8 +19,8 @@
 import { ref, useTemplateRef, onMounted } from 'vue';
 import { useWallpaperStore } from '@/global/store';
 import { NovaWallpaper } from '@/electron-vue/preload';
-import WallpapersList from '@/dashboard/components/WallpapersList.vue';
-import NewWallpaper from '@/dashboard/components/NewWallpaper.vue';
+import WallpapersList from '@/library/components/WallpapersList.vue';
+import NewWallpaper from '@/library/components/NewWallpaper.vue';
 
 const store = useWallpaperStore();
 
@@ -40,12 +40,12 @@ onMounted(async () => {
 	NovaWallpaper.database.on('refresh', () => store.readData());
 	await Promise.all([store.readData(), new Promise((resolve) => setTimeout(resolve, 1500))]);
 	if (!store.wallpapers.length) newWallpapersVisible.value = true;
-	NovaWallpaper.window.send('show-dashboard');
+	NovaWallpaper.window.send('show-library');
 });
 </script>
 
 <style scoped>
-.dashboard {
+.library {
 	height: calc(100% - 20px);
 	display: flex;
 	flex-direction: column;

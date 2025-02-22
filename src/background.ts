@@ -5,7 +5,7 @@ import { startVueEventsListeners } from '@/electron-vue/channels';
 import { prepareVueProtocol } from '@/electron-vue/load-app';
 import { processType, processesConnection } from '@/process';
 import { initRenderer } from '@/renderer';
-import { initDashboard } from '@/dashboard';
+import { initLibrary } from '@/library';
 import { initForm } from '@/form';
 import { initTray } from '@/tray';
 
@@ -17,7 +17,7 @@ app.on('ready', async () => {
 	}
 	if (processType !== 'main') {
 		startVueEventsListeners();
-		initDashboard();
+		initLibrary();
 		initForm();
 		initTray();
 	}

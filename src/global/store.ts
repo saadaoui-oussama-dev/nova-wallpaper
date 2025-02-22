@@ -100,7 +100,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			return !error;
 		},
 
-		async deleteWallpaper(wallpaper: Partial<Wallpaper>, trigger: 'dashboard' | 'form') {
+		async deleteWallpaper(wallpaper: Partial<Wallpaper>, trigger: 'library' | 'form') {
 			const { error } = await NovaWallpaper.database.invoke('delete', 'wallpaper', { id: wallpaper.id }, trigger);
 			if (error) return false;
 			if (trigger === 'form') NovaWallpaper.window.send('close-form');

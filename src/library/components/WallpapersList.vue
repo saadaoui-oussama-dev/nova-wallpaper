@@ -99,7 +99,7 @@ const deleteWallpaper = async (wallpaper: Wallpaper) => {
 		neutralBtn: 'Cancel',
 		primaryBtn: { text: 'Delete', danger: true },
 	});
-	if (response) await store.deleteWallpaper(wallpaper, 'dashboard');
+	if (response) await store.deleteWallpaper(wallpaper, 'library');
 };
 
 const editWallpaper = async (wallpaper: Wallpaper) => {

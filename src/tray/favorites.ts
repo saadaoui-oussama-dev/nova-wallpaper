@@ -26,7 +26,7 @@ export const renderFavorites = async (options: Electron.MenuItemConstructorOptio
 						events.$emit('active-wallpaper-changed', 'tray');
 						events.$emit('tray-reload-menu');
 						setTimeout(() => {
-							events.$emit('dashboard-window', 'minimize');
+							events.$emit('library-window', 'minimize');
 							events.$emit('renderer-sync-action', 'change');
 						}, 400);
 					}

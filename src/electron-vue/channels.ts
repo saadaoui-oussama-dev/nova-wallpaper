@@ -8,7 +8,7 @@ import { Send, Invoke, Response, WindowChannel, JSONChannel, DatabaseChannel, Fi
 
 export const startVueEventsListeners = () => {
 	ipcMain.on('vue-window', (_, action: Send<WindowChannel>): void => {
-		if (action.includes('dashboard')) events.$emit('dashboard-window', action);
+		if (action.includes('library')) events.$emit('library-window', action);
 		else if (action.includes('form')) events.$emit('form-window', action);
 	});
 
@@ -39,7 +39,7 @@ export const startVueEventsListeners = () => {
 					if (response.error) return resolve(response);
 					if (table === 'active' || 'favorite' in payload) {
 						events.$emit('tray-reload-menu');
-						if (table === 'active') events.$emit('active-wallpaper-changed', 'dashboard');
+						if (table === 'active') events.$emit('active-wallpaper-changed', 'library');
 						if (table === 'active') events.$emit('renderer-sync-action', 'change');
 					} else if ('label' in payload) {
 						events.$emit('tray-reload-menu');
