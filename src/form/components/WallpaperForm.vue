@@ -18,6 +18,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef, watch } from 'vue';
+import { NovaWallpaper } from '@/electron-vue/preload';
 import { useWallpaperStore } from '@/global/store';
 import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
@@ -126,8 +127,7 @@ const finish = async () => {
 		queryParams: { ...queryParams.value },
 	});
 	if (!valid) return;
-	store.formWallpaper = null;
-	await store.readData();
+	NovaWallpaper.window.send('close-form');
 };
 
 // eslint-disable-next-line
