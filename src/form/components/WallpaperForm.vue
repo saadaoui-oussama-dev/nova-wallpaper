@@ -23,7 +23,7 @@ import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
-import WallpaperPreview from '@/components/WallpaperPreview.vue';
+import WallpaperPreview from '@/global/WallpaperPreview.vue';
 import WallpaperSettings from '@/form/components/WallpaperSettings.vue';
 import WallpaperPermissions from '@/form/components/WallpaperPermissions.vue';
 import WallpaperQueryParams from '@/form/components/WallpaperQueryParams.vue';

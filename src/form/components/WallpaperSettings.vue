@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { getID, getLabel } from '@/global/settings';
 import { Wallpaper, SimpleMap } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
