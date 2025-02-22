@@ -16,7 +16,7 @@
 import { useTemplateRef, onMounted } from 'vue';
 import { useWallpaperStore } from '@/global/store';
 import { NovaWallpaper } from '@/electron-vue/preload';
-import WallpaperForm from '@/form/WallpaperForm.vue';
+import WallpaperForm from '@/form/components/WallpaperForm.vue';
 
 const store = useWallpaperStore();
 

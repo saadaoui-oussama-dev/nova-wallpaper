@@ -8,7 +8,7 @@
 	</template>
 
 	<template v-else-if="task === 'form'">
-		<wallpaper-form />
+		<wallpaper-form-wrapper />
 	</template>
 </template>
 
@@ -16,7 +16,7 @@
 import { ref, onMounted } from 'vue';
 import SplashScreen from '@/dashboard/SplashScreen.vue';
 import MainDashboard from '@/dashboard/MainDashboard.vue';
-import WallpaperForm from '@/form/WallpaperFormWrapper.vue';
+import WallpaperFormWrapper from '@/form/WallpaperFormWrapper.vue';
 
 const task = ref<'splashscreen' | 'main' | 'form' | ''>('');
 
