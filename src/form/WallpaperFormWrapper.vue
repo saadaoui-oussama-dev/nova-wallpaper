@@ -1,13 +1,13 @@
 <template>
 	<div class="form">
+		<div class="content">
+			<wallpaper-form ref="form" />
+		</div>
+
 		<div class="buttons">
 			<!-- <button class="text-btn" @click="formAction('restore')">Reset All</button> -->
 			<button class="text-btn danger" @click="formAction('delete')">Delete</button>
 			<button class="text-btn primary" @click="formAction('finish')">Finish</button>
-		</div>
-
-		<div class="content">
-			<wallpaper-form ref="form" />
 		</div>
 	</div>
 </template>
@@ -50,7 +50,7 @@ onMounted(async () => {
 
 .content {
 	flex: 1;
-	padding-inline: 20px;
+	padding: 15px 20px 0px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -63,9 +63,9 @@ onMounted(async () => {
 	display: flex;
 	justify-content: flex-end;
 	gap: 7px;
-	margin: 15px 20px;
-	padding-bottom: 15px;
-	border-bottom: 1px solid var(--border-color);
+	margin: 15px 20px 0px;
+	padding-top: 15px;
+	border-top: 1px solid var(--border-color);
 }
 
 .text-btn {

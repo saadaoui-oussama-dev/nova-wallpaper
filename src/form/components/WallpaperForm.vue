@@ -1,12 +1,12 @@
 <template>
 	<div class="wallpaper-form" v-if="wallpaper">
-		<wallpaper-preview :wallpaper="wallpaper" :settings="settings" />
 		<div class="section">
 			<p class="title">Name:</p>
 			<div class="column">
 				<input v-model="label" placeholder="Wallpaper Name" maxlength="25" />
 			</div>
 		</div>
+		<wallpaper-preview :wallpaper="wallpaper" :settings="settings" />
 		<wallpaper-settings :wallpaper="wallpaper" :json="wallpaperJSON" @change="setSettings" />
 		<template v-if="wallpaper.path.endsWith('.html')">
 			<wallpaper-permissions ref="permissions" :wallpaper="wallpaper" :json="wallpaperJSON" @change="setPermissions" />

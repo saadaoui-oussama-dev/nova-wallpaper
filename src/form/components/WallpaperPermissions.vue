@@ -7,7 +7,7 @@
 				<div style="position: relative">
 					<input
 						v-model="option.value"
-						@change="onChange(false, false)"
+						@input="onChange(false, false)"
 						:placeholder="getPlaceholder(option)"
 						style="flex: 1"
 						:class="option.type"
