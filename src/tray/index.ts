@@ -26,8 +26,8 @@ export const initTray = () => {
 
 	events.$on('tray-reload-menu', async () => {
 		const options: Electron.MenuItemConstructorOptions[] = [];
-		await renderFavorites(options);
-		renderControls(options);
+		const hasActiveWallpaper = await renderFavorites(options);
+		renderControls(options, hasActiveWallpaper);
 		events.$emit('tray-render-menu', options);
 	});
 

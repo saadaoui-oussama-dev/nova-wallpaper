@@ -4,7 +4,7 @@ import { events } from '@/global/utils';
 
 let soundsStateLabel = 'Mute Wallpaper';
 
-export const renderControls = (options: Electron.MenuItemConstructorOptions[]): void => {
+export const renderControls = (options: Electron.MenuItemConstructorOptions[], hasActiveWallpaper: boolean): void => {
 	const pad = options.length ? true : false;
 
 	const padding = (label: string, padding = true) => events.$emit('padding', label, padding)[0] as string;
@@ -38,6 +38,11 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[]): 
 
 	options.push(
 		{ type: 'separator' },
+		{
+			label: padding('Customize Wallpaper', pad),
+			click: () => events.$emit('form-window', 'show'),
+			enabled: hasActiveWallpaper,
+		},
 		soundsController,
 		visibilityController,
 		{
