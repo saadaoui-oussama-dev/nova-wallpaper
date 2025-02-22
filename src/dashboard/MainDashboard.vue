@@ -46,11 +46,10 @@ onMounted(async () => {
 
 <style scoped>
 .dashboard {
-	height: 100%;
+	height: calc(100% - 20px);
 	display: flex;
 	flex-direction: column;
 	font-size: 14px;
-	margin-bottom: 20px;
 	overflow: hidden;
 }
 
