@@ -17,7 +17,7 @@ export const VueApp = (onClose?: () => void, options?: Electron.BrowserWindowCon
 			devTools: false,
 			nodeIntegration: false,
 			contextIsolation: true,
-			preload: joinPublic('@/public/js/dashboard-preload.js'),
+			preload: joinPublic('@/public/js/vue-preload.js'),
 		},
 		...options,
 		width: Math.min(options ? options.width || width : width, width),
