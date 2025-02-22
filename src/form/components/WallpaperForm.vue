@@ -135,6 +135,10 @@ defineExpose({ remove, finish });
 </script>
 
 <style>
+.wallpaper-form {
+	--width: 299;
+}
+
 .wallpaper-form .section {
 	margin-bottom: 18px;
 }

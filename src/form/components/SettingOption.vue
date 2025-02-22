@@ -178,7 +178,6 @@ const change = (value: Event | string | number | boolean) => {
 	align-items: center;
 	gap: 5px;
 	width: 48.5%;
-	min-width: 200px;
 }
 
 .slider-container input[type='range'] {

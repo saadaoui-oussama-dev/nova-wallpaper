@@ -71,7 +71,6 @@ const createWallpaper = async ({ type }: Option) => {
 
 <style scoped>
 .wrapper {
-	min-width: 460px;
 	display: grid;
 	grid-template-rows: 1fr;
 	overflow: hidden;

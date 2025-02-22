@@ -18,10 +18,10 @@ export const initForm = () => {
 
 			form = VueApp(() => (form = null), {
 				title: 'Customize Nova Wallpaper',
-				width: 385,
+				width: 355,
 				height: 600,
-				minWidth: 385,
-				maxWidth: 385,
+				minWidth: 355,
+				maxWidth: 355,
 				minHeight: 600,
 				resizable: true,
 				fullscreenable: false,

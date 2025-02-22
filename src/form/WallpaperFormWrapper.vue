@@ -55,6 +55,10 @@ onMounted(async () => {
 	overflow-x: hidden;
 }
 
+.content > * {
+	width: calc(100vw - 40px);
+}
+
 .buttons {
 	display: flex;
 	justify-content: flex-end;
