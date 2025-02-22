@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { NovaWallpaper } from '@/electron-vue/preload';
 import { useWallpaperStore } from '@/global/store';
 import { getFileName } from '@/global/files';
