@@ -40,7 +40,7 @@ export const threadsManager = async (key: string, callback: () => Promise<void>)
 		await threads[key].current;
 		threads[key].next = false;
 	}
-	let resolveThread = () => console.log();
+	let resolveThread = () => undefined as void;
 	threads[key].current = new Promise((resolve) => (resolveThread = resolve));
 	await callback();
 	resolveThread();

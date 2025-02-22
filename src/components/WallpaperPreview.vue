@@ -68,7 +68,7 @@ const setDimensions = async () => {
 		dimensions.value.width = response[areaType.value].width;
 		dimensions.value.height = response[areaType.value].height;
 	} catch {
-		console.log();
+		return;
 	}
 };
 

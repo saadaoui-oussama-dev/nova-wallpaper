@@ -35,7 +35,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				const { doc: active } = await NovaWallpaper.database.invoke('read', 'active');
 				this.activeWallpaper = active[0] ? active[0].value : '';
 			} catch {
-				console.log();
+				return;
 			}
 		},
 
@@ -77,7 +77,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				}
 				await this.readData();
 			} catch {
-				console.log();
+				return false;
 			}
 			return valid;
 		},
@@ -98,7 +98,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			const src = this.data[wallpaper.path];
 			if (!(forceFetch || !src || !src.json)) return src.json;
 
-			let resolver: (value: Response<JSONChannel>) => void = () => console.log();
+			let resolver: (value: Response<JSONChannel>) => void = () => undefined as void;
 
 			this.data[wallpaper.path] = {
 				preview: this.data[wallpaper.path] ? this.data[wallpaper.path].preview : null,
@@ -114,8 +114,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				if (forceFetch || !src || !src.json) {
 					if (isSupported(wallpaper.path, true)) {
 						await new Promise((resolve) => setTimeout(resolve, 1));
-						data.valid = true;
-						data.exist = true;
+						Object.assign(data, { exist: true, valid: true });
 						data.data = wallpaper.path.endsWith('.mp4') ? videoJSON : imageJSON;
 					} else if (wallpaper.path.endsWith('.html')) {
 						const filename = replaceFileName(wallpaper.path, { name: 'settings', extension: 'json' });
@@ -123,8 +122,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 						const livelyFilename = replaceFileName(wallpaper.path, { name: 'LivelyProperties', extension: 'json' });
 						const livelyResponse = await NovaWallpaper.json.invoke('read', livelyFilename);
 						if (livelyResponse.valid) {
-							response.valid = true;
-							response.exist = true;
+							Object.assign(data, { exist: true, valid: true });
 							if (!response.data) response.data = { settings: [] };
 							if (!response.data.settings) response.data.settings = [];
 							Object.entries(livelyResponse.data as { [key: string]: SettingOption }).map(([p, v]) => {
@@ -135,7 +133,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 					}
 				}
 			} catch {
-				console.log();
+				Object.assign(data, { exist: false, valid: false, data: null });
 			}
 
 			resolver(data);
@@ -146,7 +144,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 			const src = this.data[wallpaper.path];
 			if (src && src.preview) return src.preview;
 
-			let resolver: (value: Response<FilesChannel>) => void = () => console.log();
+			let resolver: (value: Response<FilesChannel>) => void = () => undefined as void;
 
 			this.data[wallpaper.path] = {
 				preview: new Promise((resolve) => (resolver = resolve)),
