@@ -54,6 +54,7 @@ export const renderControls = (options: Electron.MenuItemConstructorOptions[], h
 			click: () => {
 				events.$emit('tray-render-menu', []);
 				events.$emit('dashboard-window', 'close');
+				events.$emit('form-window', 'close');
 				events.$emit('renderer-sync-action', 'exit');
 				if (processType !== 'both') setTimeout(() => app.exit(), 3000);
 			},
