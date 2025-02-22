@@ -51,10 +51,7 @@ export const useWallpaperStore = defineStore('wallpaper', {
 				permissions: {},
 				queryParams: {},
 			};
-			const { doc, error } = await NovaWallpaper.database.invoke('insert', 'wallpaper', {
-				...wallpaper,
-				label: 'Draft',
-			});
+			const { doc, error } = await NovaWallpaper.database.invoke('insert', 'wallpaper', wallpaper);
 			if (error || !doc || typeof doc.id !== 'number') return false;
 			wallpaper.id = doc.id;
 			return this.selectWallpaper(wallpaper);
