@@ -71,6 +71,7 @@
 					container.appendChild(el);
 					el.src = value;
 					if (isVideo) {
+						el.volume = 0;
 						el.autoplay = true;
 						el.loop = true;
 						el.playsinline = true;
