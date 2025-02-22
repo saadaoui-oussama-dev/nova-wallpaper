@@ -107,8 +107,10 @@ export const initRenderer = () => {
 				try {
 					await render.loadURL('about:blank');
 					const path = isMedia ? joinPublic('@/public/media.html') : wallpaper.path;
-					const query = Object.entries(isMedia ? {} : wallpaper.query || {});
-					const url = query.length ? path + '?' + query.map(([k, v]) => `${k}=${v}`).join('&') : path;
+					const query = Object.entries(isMedia ? {} : wallpaper.queries || {})
+						.filter(([_, v]) => v !== undefined && v !== null && v !== '')
+						.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
+					const url = query.length ? `${path}?${query.join('&')}` : path;
 					await render.loadURL(url);
 					oldWallpaper = null;
 					setVisibility(true, false);
