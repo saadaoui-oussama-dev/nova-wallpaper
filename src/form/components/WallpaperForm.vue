@@ -21,7 +21,7 @@ import { NovaWallpaper } from '@/electron-vue/preload';
 import { useWallpaperStore } from '@/global/store';
 import { getFileName } from '@/global/files';
 import { useDialog } from '@/global/dialog';
-import { Wallpaper, SimpleMap } from '@/types/wallpaper';
+import { Wallpaper, SimpleRecord } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import WallpaperPreview from '@/global/WallpaperPreview.vue';
 import WallpaperSettings from '@/form/components/WallpaperSettings.vue';
@@ -35,9 +35,9 @@ const wallpaper = ref<Wallpaper | null>(null);
 
 const label = ref('');
 
-const settings = ref<{ taskbar: boolean; settings: SimpleMap }>({ taskbar: false, settings: {} });
+const settings = ref<{ taskbar: boolean; settings: SimpleRecord }>({ taskbar: false, settings: {} });
 
-const queries = ref<SimpleMap>({});
+const queries = ref<SimpleRecord>({});
 
 watch(
 	() => store.formWallpaper,
@@ -69,7 +69,7 @@ watch(label, () => {
 	});
 });
 
-const setSettings = (data: { taskbar: boolean; settings: SimpleMap }) => {
+const setSettings = (data: { taskbar: boolean; settings: SimpleRecord }) => {
 	settings.value = data;
 	if (!wallpaper.value) return;
 	store.updateWallpaper({
@@ -79,7 +79,7 @@ const setSettings = (data: { taskbar: boolean; settings: SimpleMap }) => {
 	});
 };
 
-const setQueries = (data: SimpleMap) => {
+const setQueries = (data: SimpleRecord) => {
 	queries.value = data;
 	if (!wallpaper.value) return;
 	store.updateWallpaper({

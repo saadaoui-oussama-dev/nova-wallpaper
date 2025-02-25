@@ -1,4 +1,4 @@
-import { SimpleMap } from '@/types/wallpaper';
+import { SimpleRecord } from '@/types/wallpaper';
 
 export type Selector =
 	| 'container'
@@ -10,7 +10,7 @@ export type Selector =
 	| 'button'
 	| 'buttonHover';
 
-export type DialogStyle = SimpleMap | ((args: SimpleMap) => SimpleMap);
+export type DialogStyle = SimpleRecord | ((args: SimpleRecord) => SimpleRecord);
 
 export type DialogButton = {
 	text?: string;
@@ -93,7 +93,7 @@ const styles: DialogOptions['styles'] = {
 	}),
 };
 
-const buttons: Record<'neutralBtn' | 'cancelBtn' | 'primaryBtn', (args: SimpleMap) => DialogButton> = {
+const buttons: Record<'neutralBtn' | 'cancelBtn' | 'primaryBtn', (args: SimpleRecord) => DialogButton> = {
 	neutralBtn: () => ({
 		backgroundColor: 'var(--neutral-color, #343434)',
 		backgroundColorHover: 'var(--neutral-hover, #444444)',
@@ -112,8 +112,8 @@ const buttons: Record<'neutralBtn' | 'cancelBtn' | 'primaryBtn', (args: SimpleMa
 	}),
 };
 
-const setStyles = (target: HTMLElement, source: DialogOptions['styles'], selector: Selector, args?: SimpleMap) => {
-	const getStyles = (styles?: SimpleMap | ((args: SimpleMap) => SimpleMap)) =>
+const setStyles = (target: HTMLElement, source: DialogOptions['styles'], selector: Selector, args?: SimpleRecord) => {
+	const getStyles = (styles?: SimpleRecord | ((args: SimpleRecord) => SimpleRecord)) =>
 		typeof styles === 'function' ? styles(args || {}) : typeof styles === 'object' ? styles : undefined;
 	Object.assign(target.style, { ...(styles && getStyles(styles[selector])), ...getStyles(source && source[selector]) });
 };
@@ -122,7 +122,7 @@ function createButton(
 	button: string | DialogButton | undefined,
 	value: boolean | undefined,
 	styles: DialogOptions['styles'],
-	defaultButton: (args: SimpleMap) => DialogButton,
+	defaultButton: (args: SimpleRecord) => DialogButton,
 	response: (value: boolean | undefined) => void
 ): { ref: 0 | 1; button: HTMLButtonElement | null } {
 	button = typeof button === 'string' ? { text: button } : button;

@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { getID, getLabel } from '@/global/settings';
-import { Wallpaper, SimpleMap } from '@/types/wallpaper';
+import { Wallpaper, SimpleRecord } from '@/types/wallpaper';
 import { Response, JSONChannel } from '@/types/channels';
 import { SettingsJSON, SettingOption, ToggleOption } from '@/types/json';
 import SettingsOption from '@/form/components/SettingOption.vue';
@@ -94,7 +94,7 @@ watch(
 	}
 );
 
-const getSettings = (): { taskbar: boolean; settings: SimpleMap } => {
+const getSettings = (): { taskbar: boolean; settings: SimpleRecord } => {
 	if (!settings.value) return { taskbar: taskbarSetting.value.value, settings: {} };
 	return {
 		taskbar: taskbarSetting.value.value,

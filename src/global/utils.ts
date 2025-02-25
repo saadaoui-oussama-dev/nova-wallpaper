@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { statSync } from 'fs';
 import { app, screen } from 'electron';
-import { SimpleMap } from '@/types/wallpaper';
+import { SimpleRecord } from '@/types/wallpaper';
 import { Response, WindowChannel } from '@/types/channels';
 
 export * from '@/global/events';
@@ -46,12 +46,12 @@ export const threadsManager = async (key: string, callback: () => Promise<void>)
 	resolveThread();
 };
 
-export const compareMaps = (data1: SimpleMap, data2: SimpleMap, onlyKeys = false): boolean => {
+export const compareMaps = (data1: SimpleRecord, data2: SimpleRecord, onlyKeys = false): boolean => {
 	const data1keys = Object.keys(data1);
 	if (data1keys.length !== Object.keys(data2).length) return false;
 	return data1keys.every((k) => k in data2 && (onlyKeys || data1[k] === data2[k]));
 };
 
-export const getMapChanges = (data1?: SimpleMap, data2?: SimpleMap) => {
+export const getMapChanges = (data1?: SimpleRecord, data2?: SimpleRecord) => {
 	return data1 && data2 ? Object.entries(data1).filter(([id, val]) => data2[id] !== val) : Object.entries(data1 || {});
 };
