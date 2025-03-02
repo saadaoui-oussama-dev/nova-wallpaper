@@ -22,10 +22,10 @@ export const initLibrary = () => {
 
 			library = VueApp(() => (library = null), {
 				title: 'Nova Wallpaper Library',
-				width: 1004,
+				width: 752,
 				height: 770,
-				minWidth: 752,
-				minHeight: 770,
+				minWidth: 516,
+				minHeight: 516,
 				resizable: true,
 				fullscreenable: false,
 			});
